@@ -29,10 +29,7 @@ Object::Object()
 
 string Object::toString() const
 {
-    string thiz;
-    strstream tem;
-    tem << this;
-    tem >> thiz;
+    string thiz = soften::getObjectAddress<Object>(this);
 
     string s("(Object");
 

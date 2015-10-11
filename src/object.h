@@ -4,6 +4,7 @@
 #include <functional>
 #include <map>
 #include "metaobject.h"
+#include "soften.h"
 
 namespace soften {
 
@@ -41,10 +42,11 @@ public:
 
 
 #define SOFTEN_OBJECT(_CLASS_NAME)                                              \
-    protected:                                                                  \
-    SOFTEN_HACK class soften::MetaObject<_CLASS_NAME>;                          \
+    public:                                                                     \
     typedef soften::MetaObject<_CLASS_NAME> Meta;                               \
     typedef Meta::call call;                                                    \
+    protected:                                                                  \
+    SOFTEN_HACK class soften::MetaObject<_CLASS_NAME>;                          \
     static Meta metaObject;                                                     \
     public:                                                                     \
     std::map<const std::string, call> objectMethodMap() const {                 \
@@ -61,7 +63,6 @@ public:
         _CLASS_NAME* thizz = reinterpret_cast<_CLASS_NAME*>(thiz);              \
         thizz->findMethod(method)(thizz, args, r);                              \
     }                                                                           \
-
 
 }
 

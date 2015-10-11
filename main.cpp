@@ -4,9 +4,9 @@
 
 using namespace std;
 
-#define _TUPLE_GET_ONE_ARGUMENT(_NUMBER_) decltype(std::get<_NUMBER_>(*arguments))    \
-    /*! arg0 or arg1 .. arg9 ..  */                                                  \
-    arg##_NUMBER_ = std::get<_NUMBER_>(*arguments);
+#define _TUPLE_GET_ONE_ARGUMENT(_NUMBER_)  \
+    /*! arg0 or arg1 .. arg9 ..  */        \
+    decltype(std::get<_NUMBER_>(*arguments)) arg##_NUMBER_ = std::get<_NUMBER_>(*arguments);
 
 #define _TUPLE_GET_ARGUMENTS_1  _TUPLE_GET_ONE_ARGUMENT(0)
 #define _TUPLE_GET_ARGUMENTS_2  _TUPLE_GET_ONE_ARGUMENT(1) _TUPLE_GET_ARGUMENTS_1
@@ -19,8 +19,8 @@ using namespace std;
 #define _TUPLE_GET_ARGUMENTS_9  _TUPLE_GET_ONE_ARGUMENT(8) _TUPLE_GET_ARGUMENTS_8
 #define _TUPLE_GET_ARGUMENTS_10 _TUPLE_GET_ONE_ARGUMENT(9) _TUPLE_GET_ARGUMENTS_9
 
-#define _TUPLE_GET_ARGUMENTS(_ARG_COUNT_) \
-    /*! arg0 to arg##_ARG_COUNT_ */ \
+#define _TUPLE_GET_ARGUMENTS(_ARG_COUNT_)                    \
+    /*! arg0 to arg##_ARG_COUNT_ */                          \
     _TUPLE_GET_ARGUMENTS_##_ARG_COUNT_
 
 class MyObject : public soften::Object
@@ -67,7 +67,6 @@ MyObject::Meta MyObject::metaObject = {
                 Ap arguments = reinterpret_cast<Ap>(args);
 
                 _TUPLE_GET_ARGUMENTS(2);
-
                 //! decltype(std::get<0>(*arguments)) arg0 = std::get<0>(*arguments);
                 //! decltype(std::get<1>(*arguments)) arg1 = std::get<1>(*arguments);
 
@@ -139,6 +138,7 @@ int main(int, char**)
     int int_ref = 10;
     std::tuple<int&> a0(int_ref);
     mObject.callMethod("ref", &a0, NULL);
+    mObject.ref(int_ref);
     cout << int_ref << endl;
 
     return 0;

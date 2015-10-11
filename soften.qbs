@@ -9,6 +9,7 @@ CppApplication {
         "src/metaobject.h",
         "src/object.cpp",
         "src/object.h",
+        "src/soften.h",
     ]
 
     cpp.cxxFlags:"-std=c++11"
