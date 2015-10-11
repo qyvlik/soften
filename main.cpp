@@ -6,10 +6,10 @@ using namespace std;
 
 class MyObject : public soften::Object
 {
-    SOFTEN_OBJECT(MyObject)
+    SOFTEN_OBJECT(MyObject);
 
-    public:
-        MyObject(){}
+public:
+    MyObject(){}
     ~MyObject(){}
     SOFTEN_INVOKABLE std::string toString()const {
         return  "MyObject:" + this->Object::toString();
@@ -17,6 +17,12 @@ class MyObject : public soften::Object
     SOFTEN_INVOKABLE int complex(int arg0, int arg1) {
         return arg0 + arg1;
     }
+
+private:
+    SOFTEN_INVOKABLE void privateMethod() {
+        cout << "can you call the private method in soften?" << endl;
+    }
+
 };
 
 MyObject::Meta MyObject::metaObject = {
@@ -43,6 +49,17 @@ MyObject::Meta MyObject::metaObject = {
 
                 int* r_ = reinterpret_cast<int*>(r);
                 (*r_) = thiz->complex(arg0, arg1);
+            })
+        } // complex
+        ,
+        {
+            pair<const string, MyObject::call>(
+            "privateMethod",
+            [&](MyObject* thiz, void* , void* ){
+                thiz->privateMethod();
+                cout << "soften can use the MetaObject call MyObject::privateMethod() "
+                     << "becasue the MetaObject is friend class on MyObject"
+                     << endl;
             })
         } // complex
     }
@@ -82,9 +99,7 @@ int main(int, char**)
     //! mObject.callMethod("complex", &obj, &a, &r);
     //! cout << "complex r: " << r << endl;
 
+    mObject.callMethod("privateMethod", NULL, NULL);
+
     return 0;
 }
-
-
-
-
