@@ -76,6 +76,12 @@ int main(int, char**)
     mObject.callMethod("complex", &a1, &r);
     cout << "complex r: " << r << endl;
 
+    /*!
+     * don't run this code
+     */
+    //! mObject.callMethod("complex", &obj, &a, &r);
+    //! cout << "complex r: " << r << endl;
+
     return 0;
 }
 

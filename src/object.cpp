@@ -6,7 +6,7 @@ using namespace std;
 
 namespace soften {
 
-MetaObject<Object> Object::metaObject =
+Object::Meta Object::metaObject =
 {
     {
         {
