@@ -66,13 +66,15 @@ int main(int, char**)
     test(&mObject, &name);
     cout << "name:" << name << endl;
 
-    std::tuple<int, int> a(10, 10);
     int r = 0;
 
+    std::tuple<int, int> a(10, 10);
     mObject.callMethod("complex", &mObject, &a, &r);
-
     cout << "complex r: " << r << endl;
 
+    std::tuple<int, int> a1(100, 100);
+    mObject.callMethod("complex", &a1, &r);
+    cout << "complex r: " << r << endl;
 
     return 0;
 }

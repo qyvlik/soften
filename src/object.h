@@ -22,6 +22,9 @@ public:
     call findMethod(const std::string& method) {
         return metaObject.findMethod(method);
     }
+    virtual void callMethod(const std::string &method, void *args, void *r) {
+        this->findMethod(method)(this, args, r);
+    }
     virtual void callMethod(const std::string& method, Object* thiz, void* args, void* r) {
         thiz->findMethod(method)(thiz, args, r);
     }
@@ -47,6 +50,9 @@ public:
     }                                                                           \
     call findMethod(const std::string& method) {                                \
         return metaObject.findMethod(method);                                   \
+    }                                                                           \
+    virtual void callMethod(const std::string &method, void *args, void *r) {   \
+        this->findMethod(method)(this, args, r);                                \
     }                                                                           \
     virtual void callMethod( const std::string& method,                         \
                              Object* thiz, void* args, void* r) {               \
