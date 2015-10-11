@@ -5,6 +5,10 @@ CppApplication {
     consoleApplication: true
     files: [
         "main.cpp",
+        "src/metaobject.cpp",
+        "src/metaobject.h",
+        "src/object.cpp",
+        "src/object.h",
     ]
 
     cpp.cxxFlags:"-std=c++11"
