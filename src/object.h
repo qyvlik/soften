@@ -7,12 +7,14 @@
 
 namespace soften {
 
+#define SOFTEN_HACK friend
+
 #define SOFTEN_INVOKABLE
 
 class Object
 {
 public:
-    friend class MetaObject<Object>;
+    SOFTEN_HACK class MetaObject<Object>;
     typedef MetaObject<Object> Meta;
     typedef Meta::call call;
     static Meta metaObject;
@@ -40,7 +42,7 @@ public:
 
 #define SOFTEN_OBJECT(_CLASS_NAME)                                              \
     protected:                                                                  \
-    friend class soften::MetaObject<_CLASS_NAME>;                               \
+    SOFTEN_HACK class soften::MetaObject<_CLASS_NAME>;                          \
     typedef soften::MetaObject<_CLASS_NAME> Meta;                               \
     typedef Meta::call call;                                                    \
     static Meta metaObject;                                                     \
