@@ -3,14 +3,10 @@
 
 #include <functional>
 #include <map>
-#include "metaobject.h"
 #include "soften.h"
+#include "metaobject.h"
 
 namespace soften {
-
-#define SOFTEN_HACK friend
-
-#define SOFTEN_INVOKABLE
 
 class Object
 {
@@ -60,9 +56,12 @@ public:
     }                                                                           \
     virtual void callMethod( const std::string& method,                         \
                              Object* thiz, void* args, void* r) {               \
-        _CLASS_NAME* thizz = reinterpret_cast<_CLASS_NAME*>(thiz);              \
-        thizz->findMethod(method)(thizz, args, r);                              \
-    }                                                                           \
+        _CLASS_NAME* thizz = dynamic_cast<_CLASS_NAME*>(thiz);                  \
+        if(thizz) {                                                             \
+            thizz->findMethod(method)(thizz, args, r);                          \
+        }                                                                       \
+    }
+
 
 }
 

@@ -1,5 +1,4 @@
 #include "object.h"
-#include <strstream>
 #include <iostream>
 
 using namespace std;
@@ -20,24 +19,22 @@ Object::Meta Object::metaObject =
     }
 };
 
+
 Object::Object()
 {
 
 }
 
 
-
 string Object::toString() const
 {
-    string thiz = soften::getObjectAddress<Object>(this);
-
+    string thiz = ::soften::getObjectAddress<Object>(this);
     string s("(Object");
 
     return thiz.empty()
-            ? s+")"
+            ? s +  ")"
             : s + ", " + thiz + ")";
 
 }
-
 
 }
