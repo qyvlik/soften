@@ -1,6 +1,6 @@
 #include <iostream>
 #include <tuple>
-#include "src/object.h"
+#include "../src/object.h"
 
 using namespace std;
 
