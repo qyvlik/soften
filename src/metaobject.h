@@ -24,14 +24,14 @@ public:
 
 };
 
-enum class CallState {
-    NormalCall,
-    ArgumentsFail,
-    ReturnFail,
-    Method404,
-    CppException,
-    Unkonwn
-};
+//enum class CallState {
+//    NormalCall,
+//    ArgumentsFail,
+//    ReturnFail,
+//    Method404,
+//    CppException,
+//    Unkonwn
+//};
 
 }
 

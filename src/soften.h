@@ -4,11 +4,12 @@
 #include <iostream>
 #include <sstream>
 
-namespace soften {
-
 #define SOFTEN_HACK friend
 
 #define SOFTEN_INVOKABLE
+
+namespace soften {
+
 
 template<typename T>
 std::string getObjectAddress(const T* thiz) {
@@ -19,13 +20,15 @@ std::string getObjectAddress(const T* thiz) {
     return address;
 }
 
-// run-time
-
+// compiled-time
 //template<typename _Base, typename _Derived>
 //bool isDerived(_Base* b, _Derived* )
 //{
 //    return dynamic_cast<_Derived>(b) != nullptr ;
 //}
+
+
+}
 
 #endif // SOFTEN_H
 

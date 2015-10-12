@@ -8,6 +8,7 @@
 
 namespace soften {
 
+
 class Object
 {
 public:
