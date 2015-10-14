@@ -18,9 +18,9 @@ Object::Meta Object::metaObject =
 };
 
 
-Object::Object()
+Object::Object():
+    id(getObjectAddress<Object>(this))
 {
-
 }
 
 

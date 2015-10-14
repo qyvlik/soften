@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <map>
-#include "soften.h"
+#include "../soften.h"
 #include "metaobject.h"
 
 namespace soften {
@@ -31,7 +31,7 @@ public:
 
 public:
     explicit Object();
-
+    identity id;
 public:
     SOFTEN_INVOKABLE virtual std::string toString() const;
 

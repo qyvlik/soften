@@ -1,145 +1,313 @@
 #include <iostream>
-#include <tuple>
-#include "../src/object.h"
+
+#include "test-object-call/myobject.h"
+#include <memory>
 
 using namespace std;
 
-#define _TUPLE_GET_ONE_ARGUMENT(_NUMBER_)  \
-    /*! arg0 or arg1 .. arg9 ..  */        \
-    decltype(std::get<_NUMBER_>(*arguments)) arg##_NUMBER_ = std::get<_NUMBER_>(*arguments);
-
-#define _TUPLE_GET_ARGUMENTS_1  _TUPLE_GET_ONE_ARGUMENT(0)
-#define _TUPLE_GET_ARGUMENTS_2  _TUPLE_GET_ONE_ARGUMENT(1) _TUPLE_GET_ARGUMENTS_1
-#define _TUPLE_GET_ARGUMENTS_3  _TUPLE_GET_ONE_ARGUMENT(2) _TUPLE_GET_ARGUMENTS_2
-#define _TUPLE_GET_ARGUMENTS_4  _TUPLE_GET_ONE_ARGUMENT(3) _TUPLE_GET_ARGUMENTS_3
-#define _TUPLE_GET_ARGUMENTS_5  _TUPLE_GET_ONE_ARGUMENT(4) _TUPLE_GET_ARGUMENTS_4
-#define _TUPLE_GET_ARGUMENTS_6  _TUPLE_GET_ONE_ARGUMENT(5) _TUPLE_GET_ARGUMENTS_5
-#define _TUPLE_GET_ARGUMENTS_7  _TUPLE_GET_ONE_ARGUMENT(6) _TUPLE_GET_ARGUMENTS_6
-#define _TUPLE_GET_ARGUMENTS_8  _TUPLE_GET_ONE_ARGUMENT(7) _TUPLE_GET_ARGUMENTS_7
-#define _TUPLE_GET_ARGUMENTS_9  _TUPLE_GET_ONE_ARGUMENT(8) _TUPLE_GET_ARGUMENTS_8
-#define _TUPLE_GET_ARGUMENTS_10 _TUPLE_GET_ONE_ARGUMENT(9) _TUPLE_GET_ARGUMENTS_9
-
-#define _TUPLE_GET_ARGUMENTS(_ARG_COUNT_)                    \
-    /*! arg0 to arg##_ARG_COUNT_ */                          \
-    _TUPLE_GET_ARGUMENTS_##_ARG_COUNT_
-
-class MyObject : public soften::Object
+class BridgeAbstract : public soften::Object
 {
-    SOFTEN_OBJECT(MyObject);
-
 public:
-    MyObject(){}
-    ~MyObject(){}
-    SOFTEN_INVOKABLE std::string toString()const {
-        return  "MyObject:" + this->Object::toString();
+    enum Type {
+
+        /*! base type   */
+        Boolean,
+        Integer,
+        Double,
+        Float,
+        Long,
+        LongLong,
+
+        /*! complex type */
+        String,
+
+        /*! object  type */
+        Object,
+
+        /*! Unknown type */
+        Unknown
+    };
+
+    virtual ~BridgeAbstract()
+    { }
+
+    virtual Type type() const = 0;
+
+    static bool isBaseType(Type type)
+    {
+        switch(type)
+        {
+        case Boolean:
+        case Integer:
+        case Double:
+        case Float:
+        case Long:
+        case LongLong:
+            return true;
+        default:
+            return false;
+        }
     }
-    SOFTEN_INVOKABLE int complex(int arg0, int arg1) {
-        return arg0 + arg1;
+
+    static bool isComplexType(Type type)
+    {
+        switch(type)
+        {
+        case Type::String: return true;
+        default: return false;
+        }
     }
-    SOFTEN_INVOKABLE void ref(int& arg0) {
-        ++arg0;
+
+    static bool isObjectType(Type type)
+    { return type == Type::Object; }
+
+    bool isValid(BridgeAbstract* other)
+    {
+        return other->type() == this->type() && this->type() != Type::Unknown;
+    }
+
+    virtual void ASSIGN(BridgeAbstract* other) = 0;                // T(ASSIGN, "=", 2)
+    /*
+    virtual void ASSIGN_BIT_OR(BridgeAbstract& other) = 0;         // T(ASSIGN_BIT_OR, "|=", 2)
+    virtual void ASSIGN_BIT_XOR(BridgeAbstract& other) = 0;        // T(ASSIGN_BIT_XOR, "^=", 2)
+    virtual void ASSIGN_BIT_AND(BridgeAbstract& other) = 0;        // T(ASSIGN_BIT_AND, "&=", 2)
+    virtual void ASSIGN_SHL(BridgeAbstract& other) = 0;            // T(ASSIGN_SHL, "<<=", 2)
+    virtual void ASSIGN_SAR(BridgeAbstract& other) = 0;            // T(ASSIGN_SAR, ">>=", 2)
+    virtual void ASSIGN_SHR(BridgeAbstract& other) = 0;            // T(ASSIGN_SHR, ">>>=", 2)
+    */
+    virtual void ASSIGN_ADD(BridgeAbstract* other) = 0;            // T(ASSIGN_ADD, "+=", 2)
+    virtual void ASSIGN_SUB(BridgeAbstract* other) = 0;            // T(ASSIGN_SUB, "-=", 2)
+    virtual void ASSIGN_MUL(BridgeAbstract* other) = 0;            // T(ASSIGN_MUL, "*=", 2)
+    virtual void ASSIGN_DIV(BridgeAbstract* other) = 0;            // T(ASSIGN_DIV, "/=", 2)
+    virtual void ASSIGN_MOD(BridgeAbstract* other) = 0;            // T(ASSIGN_MOD, "%=", 2)
+    /*
+
+    virtual void COMMA(BridgeAbstract& other) = 0;                 // T(COMMA, ",", 1)
+    virtual void OR(BridgeAbstract& other) = 0;                    // T(OR, "||", 4)
+    virtual void AND(BridgeAbstract& other) = 0;                   // T(AND, "&&", 5)
+    virtual void BIT_OR(BridgeAbstract& other) = 0;                // T(BIT_OR, "|", 6)
+    virtual void BIT_XOR(BridgeAbstract& other) = 0;               // T(BIT_XOR, "^", 7)
+    virtual void BIT_AND(BridgeAbstract& other) = 0;               // T(BIT_AND, "&", 8)
+    virtual void SHL(BridgeAbstract& other) = 0;                   // T(SHL, "<<", 11)
+    virtual void SAR(BridgeAbstract& other) = 0;                   // T(SAR, ">>", 11)
+    virtual void SHR(BridgeAbstract& other) = 0;                   // T(SHR, ">>>", 11)
+    virtual void ADD(BridgeAbstract& other) = 0;                   // T(ADD, "+", 12)
+    virtual void SUB(BridgeAbstract& other) = 0;                   // T(SUB, "-", 12)
+    virtual void MUL(BridgeAbstract& other) = 0;                   // T(MUL, "*", 13)
+    virtual void DIV(BridgeAbstract& other) = 0;                   // T(DIV, "/", 13)
+    virtual void MOD(BridgeAbstract& other) = 0;                   // T(MOD, "%", 13)
+*/
+    virtual bool EQ(BridgeAbstract* other) = 0;                    // T(EQ, "==", 9)
+    virtual bool NE(BridgeAbstract* other) = 0;                    // T(NE, "!=", 9)
+    /*
+
+    // virtual bool EQ_STRICT(BridgeAbstract& other) = 0;             // T(EQ_STRICT, "===", 9)
+    // virtual bool NE_STRICT(BridgeAbstract& other) = 0;             // T(NE_STRICT, "!==", 9)
+
+    virtual bool LT(BridgeAbstract& other) = 0;                    // T(LT, "<", 10)
+    virtual bool GT(BridgeAbstract& other) = 0;                    // T(GT, ">", 10)
+    virtual bool LTE(BridgeAbstract& other) = 0;                   // T(LTE, "<=", 10)
+    virtual bool GTE(BridgeAbstract& other) = 0;                   // T(GTE, ">=", 10)
+    // virtual bool INSTANCEOF(BridgeAbstract& other) = 0;            // K(INSTANCEOF, "instanceof", 10)
+
+    virtual bool IN(BridgeAbstract& other) = 0;                    // K(IN, "in", 10)
+    virtual void NOT(BridgeAbstract& other) = 0;                   // T(NOT, "!", 0)
+    virtual void DELETE(BridgeAbstract& other) = 0;                // K(DELETE, "delete", 0)
+    virtual void TYPEOF(BridgeAbstract& other) = 0;                // K(TYPEOF, "typeof", 0)
+    virtual void VOID(BridgeAbstract& other) = 0;                  // K(VOID, "void", 0)
+*/
+    /*!
+   先产生一个新的对象，然后赋值，接着执行操作。。。。。
+   再将数据写会
+ */
+};
+
+
+template<typename T> BridgeAbstract::Type toType() { return BridgeAbstract::Unknown; }
+
+template<> BridgeAbstract::Type toType<bool>() { return BridgeAbstract::Boolean; }
+template<> BridgeAbstract::Type toType<int>() { return BridgeAbstract::Integer; }
+template<> BridgeAbstract::Type toType<float>() { return BridgeAbstract::Float; }
+template<> BridgeAbstract::Type toType<double>() { return BridgeAbstract::Double; }
+template<> BridgeAbstract::Type toType<long>() { return BridgeAbstract::Long; }
+template<> BridgeAbstract::Type toType<long long>() { return BridgeAbstract::LongLong; }
+template<> BridgeAbstract::Type toType<std::string>() { return BridgeAbstract::String; }
+template<> BridgeAbstract::Type toType<soften::Object>() { return BridgeAbstract::Object; }
+
+
+template<typename T>
+class Bridge : public BridgeAbstract
+{
+public:
+    explicit Bridge():
+        d(new T)
+    { }
+
+    Bridge(T* thiz ):
+        d(thiz)
+    { }
+
+    Bridge(const Bridge& other)
+        : d(other.d)
+    { }
+
+    Bridge& operator=(const Bridge& other) {
+        this->d = other.d;
+        return *this;
+    }
+
+    ~Bridge()
+    { }
+
+    Bridge(Bridge&& other)
+        : d(other.d)
+    { }
+
+    Type type() const
+    { return toType<T>(); }
+
+    virtual void ASSIGN(BridgeAbstract* other)                 // T(ASSIGN, "=", 2)
+    {
+        if(isValid(other)) {
+            if(this->type() == BridgeAbstract::Object) {
+                d = dynamic_cast<Bridge<T>* >(other)->d;
+            } else {
+                *d = *(dynamic_cast<Bridge<T>* >(other)->d);
+            }
+        }
+    }
+    /*
+    virtual void ASSIGN_BIT_OR(BridgeAbstract& other) = 0;         // T(ASSIGN_BIT_OR, "|=", 2)
+    virtual void ASSIGN_BIT_XOR(BridgeAbstract& other) = 0;        // T(ASSIGN_BIT_XOR, "^=", 2)
+    virtual void ASSIGN_BIT_AND(BridgeAbstract& other) = 0;        // T(ASSIGN_BIT_AND, "&=", 2)
+    virtual void ASSIGN_SHL(BridgeAbstract& other) = 0;            // T(ASSIGN_SHL, "<<=", 2)
+    virtual void ASSIGN_SAR(BridgeAbstract& other) = 0;            // T(ASSIGN_SAR, ">>=", 2)
+    virtual void ASSIGN_SHR(BridgeAbstract& other) = 0;            // T(ASSIGN_SHR, ">>>=", 2)
+*/
+    virtual void ASSIGN_ADD(BridgeAbstract* other)           // T(ASSIGN_ADD, "+=", 2)
+    {
+        if(isValid(other)) {
+            if(this->type() != BridgeAbstract::Object) {
+                *d += *(dynamic_cast<Bridge<T>* >(other)->d);
+            } else {
+                cout << "ASSIGN_ADD ERROR " << endl;
+            }
+        }
+    }
+
+    virtual void ASSIGN_SUB(BridgeAbstract* other)             // T(ASSIGN_SUB, "-=", 2)
+    {
+        if(isValid(other)) {
+            if(this->type() != BridgeAbstract::Object) {
+                *d -= *(dynamic_cast<Bridge<T>* >(other)->d);
+            } else {
+                cout << "ASSIGN_ADD ERROR " << endl;
+            }
+        }
+    }
+    virtual void ASSIGN_MUL(BridgeAbstract* other)         // T(ASSIGN_MUL, "*=", 2)
+    {
+        if(isValid(other)) {
+            if(this->type() != BridgeAbstract::Object) {
+                *d *= *(dynamic_cast<Bridge<T>* >(other)->d);
+            } else {
+                cout << "ASSIGN_ADD ERROR " << endl;
+            }
+        }
+    }
+    virtual void ASSIGN_DIV(BridgeAbstract* other)           // T(ASSIGN_DIV, "/=", 2)
+    {
+        if(isValid(other)) {
+            if(this->type() != BridgeAbstract::Object) {
+                *d /= *(dynamic_cast<Bridge<T>* >(other)->d);
+            } else {
+                cout << "ASSIGN_ADD ERROR " << endl;
+            }
+        }
+    }
+    virtual void ASSIGN_MOD(BridgeAbstract* other)            // T(ASSIGN_MOD, "%=", 2)
+    {
+        if(isValid(other)) {
+            if(this->type() != BridgeAbstract::Object) {
+                *d %= *(dynamic_cast<Bridge<T>* >(other)->d);
+            } else {
+                cout << "ASSIGN_ADD ERROR " << endl;
+            }
+        }
+    }
+
+    /*
+    virtual void COMMA(BridgeAbstract& other) = 0;                 // T(COMMA, ",", 1)
+    virtual void OR(BridgeAbstract& other) = 0;                    // T(OR, "||", 4)
+    virtual void AND(BridgeAbstract& other) = 0;                   // T(AND, "&&", 5)
+    virtual void BIT_OR(BridgeAbstract& other) = 0;                // T(BIT_OR, "|", 6)
+    virtual void BIT_XOR(BridgeAbstract& other) = 0;               // T(BIT_XOR, "^", 7)
+    virtual void BIT_AND(BridgeAbstract& other) = 0;               // T(BIT_AND, "&", 8)
+    virtual void SHL(BridgeAbstract& other) = 0;                   // T(SHL, "<<", 11)
+    virtual void SAR(BridgeAbstract& other) = 0;                   // T(SAR, ">>", 11)
+    virtual void SHR(BridgeAbstract& other) = 0;                   // T(SHR, ">>>", 11)
+    virtual void ADD(BridgeAbstract& other) = 0;                   // T(ADD, "+", 12)
+    virtual void SUB(BridgeAbstract& other) = 0;                   // T(SUB, "-", 12)
+    virtual void MUL(BridgeAbstract& other) = 0;                   // T(MUL, "*", 13)
+    virtual void DIV(BridgeAbstract& other) = 0;                   // T(DIV, "/", 13)
+    virtual void MOD(BridgeAbstract& other) = 0;                   // T(MOD, "%", 13)
+*/
+    virtual bool EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
+    {
+        if(this == other) return true;
+
+        if(isValid(other)) {
+            if(this->type() == BridgeAbstract::Object) {
+                return  d == dynamic_cast<Bridge<T>* >(other)->d;
+            } else {
+                return *d == *(dynamic_cast<Bridge<T>* >(other)->d);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    virtual bool NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
+    {
+        return !this->EQ(other);
+    }
+
+    /*
+
+    // virtual bool EQ_STRICT(BridgeAbstract& other) = 0;             // T(EQ_STRICT, "===", 9)
+    // virtual bool NE_STRICT(BridgeAbstract& other) = 0;             // T(NE_STRICT, "!==", 9)
+
+    virtual bool LT(BridgeAbstract& other) = 0;                    // T(LT, "<", 10)
+    virtual bool GT(BridgeAbstract& other) = 0;                    // T(GT, ">", 10)
+    virtual bool LTE(BridgeAbstract& other) = 0;                   // T(LTE, "<=", 10)
+    virtual bool GTE(BridgeAbstract& other) = 0;                   // T(GTE, ">=", 10)
+    // virtual bool INSTANCEOF(BridgeAbstract& other) = 0;            // K(INSTANCEOF, "instanceof", 10)
+
+    virtual bool IN(BridgeAbstract& other) = 0;                    // K(IN, "in", 10)
+    virtual void NOT(BridgeAbstract& other) = 0;                   // T(NOT, "!", 0)
+    virtual void DELETE(BridgeAbstract& other) = 0;                // K(DELETE, "delete", 0)
+    virtual void TYPEOF(BridgeAbstract& other) = 0;                // K(TYPEOF, "typeof", 0)
+    virtual void VOID(BridgeAbstract& other) = 0;                  // K(VOID, "void", 0)
+*/
+public:
+    friend std::ostream& operator << (std::ostream& os, const Bridge& obj) {
+        return os << "(" << obj.d.get() << ", " << *obj.d.get() << ")";
     }
 
 private:
-    SOFTEN_INVOKABLE void privateMethod() {
-        cout << "can you call the private method in soften?" << endl;
-    }
-
+    shared_ptr<T> d;
 };
 
-MyObject::Meta MyObject::metaObject = {
-    {
-        {
-            pair<const string, MyObject::call>(
-            "toString",
-            [&](MyObject* thiz, void* , void* r){
-                string* r_ = reinterpret_cast<string*>(r);
-                (*r_) = thiz->toString();
-            })
-        } // toString
-        ,
-        {
-            pair<const string, MyObject::call>(
-            "complex",
-            [&](MyObject* thiz, void* args, void* r){
 
-                typedef tuple<int, int>* Ap;
-                Ap arguments = reinterpret_cast<Ap>(args);
 
-                _TUPLE_GET_ARGUMENTS(2);
-                //! decltype(std::get<0>(*arguments)) arg0 = std::get<0>(*arguments);
-                //! decltype(std::get<1>(*arguments)) arg1 = std::get<1>(*arguments);
-
-                int* r_ = reinterpret_cast<int*>(r);
-                (*r_) = thiz->complex(arg0, arg1);
-            })
-        } // complex
-        ,
-        {
-            pair<const string, MyObject::call>(
-            "privateMethod",
-            [&](MyObject* thiz, void* , void* ){
-                thiz->privateMethod();
-                cout << "soften can use the MetaObject call MyObject::privateMethod() "
-                << "becasue the MetaObject is friend class on MyObject"
-                << endl;
-            })
-        } // privateMethod
-        ,
-        {
-            pair<const string, MyObject::call>(
-            "ref",
-            [&](MyObject* thiz, void* args, void* ){
-                typedef std::tuple<int&> * Ap;
-                Ap arguments = reinterpret_cast<Ap>(args);
-                decltype(std::get<0>(*arguments)) arg0 = std::get<0>(*arguments);
-                thiz->ref(arg0);
-            })
-        } // ref
-    }
-};
-
-void test(soften::Object* obj, string* s)
+int main(int , char** )
 {
-    obj->callMethod("toString", obj, NULL, s);
-}
+    Bridge<int> i0;
+    Bridge<int> i1(new int(10));
+    i0.ASSIGN(&i1);
+    cout << i0 << endl;
+    cout << i0.EQ(&i1) << endl;
 
-
-int main(int, char**)
-{
-    soften::Object obj;
-    MyObject mObject;
-
-    string name;
-
-    test(&obj, &name);
-    cout << "name:" << name << endl;
-    test(&mObject, &name);
-    cout << "name:" << name << endl;
-
-    int r = 0;
-
-    std::tuple<int, int> a(10, 10);
-    mObject.callMethod("complex", &mObject, &a, &r);
-    cout << "complex r: " << r << endl;
-
-    std::tuple<int, int> a1(100, 100);
-    mObject.callMethod("complex", &a1, &r);
-    cout << "complex r: " << r << endl;
-
-    /*!
-     * don't run this code
-     */
-    //! mObject.callMethod("complex", &obj, &a, &r);
-    //! cout << "complex r: " << r << endl;
-
-    mObject.callMethod("privateMethod", NULL, NULL);
-
-    int int_ref = 10;
-    std::tuple<int&> a0(int_ref);
-    mObject.callMethod("ref", &a0, NULL);
-    mObject.ref(int_ref);
-    cout << int_ref << endl;
-
+    //return MyObject::main(argc, argv);
     return 0;
 }

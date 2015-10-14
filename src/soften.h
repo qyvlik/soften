@@ -20,6 +20,16 @@ std::string getObjectAddress(const T* thiz) {
     return address;
 }
 
+struct identity {
+    identity(const std::string& previous):
+        id(previous+ "." +getObjectAddress<identity>(this))
+    {}
+
+    operator std::string () { return id; }
+
+    std::string id;
+};
+
 // compiled-time
 //template<typename _Base, typename _Derived>
 //bool isDerived(_Base* b, _Derived* )
