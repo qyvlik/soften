@@ -8,7 +8,7 @@ using namespace std;
 using namespace soften;
 
 
-int main(int , char** )
+int main(int argc, char** argv)
 {
     BaseTypeBridge<int> i0;
     BaseTypeBridge<int> i1(new int(10));
@@ -24,6 +24,6 @@ int main(int , char** )
 //    cout << i0 << endl;
 //    cout << i0.EQ(&i1) << endl;
 
-    //return MyObject::main(argc, argv);
+    return MyObject::main(argc, argv);
     return 0;
 }

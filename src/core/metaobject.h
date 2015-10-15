@@ -6,24 +6,6 @@
 
 namespace soften {
 
-template<typename T>
-class MetaObject
-{
-public:
-    typedef std::function<void(T*, void*, void*)> call;
-    inline call findMethod(const std::string& method) {
-        auto e = objectMethods.end();
-        auto c = objectMethods.find(method);
-        if(e != c) {
-            return c->second;
-        }
-        return  [](T*, void*, void*){ };
-    }
-
-    std::map<const std::string, call> objectMethods;
-
-};
-
 enum class State {
     NormalCall,
     ArgumentsFail,
@@ -34,6 +16,52 @@ enum class State {
     TypeFail,
     Unkonwn
 };
+
+class Object;
+
+template<typename T>
+class MetaObject
+{
+public:
+    typedef std::function<State(T*, void*, void*)> call;
+    inline call findMethod(const std::string& method) {
+        auto e = objectMethods.end();
+        auto c = objectMethods.find(method);
+        if(e != c) {
+            return c->second;
+        }
+        return  [](T*, void*, void*)->State{ return State::MethodNotFound; };
+    }
+
+//    template<typename Base>
+//    State callMethod(T* thiz, const std::string& methodName, void* args, void* r) {
+//        // MetaObject<T>
+//        auto c = T::metaObject.findMethod(methodName);
+//        auto end = T::metaObject.objectMethods.end();
+//        if(c != end) {
+//            return c(thiz, args, r);
+//        } else {
+//            return Base::callMethod(thiz, methodName, args, r );
+//        }
+//    }
+
+//    template<>
+//    State callMethod<soften::Object>(T* thiz, const std::string& methodName, void* args, void* r) {
+//        // MetaObject<T>
+//        auto c = T::metaObject.findMethod(methodName);
+//        auto end = T::metaObject.objectMethods.end();
+//        if(c != end) {
+//            return c(thiz, args, r);
+//        } else {
+//            return Base::callMethod(thiz, methodName, args, r );
+//        }
+//    }
+
+    std::map<const std::string, call> objectMethods;
+
+};
+
+
 
 
 #define _TUPLE_GET_ONE_ARGUMENT(_NUMBER_)  \

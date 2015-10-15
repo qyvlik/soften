@@ -9,9 +9,10 @@ Object::Meta Object::metaObject =
         {
             std::pair<const std::string, Object::call>(
             "toString",
-            [&](Object* thiz, void* , void* r){
+            [&](Object* thiz, void* , void* r)-> State {
                 std::string* r_ = reinterpret_cast<std::string*>(r);
                 (*r_) = thiz->toString();
+                return State::NormalCall;
             })
         } // toString
     }

@@ -22,11 +22,11 @@ public:
     call findMethod(const std::string& method) {
         return metaObject.findMethod(method);
     }
-    virtual void callMethod(const std::string &method, void *args, void *r) {
-        this->findMethod(method)(this, args, r);
+    virtual State callMethod(const std::string &method, void *args, void *r) {
+        return this->findMethod(method)(this, args, r);
     }
-    virtual void callMethod(const std::string& method, Object* thiz, void* args, void* r) {
-        thiz->findMethod(method)(thiz, args, r);
+    virtual State callMethod(const std::string& method, Object* thiz, void* args, void* r) {
+        return thiz->findMethod(method)(thiz, args, r);
     }
 
 public:
@@ -52,14 +52,16 @@ public:
     call findMethod(const std::string& method) {                                \
         return metaObject.findMethod(method);                                   \
     }                                                                           \
-    virtual void callMethod(const std::string &method, void *args, void *r) {   \
-        this->findMethod(method)(this, args, r);                                \
+    virtual soften::State callMethod(const std::string &method, void *args, void *r) {  \
+        return this->findMethod(method)(this, args, r);                         \
     }                                                                           \
-    virtual void callMethod( const std::string& method,                         \
+    virtual soften::State callMethod( const std::string& method,                        \
                              Object* thiz, void* args, void* r) {               \
         _CLASS_NAME* thizz = dynamic_cast<_CLASS_NAME*>(thiz);                  \
         if(thizz) {                                                             \
-            thizz->findMethod(method)(thizz, args, r);                          \
+            return thizz->findMethod(method)(thizz, args, r);                   \
+        } else {                                                                \
+            return soften::State::MethodNotFound;                                       \
         }                                                                       \
     }
 
