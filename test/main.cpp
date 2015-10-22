@@ -3,6 +3,8 @@
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 
+#include "../src/core/bridge.h"
+
 using namespace std;
 using namespace soften;
 
@@ -35,6 +37,8 @@ int main()
 
     p = &myObjectChild;
     p->callMethod("toString", (void*)0x1, (void*)0x1);
+
+    cout << endl;
 
     return 0;
 }

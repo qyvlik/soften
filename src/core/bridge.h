@@ -77,56 +77,45 @@ public:
     virtual Return ASSIGN_BIT_AND(BridgeAbstract* other) = 0;        // T(ASSIGN_BIT_AND, "&=", 2)
     virtual Return ASSIGN_SHL(BridgeAbstract* other) = 0;            // T(ASSIGN_SHL, "<<=", 2)
     virtual Return ASSIGN_SAR(BridgeAbstract* other) = 0;            // T(ASSIGN_SAR, ">>=", 2)
-    /*
-    //virtual void ASSIGN_SHR(BridgeAbstract& other) = 0;            // T(ASSIGN_SHR, ">>>=", 2)
-    */
 
-    virtual void ASSIGN_ADD(BridgeAbstract* other) = 0;            // T(ASSIGN_ADD, "+=", 2)
-    virtual void ASSIGN_SUB(BridgeAbstract* other) = 0;            // T(ASSIGN_SUB, "-=", 2)
-    virtual void ASSIGN_MUL(BridgeAbstract* other) = 0;            // T(ASSIGN_MUL, "*=", 2)
-    virtual void ASSIGN_DIV(BridgeAbstract* other) = 0;            // T(ASSIGN_DIV, "/=", 2)
-    virtual void ASSIGN_MOD(BridgeAbstract* other) = 0;            // T(ASSIGN_MOD, "%=", 2)
+    virtual Return ASSIGN_ADD(BridgeAbstract* other) = 0;            // T(ASSIGN_ADD, "+=", 2)
+    virtual Return ASSIGN_SUB(BridgeAbstract* other) = 0;            // T(ASSIGN_SUB, "-=", 2)
+    virtual Return ASSIGN_MUL(BridgeAbstract* other) = 0;            // T(ASSIGN_MUL, "*=", 2)
+    virtual Return ASSIGN_DIV(BridgeAbstract* other) = 0;            // T(ASSIGN_DIV, "/=", 2)
+    virtual Return ASSIGN_MOD(BridgeAbstract* other) = 0;            // T(ASSIGN_MOD, "%=", 2)
 
-    /*
+    virtual Return COMMA(BridgeAbstract* other) = 0;                 // T(COMMA, ",", 1)
+    virtual Return OR(BridgeAbstract* other) = 0;                    // T(OR, "||", 4)
+    virtual Return AND(BridgeAbstract* other) = 0;                   // T(AND, "&&", 5)
 
-    // virtual void COMMA(BridgeAbstract& other) = 0;                 // T(COMMA, ",", 1)
-    virtual void OR(BridgeAbstract& other) = 0;                    // T(OR, "||", 4)
-    virtual void AND(BridgeAbstract& other) = 0;                   // T(AND, "&&", 5)
+    virtual Return BIT_OR(BridgeAbstract* other) = 0;                // T(BIT_OR, "|", 6)
+    virtual Return BIT_XOR(BridgeAbstract* other) = 0;               // T(BIT_XOR, "^", 7)
+    virtual Return BIT_AND(BridgeAbstract* other) = 0;               // T(BIT_AND, "&", 8)
+    virtual Return SHL(BridgeAbstract* other) = 0;                   // T(SHL, "<<", 11)
+    virtual Return SAR(BridgeAbstract* other) = 0;                   // T(SAR, ">>", 11)
 
-    virtual void BIT_OR(BridgeAbstract& other) = 0;                // T(BIT_OR, "|", 6)
-    virtual void BIT_XOR(BridgeAbstract& other) = 0;               // T(BIT_XOR, "^", 7)
-    virtual void BIT_AND(BridgeAbstract& other) = 0;               // T(BIT_AND, "&", 8)
-    virtual void SHL(BridgeAbstract& other) = 0;                   // T(SHL, "<<", 11)
-    virtual void SAR(BridgeAbstract& other) = 0;                   // T(SAR, ">>", 11)
+    // virtual void SHR(BridgeAbstract* other) = 0;                   // T(SHR, ">>>", 11)
 
-    // virtual void SHR(BridgeAbstract& other) = 0;                   // T(SHR, ">>>", 11)
+    virtual Return ADD(BridgeAbstract* other) = 0;                   // T(ADD, "+", 12)
+    virtual Return SUB(BridgeAbstract* other) = 0;                   // T(SUB, "-", 12)
+    virtual Return MUL(BridgeAbstract* other) = 0;                   // T(MUL, "*", 13)
+    virtual Return DIV(BridgeAbstract* other) = 0;                   // T(DIV, "/", 13)
+    virtual Return MOD(BridgeAbstract* other) = 0;                   // T(MOD, "%", 13)
 
-    virtual void ADD(BridgeAbstract& other) = 0;                   // T(ADD, "+", 12)
-    virtual void SUB(BridgeAbstract& other) = 0;                   // T(SUB, "-", 12)
-    virtual void MUL(BridgeAbstract& other) = 0;                   // T(MUL, "*", 13)
-    virtual void DIV(BridgeAbstract& other) = 0;                   // T(DIV, "/", 13)
-    virtual void MOD(BridgeAbstract& other) = 0;                   // T(MOD, "%", 13)
-    */
-    virtual bool EQ(BridgeAbstract* other) = 0;                    // T(EQ, "==", 9)
-    virtual bool NE(BridgeAbstract* other) = 0;                    // T(NE, "!=", 9)
+    virtual Return EQ(BridgeAbstract* other) = 0;                    // T(EQ, "==", 9)
+    virtual Return NE(BridgeAbstract* other) = 0;                    // T(NE, "!=", 9)
 
-    /*
+    virtual Return LT(BridgeAbstract* other) = 0;                    // T(LT, "<", 10)
+    virtual Return GT(BridgeAbstract* other) = 0;                    // T(GT, ">", 10)
+    virtual Return LTE(BridgeAbstract* other) = 0;                   // T(LTE, "<=", 10)
+    virtual Return GTE(BridgeAbstract* other) = 0;                   // T(GTE, ">=", 10)
+    // virtual Return INSTANCEOF(BridgeAbstract* other) = 0;            // K(INSTANCEOF, "instanceof", 10)
 
-    // virtual bool EQ_STRICT(BridgeAbstract& other) = 0;             // T(EQ_STRICT, "===", 9)
-    // virtual bool NE_STRICT(BridgeAbstract& other) = 0;             // T(NE_STRICT, "!==", 9)
-
-    virtual bool LT(BridgeAbstract& other) = 0;                    // T(LT, "<", 10)
-    virtual bool GT(BridgeAbstract& other) = 0;                    // T(GT, ">", 10)
-    virtual bool LTE(BridgeAbstract& other) = 0;                   // T(LTE, "<=", 10)
-    virtual bool GTE(BridgeAbstract& other) = 0;                   // T(GTE, ">=", 10)
-    // virtual bool INSTANCEOF(BridgeAbstract& other) = 0;            // K(INSTANCEOF, "instanceof", 10)
-
-    virtual bool IN(BridgeAbstract& other) = 0;                    // K(IN, "in", 10)
-    virtual void NOT(BridgeAbstract& other) = 0;                   // T(NOT, "!", 0)
-    virtual void DELETE(BridgeAbstract& other) = 0;                // K(DELETE, "delete", 0)
-    virtual void TYPEOF(BridgeAbstract& other) = 0;                // K(TYPEOF, "typeof", 0)
-    virtual void VOID(BridgeAbstract& other) = 0;                  // K(VOID, "void", 0)
-    */
+    virtual Return IN(BridgeAbstract* other) = 0;                    // K(IN, "in", 10)
+    virtual Return NOT(BridgeAbstract* other) = 0;                   // T(NOT, "!", 0)
+    virtual Return DELETE(BridgeAbstract* other) = 0;                // K(DELETE, "delete", 0)
+    virtual Return TYPEOF(BridgeAbstract* other) = 0;                // K(TYPEOF, "typeof", 0)
+    virtual Return VOID(BridgeAbstract* other) = 0;                  // K(VOID, "void", 0)
 
     /*!
         先产生一个新的对象，然后赋值，接着执行操作。。。。。
@@ -148,286 +137,233 @@ template<> BridgeAbstract::Type toType<std::string>() { return BridgeAbstract::S
 
 template<> BridgeAbstract::Type toType<soften::Object>() { return BridgeAbstract::Object; }
 
-// base type
+BridgeAbstract::Type toType() { return BridgeAbstract::Unknown; }
 
-template<typename T>
-class BaseTypeBridge : public BridgeAbstract
+class Bridge : virtual public BridgeAbstract
 {
 public:
-    friend std::ostream& operator << (std::ostream& os, const BaseTypeBridge& obj)
-    { return os << "(" << obj.d.get() << ", " << *obj.d.get() << ")"; }
+    explicit Bridge()
+    {}
+    virtual ~Bridge()
+    {}
 
-    T* operator->()
-    { return d.get();}
+    virtual Type type() const
+    { return toType(); }
 
-protected:
-    static std::pair<bool, std::shared_ptr<T> >
-    getSharedPoint(BridgeAbstract *other)
-    {
-        BaseTypeBridge<T>* p = dynamic_cast<BaseTypeBridge<T>*>(other);
-        return std::pair<bool, std::shared_ptr<T> >
-                (p != nullptr,
-                 p != nullptr ? p->d : Null);
-    }
-public:
-    explicit BaseTypeBridge():
-        d(new T)
-    { }
-
-    BaseTypeBridge(T* thiz ):
-        d(thiz)
-    { }
-
-    BaseTypeBridge(const BaseTypeBridge& other)
-        : d(other.d)
-    { }
-
-    BaseTypeBridge& operator=(const BaseTypeBridge& other) {
-        this->d = other.d;
-        return *this;
+    // T(ASSIGN, "=", 2)
+    virtual Return ASSIGN(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    ~BaseTypeBridge()
-    { }
-
-    BaseTypeBridge(BaseTypeBridge&& other)
-        : d(other.d)
-    { }
-
-    Type type() const
-    { return toType<T>(); }
-
-    virtual Return ASSIGN(BridgeAbstract* other)                 // T(ASSIGN, "=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d = *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            } else {
-                std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            }
-        } else {
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
-        }
+    // T(ASSIGN_BIT_OR, "|=", 2)
+    virtual Return ASSIGN_BIT_OR(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual Return ASSIGN_BIT_OR(BridgeAbstract* other)       // T(ASSIGN_BIT_OR, "|=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d |= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            } else {
-                std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            }
-        } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
-        }
+    // T(ASSIGN_BIT_XOR, "^=", 2)
+    virtual Return ASSIGN_BIT_XOR(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+    // T(ASSIGN_BIT_AND, "&=", 2)
+    virtual Return ASSIGN_BIT_AND(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual Return ASSIGN_BIT_XOR(BridgeAbstract* other)         // T(ASSIGN_BIT_XOR, "^=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d ^= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            } else {
-                std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            }
-        } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
-        }
+    // T(ASSIGN_SHL, "<<=", 2)
+    virtual Return ASSIGN_SHL(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual Return ASSIGN_BIT_AND(BridgeAbstract* other)         // T(ASSIGN_BIT_AND, "&=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d &= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            } else {
-                std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            }
-        } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
-        }
+    // T(ASSIGN_SAR, ">>=", 2)
+    virtual Return ASSIGN_SAR(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual Return ASSIGN_SHL(BridgeAbstract* other)             // T(ASSIGN_SHL, "<<=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d <<= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            } else {
-                std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            }
-        } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
-        }
+    // T(ASSIGN_ADD, "+=", 2)
+    virtual Return ASSIGN_ADD(BridgeAbstract* ){
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual Return ASSIGN_SAR(BridgeAbstract* other)            // T(ASSIGN_SAR, ">>=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d >>= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            } else {
-                std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
-            }
-        } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
-        }
+    // T(ASSIGN_SUB, "-=", 2)
+    virtual Return ASSIGN_SUB(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    /*
-    //virtual void ASSIGN_SHR(BridgeAbstract& other) = 0;            // T(ASSIGN_SHR, ">>>=", 2)
-   */
-
-    virtual void ASSIGN_ADD(BridgeAbstract* other)           // T(ASSIGN_ADD, "+=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d += *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else if(isComplexType(this->type())) {
-                *d += *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else {
-                std::cout << "OBJECT type" << std::endl;
-            }
-        }
+    // T(ASSIGN_MUL, "*=", 2)
+    virtual Return ASSIGN_MUL(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual void ASSIGN_SUB(BridgeAbstract* other)             // T(ASSIGN_SUB, "-=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d -= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else {
-                std::cout << "Unkonwn type" << std::endl;
-            }
-        }
+    // T(ASSIGN_DIV, "/=", 2)
+    virtual Return ASSIGN_DIV(BridgeAbstract* ){
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual void ASSIGN_MUL(BridgeAbstract* other)         // T(ASSIGN_MUL, "*=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d *= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else {
-                std::cout << "Unkonwn type" << std::endl;
-            }
-        }
+    // T(ASSIGN_MOD, "%=", 2)
+    virtual Return ASSIGN_MOD(BridgeAbstract* ){
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual void ASSIGN_DIV(BridgeAbstract* other)           // T(ASSIGN_DIV, "/=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d /= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else {
-                std::cout << "Unkonwn type" << std::endl;
-            }
-        }
+    // T(COMMA, ",", 1)
+    virtual Return COMMA(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual void ASSIGN_MOD(BridgeAbstract* other)            // T(ASSIGN_MOD, "%=", 2)
-    {
-        if(isValid(other)) {
-            if(isBaseType(this->type())) {
-                *d %= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else {
-                std::cout << "Unkonwn type" << std::endl;
-            }
-        }
+    // T(OR, "||", 4)
+    virtual Return OR(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    /*
-    // virtual void COMMA(BridgeAbstract& other) = 0;                 // T(COMMA, ",", 1)
-    virtual void OR(BridgeAbstract& other) = 0;                    // T(OR, "||", 4)
-    virtual void AND(BridgeAbstract& other) = 0;                   // T(AND, "&&", 5)
-    virtual void BIT_OR(BridgeAbstract& other) = 0;                // T(BIT_OR, "|", 6)
-    virtual void BIT_XOR(BridgeAbstract& other) = 0;               // T(BIT_XOR, "^", 7)
-    virtual void BIT_AND(BridgeAbstract& other) = 0;               // T(BIT_AND, "&", 8)
-    virtual void SHL(BridgeAbstract& other) = 0;                   // T(SHL, "<<", 11)
-    virtual void SAR(BridgeAbstract& other) = 0;                   // T(SAR, ">>", 11)
-    //virtual void SHR(BridgeAbstract& other) = 0;                   // T(SHR, ">>>", 11)
-    virtual void ADD(BridgeAbstract& other) = 0;                   // T(ADD, "+", 12)
-    virtual void SUB(BridgeAbstract& other) = 0;                   // T(SUB, "-", 12)
-    virtual void MUL(BridgeAbstract& other) = 0;                   // T(MUL, "*", 13)
-    virtual void DIV(BridgeAbstract& other) = 0;                   // T(DIV, "/", 13)
-    virtual void MOD(BridgeAbstract& other) = 0;                   // T(MOD, "%", 13)
-*/
-
-    virtual bool EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
-    {
-        if(this == other) return true;
-
-        if(isValid(other)) {
-            return *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-        } else {
-            return false;
-        }
+    // T(AND, "&&", 5)
+    virtual Return AND(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    virtual bool NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
-    {
-        return !this->EQ(other);
+    // T(BIT_OR, "|", 6)
+    virtual Return BIT_OR(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
     }
 
-    /*
+    // T(BIT_XOR, "^", 7)
+    virtual Return BIT_XOR(BridgeAbstract* ){
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
 
-    // virtual bool EQ_STRICT(BridgeAbstract& other) = 0;             // T(EQ_STRICT, "===", 9)
-    // virtual bool NE_STRICT(BridgeAbstract& other) = 0;             // T(NE_STRICT, "!==", 9)
+    // T(BIT_AND, "&", 8)
+    virtual Return BIT_AND(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
 
-    virtual bool LT(BridgeAbstract& other) = 0;                    // T(LT, "<", 10)
-    virtual bool GT(BridgeAbstract& other) = 0;                    // T(GT, ">", 10)
-    virtual bool LTE(BridgeAbstract& other) = 0;                   // T(LTE, "<=", 10)
-    virtual bool GTE(BridgeAbstract& other) = 0;                   // T(GTE, ">=", 10)
-    // virtual bool INSTANCEOF(BridgeAbstract& other) = 0;            // K(INSTANCEOF, "instanceof", 10)
+    // T(SHL, "<<", 11)
+    virtual Return SHL(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
 
-    virtual bool IN(BridgeAbstract& other) = 0;                    // K(IN, "in", 10)
-    virtual void NOT(BridgeAbstract& other) = 0;                   // T(NOT, "!", 0)
-    virtual void DELETE(BridgeAbstract& other) = 0;                // K(DELETE, "delete", 0)
-    virtual void TYPEOF(BridgeAbstract& other) = 0;                // K(TYPEOF, "typeof", 0)
-    virtual void VOID(BridgeAbstract& other) = 0;                  // K(VOID, "void", 0)
-*/
+    // T(SAR, ">>", 11)
+    virtual Return SAR(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
 
-private:
-    std::shared_ptr<T> d;
-    static std::shared_ptr<T> Null;
+    // T(ADD, "+", 12)
+    virtual Return ADD(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(SUB, "-", 12)
+    virtual Return SUB(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(MUL, "*", 13)
+    virtual Return MUL(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(DIV, "/", 13)
+    virtual Return DIV(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(MOD, "%", 13)
+    virtual Return MOD(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(EQ, "==", 9)
+    virtual Return EQ(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(NE, "!=", 9)
+    virtual Return NE(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(LT, "<", 10)
+    virtual Return LT(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(GT, ">", 10)
+    virtual Return GT(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(LTE, "<=", 10)
+    virtual Return LTE(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(GTE, ">=", 10)
+    virtual Return GTE(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // virtual Return INSTANCEOF(BridgeAbstract* other) = 0;            // K(INSTANCEOF, "instanceof", 10)
+
+    // K(IN, "in", 10)
+    virtual Return IN(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // T(NOT, "!", 0)
+    virtual Return NOT(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // K(DELETE, "delete", 0)
+    virtual Return DELETE(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // K(TYPEOF, "typeof", 0)
+    virtual Return TYPEOF(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
+
+    // K(VOID, "void", 0)
+    virtual Return VOID(BridgeAbstract* ) {
+        return Return(soften::State::CastFail,
+                      std::shared_ptr<BridgeAbstract>(new Bridge()));
+    }
 };
 
-template<typename T> std::shared_ptr<T> BaseTypeBridge<T>::Null;
+
+
 
 }
 

@@ -4,6 +4,7 @@ CppApplication {
     type: "application" // To suppress bundle generation on Mac
     consoleApplication: true
     files: [
+        "src/core/basetypebridge.h",
         "src/core/bridge.h",
         "src/core/metaobject.h",
         "src/core/metacall.h",

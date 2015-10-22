@@ -8,6 +8,8 @@
 
 #define SOFTEN_INVOKABLE
 
+// #define SOFTEN_EXTENDS : virtual public
+
 namespace soften {
 
 
@@ -19,16 +21,6 @@ std::string getObjectAddress(const T* thiz) {
     s >> address;
     return address;
 }
-
-struct identity {
-    identity(const std::string& previous):
-        id(previous+ "." +getObjectAddress<identity>(this))
-    {}
-
-    operator std::string () { return id; }
-
-    std::string id;
-};
 
 
 }

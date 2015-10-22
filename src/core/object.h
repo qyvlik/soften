@@ -15,7 +15,7 @@ public:
     SOFTEN_HACK class MetaCall<Object>;
     typedef MetaCall<Object> Meta;
     static Meta metaCall;
-    virtual int callMethod(const std::string& methodName, void* args, void*r);
+    virtual int callMethod(const std::string& methodName, void* args, void* r);
 
 public:
     explicit Object();
@@ -49,6 +49,7 @@ int callMethod(D* thiz, const std::string& methodName, void* args, void*r) {
 
 #define SOFTEN_OBJECT(_DERIVED_, _BASE_)                                                        \
     public:                                                                                     \
+        SOFTEN_HACK class MetaCall<_DERIVED_>;                                                  \
         typedef soften::MetaCall<_DERIVED_> Meta;                                               \
         static Meta metaCall;                                                                   \
         virtual int callMethod(const std::string& methodName, void* args, void* r)              \
