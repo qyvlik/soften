@@ -30,13 +30,6 @@ struct identity {
     std::string id;
 };
 
-// compiled-time
-//template<typename _Base, typename _Derived>
-//bool isDerived(_Base* b, _Derived* )
-//{
-//    return dynamic_cast<_Derived>(b) != nullptr ;
-//}
-
 
 }
 

@@ -33,28 +33,22 @@ public:
         return  [](T*, void*, void*)->State{ return State::MethodNotFound; };
     }
 
-//    template<typename Base>
-//    State callMethod(T* thiz, const std::string& methodName, void* args, void* r) {
-//        // MetaObject<T>
-//        auto c = T::metaObject.findMethod(methodName);
-//        auto end = T::metaObject.objectMethods.end();
-//        if(c != end) {
-//            return c(thiz, args, r);
-//        } else {
-//            return Base::callMethod(thiz, methodName, args, r );
-//        }
-//    }
+    template<typename Base>
+    State callMethod(T* thiz, const std::string& methodName, void* args, void* r) {
+        // MetaObject<T>
+        auto c = T::metaObject.findMethod(methodName);
+        auto end = T::metaObject.objectMethods.end();
+        if(c != end) {
+            return c(thiz, args, r);
+        } else {
+            return Base::metaObject.findMethod(thiz, methodName, args, r );
+        }
+    }
 
 //    template<>
 //    State callMethod<soften::Object>(T* thiz, const std::string& methodName, void* args, void* r) {
 //        // MetaObject<T>
-//        auto c = T::metaObject.findMethod(methodName);
-//        auto end = T::metaObject.objectMethods.end();
-//        if(c != end) {
-//            return c(thiz, args, r);
-//        } else {
-//            return Base::callMethod(thiz, methodName, args, r );
-//        }
+//        return T::metaObject.findMethod(methodName)(thiz, args, r);
 //    }
 
     std::map<const std::string, call> objectMethods;
