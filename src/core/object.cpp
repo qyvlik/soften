@@ -11,7 +11,7 @@ Object::Meta Object::metaCall = {
         "toString",
         [](Object* thiz, void* , void*)->int{
             cout << thiz->toString();
-            return 0;
+            return (int)soften::State::NormalCall;
         })
     }
 };
