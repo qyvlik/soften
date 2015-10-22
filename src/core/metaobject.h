@@ -45,12 +45,6 @@ public:
         }
     }
 
-//    template<>
-//    State callMethod<soften::Object>(T* thiz, const std::string& methodName, void* args, void* r) {
-//        // MetaObject<T>
-//        return T::metaObject.findMethod(methodName)(thiz, args, r);
-//    }
-
     std::map<const std::string, call> objectMethods;
 
 };

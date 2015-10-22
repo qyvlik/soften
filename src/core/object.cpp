@@ -1,27 +1,38 @@
 #include "object.h"
 
+using namespace std;
+
 namespace soften {
 
 
-Object::Meta Object::metaObject =
-{
+Object::Meta Object::metaCall = {
     {
-        {
-            std::pair<const std::string, Object::call>(
-            "toString",
-            [&](Object* thiz, void* , void* r)-> State {
-                std::string* r_ = reinterpret_cast<std::string*>(r);
-                (*r_) = thiz->toString();
-                return State::NormalCall;
-            })
-        } // toString
+        pair<const string, Object::Meta::Call>(
+        "toString",
+        [](Object* thiz, void* , void*)->int{
+            cout << thiz->toString();
+            return 0;
+        })
     }
 };
 
 
-Object::Object():
-    id(getObjectAddress<Object>(this))
+Object::Object()
 {
+
+}
+
+
+Object::~Object()
+{
+
+}
+
+
+int Object::callMethod(const string &methodName, void *args, void *r)
+{
+    return Object::metaCall.findMethod(methodName)(this, args, r);
+
 }
 
 
