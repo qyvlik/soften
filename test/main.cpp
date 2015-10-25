@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <fstream>
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
@@ -9,9 +9,19 @@
 using namespace std;
 using namespace soften;
 
+void test_bridge();
 void test_assembler();
+void test_file_stream();
+void test_assembler_compiler();
 
 int main()
+{
+    test_assembler_compiler();
+    return 0;
+}
+
+
+void test_bridge()
 {
     BaseTypeBridge<int> i(new int(10));
     Bridge* r = &i;
@@ -56,15 +66,7 @@ int main()
 
     p->callMethod("add", args, r);
     cout << i.get() << endl;
-
-    // assembler test
-    test_assembler();
-
-
-
-    return 0;
 }
-
 
 void test_assembler()
 {
@@ -81,5 +83,45 @@ void test_assembler()
     } else {
         cout << "success !" << endl;
     }
+}
 
+
+void test_file_stream()
+{
+    ifstream file;
+    file.open("K://ass.txt");
+
+    string single_instruction;
+    string lhs;
+    string operation;
+    string rhs;
+    int length;
+
+    while(std::getline(file, single_instruction)) {
+        length = single_instruction.length();
+        if(length == 0) {
+            continue;
+        }
+        int pos0 = 0;
+        pos0 = single_instruction.find(' ', pos0);
+        operation.assign(single_instruction, 0, pos0);
+
+        int pos1 = single_instruction.find(' ', pos0+1);
+        lhs.assign(single_instruction, pos0+1, pos1-pos0-1);
+
+        rhs.assign(single_instruction, pos1+1, length-pos1-1);
+
+        cout << operation << endl
+             << lhs << endl
+             << rhs << endl;
+    }
+
+    file.close();
+}
+
+void test_assembler_compiler()
+{
+    Assembler assmbler;
+    assmbler.compile("K://ass.txt");
+    assmbler.test_print_instrctions();
 }

@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include <iostream>
 #include "../core/metacall.h"
 
 namespace soften {
@@ -59,8 +60,21 @@ public:
         OP_GOTO,
         OP_NEW,
         OP_PUSH,
+        OP_LABEL,                       // 标签
+        OP_UNKNOWN
     };
 
+    struct Instruction {
+        OP operation;
+        std::string lhs;
+        std::string rhs;
+        Instruction(OP operation, const std::string& lhs, const std::string& rhs) :
+            operation(operation),
+            lhs(lhs),
+            rhs(rhs)
+        { }
+
+    };
 
     explicit Assembler();
 
@@ -68,24 +82,35 @@ public:
 
     std::string lastErrorString() const;
 
-    State run(const std::string& assemblerFile);
+    State compile(const std::string& assemblerFile);
 
     State DECLARA(const std::string lhs,const std::string& rhs);
 
+    //@ TEST
+    void test_print_instrctions() {
+        for(unsigned int i=0; i< m_instructions.size(); i++) {
+            std::cout << m_instructions.at(i).operation << std::endl
+                      << m_instructions.at(i).lhs << std::endl
+                      << m_instructions.at(i).rhs << std::endl
+                      << std::endl;
+        }
+    }
+
 protected:
+
     void setLastErrorString(const std::string &lastErrorString);
+
     static Bridge* createBridgeFromStringValue(Assembler *thiz, const std::string& value);
 
+    static Assembler::Instruction createInstruction(const std::string& operation,
+                                                    const std::string& lhs,
+                                                    const std::string& rhs);
+
 private:
+
     typedef std::pair<std::string, Bridge*> Variant;
 
-    struct instruction {
-        OP operation;
-        std::string lhs;
-        std::string rhs;
-    };
-
-    std::vector<instruction> m_instructions;
+    std::vector<Instruction> m_instructions;
     std::map<std::string, Bridge*> m_objectMap;
 
     std::string m_lastErrorString;
@@ -98,8 +123,8 @@ private:
 template<typename T>
 T toNumber(const std::string& number_string ){
 
-//    static_assert(!std::is_enum<T>::value, "bad");
-//    static_assert(!std::is_class<T>::value, "bad");
+    //    static_assert(!std::is_enum<T>::value, "bad");
+    //    static_assert(!std::is_class<T>::value, "bad");
 
     T number;
     std::stringstream stream;

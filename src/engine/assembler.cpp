@@ -64,6 +64,89 @@ Bridge *Assembler::createBridgeFromStringValue(Assembler* thiz,const string &val
     }
 }
 
+Assembler::Instruction Assembler::createInstruction(const string &operation,
+                                                    const string &lhs,
+                                                    const string &rhs)
+{
+
+    if(operation == "ASSIGN") {
+        return Instruction(OP_ASSIGN, lhs, rhs);
+    } else if(operation == "ASSIGN_BIT_OR") {
+        return Instruction(OP_ASSIGN_BIT_OR, lhs, rhs);
+    } else if(operation == "ASSIGN_BIT_XOR") {
+        return Instruction(OP_ASSIGN_BIT_XOR, lhs, rhs);
+    } else if(operation == "ASSIGN_BIT_AND") {
+        return Instruction(OP_ASSIGN_BIT_AND, lhs, rhs);
+    } else if(operation == "ASSIGN_SHL") {
+        return Instruction(OP_ASSIGN_SHL, lhs, rhs);
+    } else if(operation == "ASSIGN_SAR") {
+        return Instruction(OP_ASSIGN_SAR, lhs, rhs);
+    } else if(operation == "ASSIGN_ADD") {
+        return Instruction(OP_ASSIGN_ADD, lhs, rhs);
+    } else if(operation == "ASSIGN_SUB") {
+        return Instruction(OP_ASSIGN_SUB, lhs, rhs);
+    } else if(operation == "ASSIGN_MUL") {
+        return Instruction(OP_ASSIGN_MUL, lhs, rhs);
+    } else if(operation == "ASSIGN_DIV") {
+        return Instruction(OP_ASSIGN_DIV, lhs, rhs);
+    } else if(operation == "ASSIGN_MOD") {
+        return Instruction(OP_ASSIGN_MOD, lhs, rhs);
+    } else if(operation == "COMMA") {
+        return Instruction(OP_COMMA, lhs, rhs);
+    } else if(operation == "OR") {
+        return Instruction(OP_OR, lhs, rhs);
+    } else if(operation == "AND") {
+        return Instruction(OP_AND, lhs, rhs);
+    } else if(operation == "BIT_OR") {
+        return Instruction(OP_BIT_OR, lhs, rhs);
+    } else if(operation == "BIT_XOR") {
+        return Instruction(OP_BIT_XOR, lhs, rhs);
+    } else if(operation == "BIT_AND") {
+        return Instruction(OP_BIT_AND, lhs, rhs);
+    } else if(operation == "SHL") {
+        return Instruction(OP_SHL, lhs, rhs);
+    } else if(operation == "SAR") {
+        return Instruction(OP_SAR, lhs, rhs);
+    } else if(operation == "ADD") {
+        return Instruction(OP_ADD, lhs, rhs);
+    } else if(operation == "SUB") {
+        return Instruction(OP_SUB, lhs, rhs);
+    } else if(operation == "MUL") {
+        return Instruction(OP_MUL, lhs, rhs);
+    } else if(operation == "DIV") {
+        return Instruction(OP_DIV, lhs, rhs);
+    } else if(operation == "MOD") {
+        return Instruction(OP_MOD, lhs, rhs);
+    } else if(operation == "EQ") {
+        return Instruction(OP_EQ, lhs, rhs);
+    } else if(operation == "NE") {
+        return Instruction(OP_NE, lhs, rhs);
+    } else if(operation == "LT") {
+        return Instruction(OP_LT, lhs, rhs);
+    } else if(operation == "GT") {
+        return Instruction(OP_GT, lhs, rhs);
+    } else if(operation == "LTE") {
+        return Instruction(OP_LTE, lhs, rhs);
+    } else if(operation == "GTE") {
+        return Instruction(OP_GTE, lhs, rhs);
+    } else if(operation == "NOT") {
+        return Instruction(OP_NOT, lhs, rhs);
+    } else if(operation == "TYPEOF") {
+        return Instruction(OP_TYPEOF, lhs, rhs);
+    } else if(operation == "DECLARA") {
+        return Instruction(OP_DECLARA, lhs, rhs);
+    } else if(operation == "GOTO") {
+        return Instruction(OP_GOTO, lhs, rhs);
+    } else if(operation == "NEW") {
+        return Instruction(OP_NEW, lhs, rhs);
+    } else if(operation == "oush") {
+        return Instruction(OP_PUSH, lhs, rhs);
+
+    } else {
+        return Instruction(OP_UNKNOWN, lhs, rhs);
+    }
+}
+
 
 std::string Assembler::lastErrorString() const
 {
@@ -79,10 +162,41 @@ std::string Assembler::lastErrorString() const
  *
 */
 
-State Assembler::run(const string &assemblerFile)
+State Assembler::compile(const string &assemblerFile)
 {
+    ifstream file;
+    file.open(assemblerFile);
 
-    return State::Unkonwn;
+    if(!file.is_open()) {
+        return State::FileError;
+    }
+
+    string single_instruction;
+    string lhs;
+    string operation;
+    string rhs;
+    int length;
+
+    while(std::getline(file, single_instruction)) {
+        length = single_instruction.length();
+        if(length == 0) {
+            continue;
+        }
+        int pos0 = 0;
+        pos0 = single_instruction.find(' ', pos0);
+        operation.assign(single_instruction, 0, pos0);
+
+        int pos1 = single_instruction.find(' ', pos0+1);
+        lhs.assign(single_instruction, pos0+1, pos1-pos0-1);
+
+        rhs.assign(single_instruction, pos1+1, length-pos1-1);
+
+        m_instructions.push_back(Assembler::createInstruction(operation, lhs,rhs));
+    }
+
+    file.close();
+
+    return State::NormalCall;
 }
 
 

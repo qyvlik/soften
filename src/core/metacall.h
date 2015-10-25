@@ -19,6 +19,7 @@ enum class State {
     CallFail,
     MutilDefine,
     NotDefine,
+    FileError,
     Unkonwn
 };
 
