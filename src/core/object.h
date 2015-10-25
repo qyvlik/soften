@@ -3,19 +3,20 @@
 
 #include <functional>
 #include <map>
+#include <list>
 #include "../soften.h"
 #include "metacall.h"
 
 namespace soften {
 
-
+class Bridge;
 class Object
 {
 public:
     SOFTEN_HACK class MetaCall<Object>;
     typedef MetaCall<Object> Meta;
     static Meta metaCall;
-    virtual int callMethod(const std::string& methodName, void* args, void* r);
+    virtual int callMethod(const std::string& methodName, std::list<Bridge*> args, Bridge* r);
 
 public:
     explicit Object();
@@ -26,9 +27,8 @@ public:
 
 namespace internal {
 
-
 template<typename D, typename B>
-int callMethod(D* thiz, const std::string& methodName, void* args, void*r) {
+int callMethod(D* thiz, const std::string& methodName, std::list<soften::Bridge*> args, soften::Bridge* r) {
     //! 静态检查
     static_assert(std::is_base_of<B, D>::value, "E10: is not base");
 
@@ -47,14 +47,14 @@ int callMethod(D* thiz, const std::string& methodName, void* args, void*r) {
 }
 
 
-#define SOFTEN_OBJECT(_DERIVED_, _BASE_)                                                        \
-    public:                                                                                     \
-        SOFTEN_HACK class soften::MetaCall<_DERIVED_>;                                          \
-        typedef soften::MetaCall<_DERIVED_> Meta;                                               \
-        static Meta metaCall;                                                                   \
-        virtual int callMethod(const std::string& methodName, void* args, void* r)              \
-        {                                                                                       \
-            return soften::internal::callMethod<_DERIVED_, _BASE_>(this, methodName, args, r);  \
+#define SOFTEN_OBJECT(_DERIVED_, _BASE_)                                                            \
+    public:                                                                                         \
+        SOFTEN_HACK class soften::MetaCall<_DERIVED_>;                                              \
+        typedef soften::MetaCall<_DERIVED_> Meta;                                                   \
+        static Meta metaCall;                                                                       \
+        virtual int callMethod(const std::string& methodName, std::list<soften::Bridge*> args, soften::Bridge* r)  \
+        {                                                                                           \
+            return soften::internal::callMethod<_DERIVED_, _BASE_>(this, methodName, args, r);      \
         }
 
 

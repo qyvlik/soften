@@ -3,7 +3,6 @@
 
 #include "../../src/core/object.h"
 
-
 class MyObject : public soften::Object
 {
 public:

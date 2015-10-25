@@ -8,7 +8,7 @@
 namespace soften {
 
 
-class BridgeAbstract
+class BridgeAbstract : virtual public Object
 {
 public:
     enum Type {
@@ -124,21 +124,6 @@ public:
 };
 
 
-template<typename T> BridgeAbstract::Type toType() { return BridgeAbstract::Unknown; }
-
-template<> BridgeAbstract::Type toType<bool>() { return BridgeAbstract::Boolean; }
-template<> BridgeAbstract::Type toType<int>() { return BridgeAbstract::Integer; }
-template<> BridgeAbstract::Type toType<float>() { return BridgeAbstract::Float; }
-template<> BridgeAbstract::Type toType<double>() { return BridgeAbstract::Double; }
-template<> BridgeAbstract::Type toType<long>() { return BridgeAbstract::Long; }
-template<> BridgeAbstract::Type toType<long long>() { return BridgeAbstract::LongLong; }
-
-template<> BridgeAbstract::Type toType<std::string>() { return BridgeAbstract::String; }
-
-template<> BridgeAbstract::Type toType<soften::Object>() { return BridgeAbstract::Object; }
-
-BridgeAbstract::Type toType() { return BridgeAbstract::Unknown; }
-
 class Bridge : virtual public BridgeAbstract
 {
 public:
@@ -148,7 +133,7 @@ public:
     {}
 
     virtual Type type() const
-    { return toType(); }
+    {  return BridgeAbstract::Unknown; }
 
     // T(ASSIGN, "=", 2)
     virtual Return ASSIGN(BridgeAbstract* ) {

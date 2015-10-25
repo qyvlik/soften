@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <map>
+#include <list>
 
 namespace soften {
 
@@ -18,11 +19,13 @@ enum class State {
 };
 
 
+class Bridge;
+
 template<typename T>
 class MetaCall
 {
 public:
-    typedef std::function<int (T*, void*, void*)> Call;
+    typedef std::function<int (T*, std::list<Bridge*>, Bridge*)> Call;
 
     Call findMethod(const std::string& methodName) {
         auto c = methods.find(methodName);
@@ -30,7 +33,7 @@ public:
         if(c != end) {
             return (*c).second;
         } else {
-            return [](T* , void*, void*) -> int { return (int)State::MethodNotFound; };
+            return [](T* , std::list<Bridge*>, Bridge*) -> int { return (int)State::MethodNotFound; };
         }
     }
 

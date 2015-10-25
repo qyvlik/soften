@@ -1,4 +1,5 @@
 #include "object.h"
+#include "bridge.h"
 
 using namespace std;
 
@@ -9,7 +10,7 @@ Object::Meta Object::metaCall = {
     {
         pair<const string, Object::Meta::Call>(
         "toString",
-        [](Object* thiz, void* , void*)->int{
+        [](Object* thiz, std::list<Bridge*>, Bridge*)->int{
             cout << thiz->toString();
             return (int)soften::State::NormalCall;
         })
@@ -29,7 +30,7 @@ Object::~Object()
 }
 
 
-int Object::callMethod(const string &methodName, void *args, void *r)
+int Object::callMethod(const string &methodName, std::list<Bridge *> args, Bridge *r)
 {
     return Object::metaCall.findMethod(methodName)(this, args, r);
 

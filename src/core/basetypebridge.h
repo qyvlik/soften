@@ -5,6 +5,19 @@
 
 namespace soften {
 
+
+template<typename T> BridgeAbstract::Type toType() { return BridgeAbstract::Unknown; }
+
+template<> BridgeAbstract::Type toType<bool>() { return BridgeAbstract::Boolean; }
+template<> BridgeAbstract::Type toType<int>() { return BridgeAbstract::Integer; }
+template<> BridgeAbstract::Type toType<float>() { return BridgeAbstract::Float; }
+template<> BridgeAbstract::Type toType<double>() { return BridgeAbstract::Double; }
+template<> BridgeAbstract::Type toType<long>() { return BridgeAbstract::Long; }
+template<> BridgeAbstract::Type toType<long long>() { return BridgeAbstract::LongLong; }
+
+template<> BridgeAbstract::Type toType<std::string>() { return BridgeAbstract::String; }
+
+
 // base type
 
 template<typename T>
@@ -172,7 +185,7 @@ public:
         }
     }
 
-    virtual void ASSIGN_ADD(BridgeAbstract* other)           // T(ASSIGN_ADD, "+=", 2)
+    virtual Return ASSIGN_ADD(BridgeAbstract* other)           // T(ASSIGN_ADD, "+=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -185,7 +198,7 @@ public:
         }
     }
 
-    virtual void ASSIGN_SUB(BridgeAbstract* other)             // T(ASSIGN_SUB, "-=", 2)
+    virtual Return ASSIGN_SUB(BridgeAbstract* other)             // T(ASSIGN_SUB, "-=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -196,7 +209,7 @@ public:
         }
     }
 
-    virtual void ASSIGN_MUL(BridgeAbstract* other)         // T(ASSIGN_MUL, "*=", 2)
+    virtual Return ASSIGN_MUL(BridgeAbstract* other)         // T(ASSIGN_MUL, "*=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -207,7 +220,7 @@ public:
         }
     }
 
-    virtual void ASSIGN_DIV(BridgeAbstract* other)           // T(ASSIGN_DIV, "/=", 2)
+    virtual Return ASSIGN_DIV(BridgeAbstract* other)           // T(ASSIGN_DIV, "/=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -218,7 +231,7 @@ public:
         }
     }
 
-    virtual void ASSIGN_MOD(BridgeAbstract* other)            // T(ASSIGN_MOD, "%=", 2)
+    virtual Return ASSIGN_MOD(BridgeAbstract* other)            // T(ASSIGN_MOD, "%=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -229,20 +242,38 @@ public:
         }
     }
 
-    virtual bool EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
+    virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
     {
-        if(this == other) return true;
+        if(this == other) {
+            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
+            return Return(State::NormalCall, r_d);
+        }
 
         if(isValid(other)) {
-            return *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+            bool r = *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
+            return Return(State::NormalCall, r_d);
         } else {
-            return false;
+            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
+            return Return(State::NormalCall, r_d);
         }
     }
 
-    virtual bool NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
+    virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
     {
-        return !this->EQ(other);
+        if(this == other) {
+            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
+            return Return(State::NormalCall, r_d);
+        }
+
+        if(isValid(other)) {
+            bool r = *d != *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
+            return Return(State::NormalCall, r_d);
+        } else {
+            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
+            return Return(State::NormalCall, r_d);
+        }
     }
 
 private:

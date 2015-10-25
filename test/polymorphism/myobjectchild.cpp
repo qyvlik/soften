@@ -1,4 +1,5 @@
 #include "myobjectchild.h"
+#include "../../src/core/bridge.h"
 
 using namespace std;
 
@@ -7,7 +8,7 @@ MyObjectChild::Meta MyObjectChild::metaCall = {
         {
             pair<const string, MyObjectChild::Meta::Call> (
             "toString",
-            [](MyObjectChild* thiz, void*, void*) -> int {
+            [](MyObjectChild* thiz, std::list<soften::Bridge*>, soften::Bridge*) -> int {
                 cout << thiz->toString();
                 return 0;
             })
