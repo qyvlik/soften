@@ -4,19 +4,18 @@
 
 MyObject::Meta MyObject::metaCall = {
     {
-        {
-            std::pair<const std::string, MyObject::Meta::Call>(
-            "toString",
-            [](MyObject* thiz, std::vector<soften::Bridge*>, soften::Bridge*) -> int {
-                std::cout << thiz->toString();
-                return 0;
-            })
-        },
+//        {
+//            std::pair<const std::string, MyObject::Meta::Call>(
+//            "toString",
+//            [](MyObject* thiz, std::vector<soften::Bridge*>, soften::Bridge*) -> int {
+//                std::cout << thiz->toString();
+//                return 0;
+//            })
+//        },
         {
             std::pair<const std::string, MyObject::Meta::Call>(
             "add",
             [](MyObject* thiz, std::vector<soften::Bridge*> args, soften::Bridge* r) -> int {
-                // arguments length is 2
                 // int(int, int);
                 if(args.size() < 2) return (int)soften::State::ArgumentsFail;
                 soften::BaseTypeBridge<int>* arg0 = dynamic_cast<soften::BaseTypeBridge<int>*>(args[0]);

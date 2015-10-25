@@ -83,7 +83,8 @@ public:
     // ASSIGN @a @b
     // 将 b 赋值给 a
     // 指令执行后有执行状态
-    virtual Return ASSIGN(BridgeAbstract* other)                 // T(ASSIGN, "=", 2)
+
+    SOFTEN_INVOKABLE virtual Return ASSIGN(BridgeAbstract* other)                 // T(ASSIGN, "=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -98,7 +99,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_BIT_OR(BridgeAbstract* other)       // T(ASSIGN_BIT_OR, "|=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_BIT_OR(BridgeAbstract* other)       // T(ASSIGN_BIT_OR, "|=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -113,7 +114,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_BIT_XOR(BridgeAbstract* other)         // T(ASSIGN_BIT_XOR, "^=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_BIT_XOR(BridgeAbstract* other)         // T(ASSIGN_BIT_XOR, "^=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -128,7 +129,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_BIT_AND(BridgeAbstract* other)         // T(ASSIGN_BIT_AND, "&=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_BIT_AND(BridgeAbstract* other)         // T(ASSIGN_BIT_AND, "&=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -143,7 +144,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_SHL(BridgeAbstract* other)             // T(ASSIGN_SHL, "<<=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_SHL(BridgeAbstract* other)             // T(ASSIGN_SHL, "<<=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -158,7 +159,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_SAR(BridgeAbstract* other)            // T(ASSIGN_SAR, ">>=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_SAR(BridgeAbstract* other)            // T(ASSIGN_SAR, ">>=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -173,7 +174,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_ADD(BridgeAbstract* other)           // T(ASSIGN_ADD, "+=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_ADD(BridgeAbstract* other)           // T(ASSIGN_ADD, "+=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -188,7 +189,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_SUB(BridgeAbstract* other)             // T(ASSIGN_SUB, "-=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_SUB(BridgeAbstract* other)             // T(ASSIGN_SUB, "-=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -203,7 +204,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_MUL(BridgeAbstract* other)         // T(ASSIGN_MUL, "*=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_MUL(BridgeAbstract* other)         // T(ASSIGN_MUL, "*=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -218,7 +219,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_DIV(BridgeAbstract* other)           // T(ASSIGN_DIV, "/=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_DIV(BridgeAbstract* other)           // T(ASSIGN_DIV, "/=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -233,7 +234,7 @@ public:
         }
     }
 
-    virtual Return ASSIGN_MOD(BridgeAbstract* other)            // T(ASSIGN_MOD, "%=", 2)
+    SOFTEN_INVOKABLE virtual Return ASSIGN_MOD(BridgeAbstract* other)            // T(ASSIGN_MOD, "%=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
@@ -248,7 +249,7 @@ public:
         }
     }
 
-//    virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
+//    SOFTEN_INVOKABLE virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
 //    {
 //        if(this == other) {
 //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
@@ -265,7 +266,7 @@ public:
 //        }
 //    }
 
-//    virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
+//    SOFTEN_INVOKABLE virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
 //    {
 //        if(this == other) {
 //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));

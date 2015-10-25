@@ -1,0 +1,114 @@
+#ifndef ASSEMBLER_H
+#define ASSEMBLER_H
+
+#include <map>
+#include <vector>
+#include <sstream>
+#include "../core/metacall.h"
+
+namespace soften {
+
+
+class Bridge;
+class Assembler
+{
+public:
+    enum OP {
+        OP_ASSIGN,                      // T(ASSIGN, "=", 2)
+
+        OP_ASSIGN_BIT_OR,               // T(ASSIGN_BIT_OR, "|=", 2)
+        OP_ASSIGN_BIT_XOR,              // T(ASSIGN_BIT_XOR, "^=", 2)
+        OP_ASSIGN_BIT_AND,              // T(ASSIGN_BIT_AND, "&=", 2)
+        OP_ASSIGN_SHL,                  // T(ASSIGN_SHL, "<<=", 2)
+        OP_ASSIGN_SAR,                  // T(ASSIGN_SAR, ">>=", 2)
+
+        OP_ASSIGN_ADD,                  // T(ASSIGN_ADD, "+=", 2)
+        OP_ASSIGN_SUB,                  // T(ASSIGN_SUB, "-=", 2)
+        OP_ASSIGN_MUL,                  // T(ASSIGN_MUL, "*=", 2)
+        OP_ASSIGN_DIV,                  // T(ASSIGN_DIV, "/=", 2)
+        OP_ASSIGN_MOD,                  // T(ASSIGN_MOD, "%=", 2)
+
+        OP_COMMA,                       // T(COMMA, ",", 1)
+        OP_OR,                          // T(OR, "||", 4)
+        OP_AND,                         // T(AND, "&&", 5)
+
+        OP_BIT_OR,                      // T(BIT_OR, "|", 6)
+        OP_BIT_XOR,                     // T(BIT_XOR, "^", 7)
+        OP_BIT_AND,                     // T(BIT_AND, "&", 8)
+        OP_SHL,                         // T(SHL, "<<", 11)
+        OP_SAR,                         // T(SAR, ">>", 11)
+
+        OP_ADD,                         // T(ADD, "+", 12)
+        OP_SUB,                         // T(SUB, "-", 12)
+        OP_MUL,                         // T(MUL, "*", 13)
+        OP_DIV,                         // T(DIV, "/", 13)
+        OP_MOD,                         // T(MOD, "%", 13)
+
+        OP_EQ,                          // T(EQ, "==", 9)
+        OP_NE,                          // T(NE, "!=", 9)
+
+        OP_LT,                          // T(LT, "<", 10)
+        OP_GT,                          // T(GT, ">", 10)
+        OP_LTE,                         // T(LTE, "<=", 10)
+        OP_GTE,                         // T(GTE, ">=", 10)
+
+        OP_NOT,                         // T(NOT, "!", 0)
+        OP_TYPEOF,                      // K(TYPEOF, "typeof", 0)
+
+        OP_DECLARA,
+        OP_GOTO,
+        OP_NEW,
+        OP_PUSH,
+    };
+
+
+    explicit Assembler();
+
+    virtual ~Assembler();
+
+    std::string lastErrorString() const;
+
+    State run(const std::string& assemblerFile);
+
+    State DECLARA(const std::string lhs,const std::string& rhs);
+
+protected:
+    void setLastErrorString(const std::string &lastErrorString);
+    static Bridge* createBridgeFromStringValue(Assembler *thiz, const std::string& value);
+
+private:
+    typedef std::pair<std::string, Bridge*> Variant;
+
+    struct instruction {
+        OP operation;
+        std::string lhs;
+        std::string rhs;
+    };
+
+    std::vector<instruction> m_instructions;
+    std::map<std::string, Bridge*> m_objectMap;
+
+    std::string m_lastErrorString;
+
+    std::vector<Bridge*> m_arguments;
+    Bridge* m_cache;
+
+};
+
+template<typename T>
+T toNumber(const std::string& number_string ){
+
+//    static_assert(!std::is_enum<T>::value, "bad");
+//    static_assert(!std::is_class<T>::value, "bad");
+
+    T number;
+    std::stringstream stream;
+    stream << number_string;
+    stream >> number;
+    return number;
+}
+
+
+}
+
+#endif // ASSEMBLER_H

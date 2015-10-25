@@ -4,9 +4,12 @@
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
 #include "../src/core/bridge.h"
+#include "../src/engine/assembler.h"
 
 using namespace std;
 using namespace soften;
+
+void test_assembler();
 
 int main()
 {
@@ -54,6 +57,29 @@ int main()
     p->callMethod("add", args, r);
     cout << i.get() << endl;
 
+    // assembler test
+    test_assembler();
+
+
+
     return 0;
 }
 
+
+void test_assembler()
+{
+    Assembler assmbler;
+    if(assmbler.DECLARA("name", "123") != soften::State::NormalCall) {
+        cout << "error !" << endl;
+    } else {
+        cout << "success !" << endl;
+    }
+
+    if(assmbler.DECLARA("name1", "@name") != soften::State::NormalCall) {
+        cout << "error !" << endl;
+        cout << assmbler.lastErrorString() << endl;
+    } else {
+        cout << "success !" << endl;
+    }
+
+}

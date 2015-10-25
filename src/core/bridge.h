@@ -25,7 +25,7 @@ public:
         String,
 
         /*! object  type */
-        Object,
+        ObjectType,
 
         /*! Unknown type */
         Unknown
@@ -58,7 +58,7 @@ public:
     }
 
     static bool isObjectType(Type type)
-    { return type == Type::Object; }
+    { return type == Type::ObjectType; }
 
     typedef soften::State Return;
 
@@ -94,8 +94,6 @@ public:
     virtual Return SHL(BridgeAbstract* other) = 0;                   // T(SHL, "<<", 11)
     virtual Return SAR(BridgeAbstract* other) = 0;                   // T(SAR, ">>", 11)
 
-    // virtual void SHR(BridgeAbstract* other) = 0;                   // T(SHR, ">>>", 11)
-
     virtual Return ADD(BridgeAbstract* other) = 0;                   // T(ADD, "+", 12)
     virtual Return SUB(BridgeAbstract* other) = 0;                   // T(SUB, "-", 12)
     virtual Return MUL(BridgeAbstract* other) = 0;                   // T(MUL, "*", 13)
@@ -116,203 +114,123 @@ public:
     virtual Return DELETE(BridgeAbstract* other) = 0;                // K(DELETE, "delete", 0)
     virtual Return TYPEOF(BridgeAbstract* other) = 0;                // K(TYPEOF, "typeof", 0)
     virtual Return VOID(BridgeAbstract* other) = 0;                  // K(VOID, "void", 0)
-
-    /*!
-        先产生一个新的对象，然后赋值，接着执行操作。。。。。
-        再将数据写会
-    */
 };
 
 
 class Bridge : virtual public BridgeAbstract
 {
+    SOFTEN_OBJECT(Bridge, Object);
 public:
-    explicit Bridge()
-    {}
-    virtual ~Bridge()
-    {}
+    explicit Bridge();
+    virtual ~Bridge();
 
-    virtual Type type() const
-    {  return BridgeAbstract::Unknown; }
+    virtual Type type() const;
 
     // T(ASSIGN, "=", 2)
-    virtual Return ASSIGN(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN(BridgeAbstract* );
 
     // T(ASSIGN_BIT_OR, "|=", 2)
-    virtual Return ASSIGN_BIT_OR(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_BIT_OR(BridgeAbstract* );
 
     // T(ASSIGN_BIT_XOR, "^=", 2)
-    virtual Return ASSIGN_BIT_XOR(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_BIT_XOR(BridgeAbstract* );
+
     // T(ASSIGN_BIT_AND, "&=", 2)
-    virtual Return ASSIGN_BIT_AND(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_BIT_AND(BridgeAbstract* );
 
     // T(ASSIGN_SHL, "<<=", 2)
-    virtual Return ASSIGN_SHL(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_SHL(BridgeAbstract* );
 
     // T(ASSIGN_SAR, ">>=", 2)
-    virtual Return ASSIGN_SAR(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_SAR(BridgeAbstract* );
 
     // T(ASSIGN_ADD, "+=", 2)
-    virtual Return ASSIGN_ADD(BridgeAbstract* ){
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_ADD(BridgeAbstract* );
 
     // T(ASSIGN_SUB, "-=", 2)
-    virtual Return ASSIGN_SUB(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_SUB(BridgeAbstract* );
 
     // T(ASSIGN_MUL, "*=", 2)
-    virtual Return ASSIGN_MUL(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_MUL(BridgeAbstract* );
 
     // T(ASSIGN_DIV, "/=", 2)
-    virtual Return ASSIGN_DIV(BridgeAbstract* ){
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_DIV(BridgeAbstract* );
 
     // T(ASSIGN_MOD, "%=", 2)
-    virtual Return ASSIGN_MOD(BridgeAbstract* ){
-        return soften::State::CastFail;
-    }
+    virtual Return ASSIGN_MOD(BridgeAbstract* );
 
     // T(COMMA, ",", 1)
-    virtual Return COMMA(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return COMMA(BridgeAbstract* );
 
     // T(OR, "||", 4)
-    virtual Return OR(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return OR(BridgeAbstract* );
 
     // T(AND, "&&", 5)
-    virtual Return AND(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return AND(BridgeAbstract* );
 
     // T(BIT_OR, "|", 6)
-    virtual Return BIT_OR(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return BIT_OR(BridgeAbstract* );
 
     // T(BIT_XOR, "^", 7)
-    virtual Return BIT_XOR(BridgeAbstract* ){
-        return soften::State::CastFail;
-    }
+    virtual Return BIT_XOR(BridgeAbstract* );
 
     // T(BIT_AND, "&", 8)
-    virtual Return BIT_AND(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return BIT_AND(BridgeAbstract* );
 
     // T(SHL, "<<", 11)
-    virtual Return SHL(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return SHL(BridgeAbstract* );
 
     // T(SAR, ">>", 11)
-    virtual Return SAR(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return SAR(BridgeAbstract* );
 
     // T(ADD, "+", 12)
-    virtual Return ADD(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return ADD(BridgeAbstract* );
 
     // T(SUB, "-", 12)
-    virtual Return SUB(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return SUB(BridgeAbstract* );
 
     // T(MUL, "*", 13)
-    virtual Return MUL(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return MUL(BridgeAbstract* );
 
     // T(DIV, "/", 13)
-    virtual Return DIV(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return DIV(BridgeAbstract* );
 
     // T(MOD, "%", 13)
-    virtual Return MOD(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return MOD(BridgeAbstract* );
 
     // T(EQ, "==", 9)
-    virtual Return EQ(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return EQ(BridgeAbstract* );
 
     // T(NE, "!=", 9)
-    virtual Return NE(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return NE(BridgeAbstract* );
 
     // T(LT, "<", 10)
-    virtual Return LT(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return LT(BridgeAbstract* );
 
     // T(GT, ">", 10)
-    virtual Return GT(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return GT(BridgeAbstract* );
 
     // T(LTE, "<=", 10)
-    virtual Return LTE(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return LTE(BridgeAbstract* );
 
     // T(GTE, ">=", 10)
-    virtual Return GTE(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
-
-    // virtual Return INSTANCEOF(BridgeAbstract* other) = 0;            // K(INSTANCEOF, "instanceof", 10)
+    virtual Return GTE(BridgeAbstract* );
 
     // K(IN, "in", 10)
-    virtual Return IN(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return IN(BridgeAbstract* );
 
     // T(NOT, "!", 0)
-    virtual Return NOT(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return NOT(BridgeAbstract* );
 
     // K(DELETE, "delete", 0)
-    virtual Return DELETE(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return DELETE(BridgeAbstract* );
 
     // K(TYPEOF, "typeof", 0)
-    virtual Return TYPEOF(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return TYPEOF(BridgeAbstract* );
 
     // K(VOID, "void", 0)
-    virtual Return VOID(BridgeAbstract* ) {
-        return soften::State::CastFail;
-    }
+    virtual Return VOID(BridgeAbstract* );
 };
-
-
 
 
 }

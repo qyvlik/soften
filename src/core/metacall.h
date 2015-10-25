@@ -17,6 +17,8 @@ enum class State {
     CastFail,
     TypeFail,
     CallFail,
+    MutilDefine,
+    NotDefine,
     Unkonwn
 };
 
