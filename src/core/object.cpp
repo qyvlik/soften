@@ -10,7 +10,7 @@ Object::Meta Object::metaCall = {
     {
         pair<const string, Object::Meta::Call>(
         "toString",
-        [](Object* thiz, std::list<Bridge*>, Bridge*)->int{
+        [](Object* thiz, std::vector<Bridge*>, Bridge*)->int{
             cout << thiz->toString();
             return (int)soften::State::NormalCall;
         })
@@ -30,7 +30,7 @@ Object::~Object()
 }
 
 
-int Object::callMethod(const string &methodName, std::list<Bridge *> args, Bridge *r)
+int Object::callMethod(const string &methodName, std::vector<Bridge *> args, Bridge *r)
 {
     return Object::metaCall.findMethod(methodName)(this, args, r);
 

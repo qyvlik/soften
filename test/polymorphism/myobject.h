@@ -14,7 +14,8 @@ public:
 //        return internal::callMethod<MyObject, Object>(this, methodName, args, r);
 //    }
 
-    virtual std::string toString()const;
+    SOFTEN_INVOKABLE virtual std::string toString()const;
+    SOFTEN_INVOKABLE int add(int a, int b);
 };
 
 

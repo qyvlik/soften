@@ -4,17 +4,19 @@
 #include <functional>
 #include <map>
 #include <list>
+#include <vector>
 
 namespace soften {
 
 enum class State {
-    NormalCall,
+    NormalCall = 0,
+    MethodNotFound,
     ArgumentsFail,
     ReturnFail,
-    MethodNotFound,
     CppException,
     CastFail,
     TypeFail,
+    CallFail,
     Unkonwn
 };
 
@@ -25,7 +27,7 @@ template<typename T>
 class MetaCall
 {
 public:
-    typedef std::function<int (T*, std::list<Bridge*>, Bridge*)> Call;
+    typedef std::function<int (T*, std::vector<Bridge*>, Bridge*)> Call;
 
     Call findMethod(const std::string& methodName) {
         auto c = methods.find(methodName);
@@ -33,7 +35,7 @@ public:
         if(c != end) {
             return (*c).second;
         } else {
-            return [](T* , std::list<Bridge*>, Bridge*) -> int { return (int)State::MethodNotFound; };
+            return [](T* , std::vector<Bridge*>, Bridge*) -> int { return (int)State::MethodNotFound; };
         }
     }
 

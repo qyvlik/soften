@@ -6,16 +6,18 @@
 namespace soften {
 
 
+//! [C++ 函数模板特化导致的多重定义链接错误](http://blog.csdn.net/ztz0223/article/details/9699295)
+
 template<typename T> BridgeAbstract::Type toType() { return BridgeAbstract::Unknown; }
 
-template<> BridgeAbstract::Type toType<bool>() { return BridgeAbstract::Boolean; }
-template<> BridgeAbstract::Type toType<int>() { return BridgeAbstract::Integer; }
-template<> BridgeAbstract::Type toType<float>() { return BridgeAbstract::Float; }
-template<> BridgeAbstract::Type toType<double>() { return BridgeAbstract::Double; }
-template<> BridgeAbstract::Type toType<long>() { return BridgeAbstract::Long; }
-template<> BridgeAbstract::Type toType<long long>() { return BridgeAbstract::LongLong; }
+template<> BridgeAbstract::Type inline toType<bool>() { return BridgeAbstract::Boolean; }
+template<> BridgeAbstract::Type inline toType<int>() { return BridgeAbstract::Integer; }
+template<> BridgeAbstract::Type inline toType<float>() { return BridgeAbstract::Float; }
+template<> BridgeAbstract::Type inline toType<double>() { return BridgeAbstract::Double; }
+template<> BridgeAbstract::Type inline toType<long>() { return BridgeAbstract::Long; }
+template<> BridgeAbstract::Type inline toType<long long>() { return BridgeAbstract::LongLong; }
 
-template<> BridgeAbstract::Type toType<std::string>() { return BridgeAbstract::String; }
+template<> BridgeAbstract::Type inline toType<std::string>() { return BridgeAbstract::String; }
 
 
 // base type
@@ -34,6 +36,10 @@ public:
 
     T* operator->()
     { return d.get();}
+
+    T get() {
+        return *(d.get());
+    }
 
 protected:
     static std::pair<bool, std::shared_ptr<T> >
@@ -70,23 +76,25 @@ public:
     { }
 
     Type type() const
-    { return toType<T>(); }
+    {
+        return toType<T>();
+    }
 
+    // ASSIGN @a @b
+    // 将 b 赋值给 a
+    // 指令执行后有执行状态
     virtual Return ASSIGN(BridgeAbstract* other)                 // T(ASSIGN, "=", 2)
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d = *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::CallFail;
             }
         } else {
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
@@ -95,17 +103,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d |= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::CallFail;
             }
         } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
@@ -114,17 +118,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d ^= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::CallFail;
             }
         } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
@@ -133,17 +133,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d &= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::CallFail;
             }
         } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
@@ -152,17 +148,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d <<= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::CallFail;
             }
         } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
@@ -171,17 +163,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d >>= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
-                std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-                return Return(State::NormalCall, r_d);
+                return State::CallFail;
             }
         } else {
-            std::cout << "Unknown type" << std::endl;
-            std::shared_ptr<BridgeAbstract> r_d((BridgeAbstract*)Null.get());
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
@@ -190,11 +178,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d += *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            } else if(isComplexType(this->type())) {
-                *d += *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                return State::NormalCall;
             } else {
-                std::cout << "OBJECT type" << std::endl;
+                std::cout << "Unknown type" << std::endl;
+                return State::CallFail;
             }
+        } else {
+            return State::CallFail;
         }
     }
 
@@ -203,9 +193,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d -= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                return State::NormalCall;
             } else {
-                std::cout << "Unkonwn type" << std::endl;
+                std::cout << "Unknown type" << std::endl;
+                return State::CallFail;
             }
+        } else {
+            return State::CallFail;
         }
     }
 
@@ -214,9 +208,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d *= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                return State::NormalCall;
             } else {
-                std::cout << "Unkonwn type" << std::endl;
+                std::cout << "Unknown type" << std::endl;
+                return State::CallFail;
             }
+        } else {
+            return State::CallFail;
         }
     }
 
@@ -225,9 +223,13 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d /= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                return State::NormalCall;
             } else {
-                std::cout << "Unkonwn type" << std::endl;
+                std::cout << "Unknown type" << std::endl;
+                return State::CallFail;
             }
+        } else {
+            return State::CallFail;
         }
     }
 
@@ -236,45 +238,49 @@ public:
         if(isValid(other)) {
             if(isBaseType(this->type())) {
                 *d %= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                return State::NormalCall;
             } else {
-                std::cout << "Unkonwn type" << std::endl;
+                std::cout << "Unknown type" << std::endl;
+                return State::CallFail;
             }
-        }
-    }
-
-    virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
-    {
-        if(this == other) {
-            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
-            return Return(State::NormalCall, r_d);
-        }
-
-        if(isValid(other)) {
-            bool r = *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
-            return Return(State::NormalCall, r_d);
         } else {
-            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
-            return Return(State::NormalCall, r_d);
+            return State::CallFail;
         }
     }
 
-    virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
-    {
-        if(this == other) {
-            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
-            return Return(State::NormalCall, r_d);
-        }
+//    virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
+//    {
+//        if(this == other) {
+//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
+//            return Return(State::NormalCall, r_d);
+//        }
 
-        if(isValid(other)) {
-            bool r = *d != *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
-            return Return(State::NormalCall, r_d);
-        } else {
-            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
-            return Return(State::NormalCall, r_d);
-        }
-    }
+//        if(isValid(other)) {
+//            bool r = *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
+//            return Return(State::NormalCall, r_d);
+//        } else {
+//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
+//            return Return(State::NormalCall, r_d);
+//        }
+//    }
+
+//    virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
+//    {
+//        if(this == other) {
+//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
+//            return Return(State::NormalCall, r_d);
+//        }
+
+//        if(isValid(other)) {
+//            bool r = *d != *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
+//            return Return(State::NormalCall, r_d);
+//        } else {
+//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
+//            return Return(State::NormalCall, r_d);
+//        }
+//    }
 
 private:
     std::shared_ptr<T> d;

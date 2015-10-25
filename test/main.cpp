@@ -11,10 +11,17 @@ using namespace soften;
 int main()
 {
     BaseTypeBridge<int> i(new int(10));
+    Bridge* r = &i;
+
+    BaseTypeBridge<int> arg0(new int(20));
+    BaseTypeBridge<int> arg1(new int(20));
+
+    vector<Bridge*> args;
+    args.push_back(&arg0);
+    args.push_back(&arg1);
+
 
     Object object;
-    list<Bridge*> args;
-    Bridge* r = nullptr;
     object.callMethod("toString", args, r);
 
     cout << endl;
@@ -43,6 +50,9 @@ int main()
     p->callMethod("toString", args, r);
 
     cout << endl;
+
+    p->callMethod("add", args, r);
+    cout << i.get() << endl;
 
     return 0;
 }
