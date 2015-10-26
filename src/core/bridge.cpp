@@ -244,6 +244,12 @@ BridgeAbstract::Return Bridge::VOID(BridgeAbstract *)
 }
 
 
+string Bridge::toString() const
+{
+    return "Bridge: " + this->Object::toString();
+}
+
+
 
 }
 

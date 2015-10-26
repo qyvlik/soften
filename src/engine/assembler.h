@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iostream>
 #include "../core/metacall.h"
+#include "../core/bridge.h"
 
 namespace soften {
 
@@ -84,7 +85,13 @@ public:
 
     State compile(const std::string& assemblerFile);
 
+    State run();
+
+    //! run instrctions ASSIGN
+
     State DECLARA(const std::string lhs,const std::string& rhs);
+
+    State ASSIGN(const std::string lhs,const std::string& rhs);
 
     //@ TEST
     void test_print_instrctions() {
@@ -93,6 +100,16 @@ public:
                       << m_instructions.at(i).lhs << std::endl
                       << m_instructions.at(i).rhs << std::endl
                       << std::endl;
+        }
+    }
+
+    //@ TEST
+    void test_print_object_map() {
+        auto iter = m_objectMap.begin();
+        auto end = m_objectMap.end();
+        while(iter != end) {
+            std::cout <<  (*iter).first << " " << (*iter).second->toString() << std::endl;
+            iter++;
         }
     }
 
@@ -111,6 +128,7 @@ private:
     typedef std::pair<std::string, Bridge*> Variant;
 
     std::vector<Instruction> m_instructions;
+    int process_count;
     std::map<std::string, Bridge*> m_objectMap;
 
     std::string m_lastErrorString;
@@ -119,19 +137,6 @@ private:
     Bridge* m_cache;
 
 };
-
-template<typename T>
-T toNumber(const std::string& number_string ){
-
-    //    static_assert(!std::is_enum<T>::value, "bad");
-    //    static_assert(!std::is_class<T>::value, "bad");
-
-    T number;
-    std::stringstream stream;
-    stream << number_string;
-    stream >> number;
-    return number;
-}
 
 
 }

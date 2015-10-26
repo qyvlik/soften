@@ -23,6 +23,16 @@ std::string getObjectAddress(const T* thiz) {
 }
 
 
+
+template<typename T>
+T toNumber(const std::string& number_string ){
+    T number;
+    std::stringstream stream;
+    stream << number_string;
+    stream >> number;
+    return number;
+}
+
 }
 
 #endif // SOFTEN_H

@@ -1,5 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <set>
+#include <map>
+
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
@@ -10,13 +13,16 @@ using namespace std;
 using namespace soften;
 
 void test_bridge();
-void test_assembler();
+void test_assembler_DECLARA();
+void test_assembler_ASSIGN();
 void test_file_stream();
 void test_assembler_compiler();
+void test_set_insert();
 
 int main()
 {
-    test_assembler_compiler();
+
+    test_assembler_ASSIGN();
     return 0;
 }
 
@@ -68,7 +74,7 @@ void test_bridge()
     cout << i.get() << endl;
 }
 
-void test_assembler()
+void test_assembler_DECLARA()
 {
     Assembler assmbler;
     if(assmbler.DECLARA("name", "123") != soften::State::NormalCall) {
@@ -83,6 +89,40 @@ void test_assembler()
     } else {
         cout << "success !" << endl;
     }
+    assmbler.test_print_object_map();
+}
+
+
+void test_assembler_ASSIGN()
+{
+    Assembler assmbler;
+
+    //! DECLARA @name 123
+
+    if(assmbler.DECLARA("@name", "123") != soften::State::NormalCall) {
+        cout << "DECLARA error !" << endl;
+    } else {
+        cout << "DECLARA success !" << endl;
+    }
+
+    //! DECLARA @name1 456
+    if(assmbler.DECLARA("@name1", "456") != soften::State::NormalCall) {
+        cout << "error !" << endl;
+    } else {
+        cout << "DECLARA success !" << endl;
+    }
+
+    assmbler.test_print_object_map();
+
+    //! ASSIGN @name1 @name
+    if(assmbler.ASSIGN("@name1", "@name") != soften::State::NormalCall) {
+        cout << "ASSIGN error !" << endl;
+        cout << assmbler.lastErrorString() << endl;
+    } else {
+        cout << "ASSIGN success !" << endl;
+    }
+
+    assmbler.test_print_object_map();
 }
 
 
@@ -119,9 +159,22 @@ void test_file_stream()
     file.close();
 }
 
+
 void test_assembler_compiler()
 {
     Assembler assmbler;
     assmbler.compile("K://ass.txt");
     assmbler.test_print_instrctions();
 }
+
+
+void test_set_insert()
+{
+    set<int> int_set;
+    auto insert_result = int_set.insert(10);
+    insert_result = int_set.insert(10);
+    cout << insert_result.second << endl;
+    // 0 ==> false
+}
+
+

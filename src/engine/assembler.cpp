@@ -1,9 +1,11 @@
 #include "assembler.h"
 
+#include "../soften.h"
 #include "../core/bridge.h"
 #include "../core/basetypebridge.h"
 
 #include <fstream>
+#include <set>
 
 using namespace std;
 
@@ -18,13 +20,21 @@ Assembler::Assembler()
 
 Assembler::~Assembler()
 {
+    set<Bridge*> delete_set;
+
     auto b = m_objectMap.begin();
     auto e = m_objectMap.end();
     while( b != e) {
 
-        cout << "delete " << (*b).second << endl;
+        auto delete_result = delete_set.insert((*b).second);
 
-        delete (*b).second;
+        if(delete_result.second) {                              // 插入成功，既这个指针并未删除。
+            cout << "delete " << (*b).second << endl;
+            delete (*b).second;
+        } else {
+            cout << "mutil delte point" << (*b).second << endl;
+        }
+
         b++;
     }
     m_objectMap.clear();
@@ -44,7 +54,7 @@ Bridge *Assembler::createBridgeFromStringValue(Assembler* thiz,const string &val
             thiz->setLastErrorString("NotDefine error");
             return nullptr;
         }
-        Bridge * bridge = new BaseTypeBridge<int>();
+        Bridge* bridge = new BaseTypeBridge<int>();
 
         State s = bridge->ASSIGN((*find).second);
         if( s != State::NormalCall) {
@@ -200,6 +210,12 @@ State Assembler::compile(const string &assemblerFile)
 }
 
 
+State Assembler::run()
+{
+    return State::NormalCall;
+}
+
+
 void Assembler::setLastErrorString(const std::string &lastErrorString)
 {
     m_lastErrorString = lastErrorString;
@@ -214,17 +230,53 @@ void Assembler::setLastErrorString(const std::string &lastErrorString)
 
 State Assembler::DECLARA(const string lhs, const string &rhs)
 {
-    if(m_objectMap.find(lhs) != m_objectMap.end()) {
+    if(lhs.at(0) != '@') return State::NameError;   // haven't @
+
+    string lhs_ = lhs;
+    lhs_.erase(0, 1);                               // remove @
+
+    if(m_objectMap.find(lhs_) != m_objectMap.end()) {
         setLastErrorString("MutilDefine");
         return State::MutilDefine;
     } else {
-        Bridge* bridge = createBridgeFromStringValue(this, rhs);
+        Bridge* bridge = Assembler::createBridgeFromStringValue(this, rhs);
         if(bridge == nullptr) {
             return State::Unkonwn;
         }
-        m_objectMap.insert(Variant(lhs, bridge));
+        m_objectMap.insert(Variant(lhs_, bridge));
         return State::NormalCall;
     }
+}
+
+
+/*
+// int a  = 10;
+// int b;
+// b = a;
+
+DECLARA @a 10
+DECLARA @b 0
+ASSIGN @b @a
+*/
+
+State Assembler::ASSIGN(const string lhs, const string &rhs)
+{
+    string lhs_ = lhs;
+    lhs_.erase(0, 1);
+    string rhs_ = rhs;
+    rhs_.erase(0, 1);
+    auto targer = m_objectMap.find(lhs_);
+    auto source = m_objectMap.find(rhs_);
+    auto end = m_objectMap.end();
+
+    if(targer != end && source != end) {
+        return (*targer).second->ASSIGN((*source).second);
+    } else {
+        setLastErrorString(lhs_ + " or "+ rhs_ +" NotDefine");
+        return State::NotDefine;
+    }
+
+
 }
 
 

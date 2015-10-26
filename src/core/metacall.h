@@ -14,6 +14,7 @@ enum class State {
     ArgumentsFail,
     ReturnFail,
     CppException,
+    NameError,
     CastFail,
     TypeFail,
     CallFail,

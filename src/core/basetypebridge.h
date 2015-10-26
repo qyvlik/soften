@@ -41,6 +41,10 @@ public:
         return *(d.get());
     }
 
+    const T get() const {
+        return *(d.get());
+    }
+
 protected:
     static std::pair<bool, std::shared_ptr<T> >
     getSharedPoint(BridgeAbstract *other)
@@ -282,6 +286,10 @@ public:
 //            return Return(State::NormalCall, r_d);
 //        }
 //    }
+
+    SOFTEN_INVOKABLE std::string toString() const {
+       return std::to_string(this->get());
+    }
 
 private:
     std::shared_ptr<T> d;

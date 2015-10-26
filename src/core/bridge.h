@@ -65,10 +65,10 @@ public:
     virtual ~BridgeAbstract()
     { }
 
-    virtual Type type() const = 0;
-
     bool isValid(BridgeAbstract* other)
     { return other->type() == this->type() && this->type() != Type::Unknown; }
+
+    virtual Type type() const = 0;
 
     virtual Return ASSIGN(BridgeAbstract* other) = 0;                // T(ASSIGN, "=", 2)
 
@@ -230,6 +230,8 @@ public:
 
     // K(VOID, "void", 0)
     virtual Return VOID(BridgeAbstract* );
+
+    virtual std::string toString() const;
 };
 
 
