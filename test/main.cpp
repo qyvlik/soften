@@ -16,13 +16,14 @@ void test_bridge();
 void test_assembler_DECLARA();
 void test_assembler_ASSIGN();
 void test_assembler_cache();
+void test_assmbler_sample_run();
 void test_file_stream();
 void test_assembler_compiler();
 void test_set_insert();
 
 int main()
 {
-    test_assembler_cache();
+    test_assmbler_sample_run();
     return 0;
 }
 
@@ -73,6 +74,7 @@ void test_bridge()
     p->callMethod("add", args, r);
     cout << i.get() << endl;
 }
+
 
 void test_assembler_DECLARA()
 {
@@ -160,6 +162,17 @@ void test_assembler_cache()
 
     assmbler.test_print_cache();
 }
+
+
+void test_assmbler_sample_run()
+{
+    Assembler assmbler;
+    assmbler.compile("K://ass.txt");
+    assmbler.run();
+    cout << "error:" << assmbler.lastErrorString() << endl;
+    assmbler.test_print_object_map();
+}
+
 
 void test_file_stream()
 {

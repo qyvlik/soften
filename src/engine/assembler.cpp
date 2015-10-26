@@ -13,6 +13,7 @@ namespace soften {
 
 
 Assembler::Assembler():
+    program_counter(0),
     m_cache(nullptr)
 {
 
@@ -214,6 +215,39 @@ State Assembler::compile(const string &assemblerFile)
 
 State Assembler::run()
 {
+    program_counter = 0;
+
+    State state;
+    int instructions_count = m_instructions.size();
+
+
+
+    while(program_counter < instructions_count) {
+        switch(m_instructions[program_counter].operation)
+        {
+        case OP_ASSIGN:
+        {
+            state = this->ASSIGN(m_instructions[program_counter].lhs,
+                                 m_instructions[program_counter].rhs);
+        }
+            if(state != State::NormalCall) return state;
+            break;
+
+        case OP_DECLARA:
+        {
+            cout << "-------------" << endl;
+            state = this->DECLARA(m_instructions[program_counter].lhs,
+                                  m_instructions[program_counter].rhs);
+            if(state != State::NormalCall) return state;
+        }
+            break;
+
+        default: return State::Unkonwn;
+        }
+
+        program_counter++;
+    }
+
     return State::NormalCall;
 }
 

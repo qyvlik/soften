@@ -140,7 +140,7 @@ private:
     typedef std::pair<std::string, Bridge*> Variant;
 
     std::vector<Instruction> m_instructions;
-    int process_count;
+    int program_counter;                                // 程序计数器
     std::map<std::string, Bridge*> m_objectMap;
 
     std::string m_lastErrorString;
