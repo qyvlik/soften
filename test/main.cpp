@@ -15,14 +15,14 @@ using namespace soften;
 void test_bridge();
 void test_assembler_DECLARA();
 void test_assembler_ASSIGN();
+void test_assembler_cache();
 void test_file_stream();
 void test_assembler_compiler();
 void test_set_insert();
 
 int main()
 {
-
-    test_assembler_ASSIGN();
+    test_assembler_cache();
     return 0;
 }
 
@@ -125,6 +125,41 @@ void test_assembler_ASSIGN()
     assmbler.test_print_object_map();
 }
 
+
+void test_assembler_cache()
+{
+    Assembler assmbler;
+
+    //! DECLARA @name 123
+
+    if(assmbler.DECLARA("@name", "123") != soften::State::NormalCall) {
+        cout << "DECLARA error !" << endl;
+    } else {
+        cout << "DECLARA success !" << endl;
+    }
+
+    assmbler.test_print_cache();
+
+    //! DECLARA @name1 456
+    if(assmbler.DECLARA("@name1", "456") != soften::State::NormalCall) {
+        cout << "error !" << endl;
+    } else {
+        cout << "DECLARA success !" << endl;
+    }
+
+    assmbler.test_print_cache();
+
+    //! ASSIGN @name1 @notdefine
+    //! NotDefine Error
+    if(assmbler.ASSIGN("@name1", "@notdefine") != soften::State::NormalCall) {
+        cout << "ASSIGN error !" << endl;
+        cout << assmbler.lastErrorString() << endl;
+    } else {
+        cout << "ASSIGN success !" << endl;
+    }
+
+    assmbler.test_print_cache();
+}
 
 void test_file_stream()
 {

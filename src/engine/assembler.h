@@ -93,6 +93,8 @@ public:
 
     State ASSIGN(const std::string lhs,const std::string& rhs);
 
+
+
     //@ TEST
     void test_print_instrctions() {
         for(unsigned int i=0; i< m_instructions.size(); i++) {
@@ -110,6 +112,16 @@ public:
         while(iter != end) {
             std::cout <<  (*iter).first << " " << (*iter).second->toString() << std::endl;
             iter++;
+        }
+    }
+
+    //@ TEST
+    void test_print_cache() {
+        if(m_cache) {
+            std::cout << m_cache->toString() << std::endl;
+        } else {
+            std::cout << "error: " << std::endl;
+            std::cout << this->lastErrorString() << std::endl;
         }
     }
 

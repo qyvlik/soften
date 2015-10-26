@@ -12,7 +12,8 @@ using namespace std;
 namespace soften {
 
 
-Assembler::Assembler()
+Assembler::Assembler():
+    m_cache(nullptr)
 {
 
 }
@@ -38,6 +39,7 @@ Assembler::~Assembler()
         b++;
     }
     m_objectMap.clear();
+    m_cache = nullptr;
 }
 
 
@@ -149,7 +151,7 @@ Assembler::Instruction Assembler::createInstruction(const string &operation,
         return Instruction(OP_GOTO, lhs, rhs);
     } else if(operation == "NEW") {
         return Instruction(OP_NEW, lhs, rhs);
-    } else if(operation == "oush") {
+    } else if(operation == "PUSH") {
         return Instruction(OP_PUSH, lhs, rhs);
 
     } else {
@@ -237,13 +239,19 @@ State Assembler::DECLARA(const string lhs, const string &rhs)
 
     if(m_objectMap.find(lhs_) != m_objectMap.end()) {
         setLastErrorString("MutilDefine");
+        m_cache = nullptr;
         return State::MutilDefine;
     } else {
         Bridge* bridge = Assembler::createBridgeFromStringValue(this, rhs);
         if(bridge == nullptr) {
+            m_cache = nullptr;
             return State::Unkonwn;
         }
         m_objectMap.insert(Variant(lhs_, bridge));
+
+        // 指令执行后有状态值和返回值
+        m_cache = bridge;
+
         return State::NormalCall;
     }
 }
@@ -270,13 +278,18 @@ State Assembler::ASSIGN(const string lhs, const string &rhs)
     auto end = m_objectMap.end();
 
     if(targer != end && source != end) {
+
+        // 指令执行后有状态值和返回值
+        m_cache = (*targer).second;
         return (*targer).second->ASSIGN((*source).second);
     } else {
         setLastErrorString(lhs_ + " or "+ rhs_ +" NotDefine");
+
+        // 指令执行后有状态值和返回值
+        m_cache = nullptr;
+
         return State::NotDefine;
     }
-
-
 }
 
 
