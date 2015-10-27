@@ -11,6 +11,7 @@ namespace soften {
 enum class State {
     NormalCall = 0,
     MethodNotFound,
+    LabelFail,
     ArgumentsFail,
     ReturnFail,
     CppException,
@@ -21,6 +22,7 @@ enum class State {
     MutilDefine,
     NotDefine,
     FileError,
+    CacheEmpty,
     Unkonwn
 };
 

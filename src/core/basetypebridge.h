@@ -242,6 +242,8 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
+
+                // TODO: NullPointException
                 *d %= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
                 return State::NormalCall;
             } else {

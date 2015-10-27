@@ -89,10 +89,11 @@ public:
 
     //! run instrctions ASSIGN
 
-    State DECLARA(const std::string lhs,const std::string& rhs);
+    State DECLARA(const std::string& lhs,const std::string& rhs);
 
-    State ASSIGN(const std::string lhs,const std::string& rhs);
+    State ASSIGN(const std::string& lhs,const std::string& rhs);
 
+    State GOTO(const std::string& lhs, const std::string& rhs);
 
 
     //@ TEST
@@ -125,6 +126,13 @@ public:
         }
     }
 
+    //@ TEST
+    void test_print_labels() {
+        for(unsigned int i=0; i<m_labels.size(); i++) {
+            std::cout << "m_labels[" << i << "]: " << m_labels[i] << std::endl;
+        }
+    }
+
 protected:
 
     void setLastErrorString(const std::string &lastErrorString);
@@ -139,8 +147,9 @@ private:
 
     typedef std::pair<std::string, Bridge*> Variant;
 
-    std::vector<Instruction> m_instructions;
-    int program_counter;                                // 程序计数器
+    std::vector<Instruction> m_instructions;            // 汇编集
+    std::vector<int> m_labels;                          // 保存 label 对应的汇编集行号
+    int m_program_counter;                              // 程序计数器
     std::map<std::string, Bridge*> m_objectMap;
 
     std::string m_lastErrorString;

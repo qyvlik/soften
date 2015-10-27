@@ -13,7 +13,7 @@ namespace soften {
 
 
 Assembler::Assembler():
-    program_counter(0),
+    m_program_counter(0),
     m_cache(nullptr)
 {
 
@@ -155,7 +155,11 @@ Assembler::Instruction Assembler::createInstruction(const string &operation,
     } else if(operation == "PUSH") {
         return Instruction(OP_PUSH, lhs, rhs);
 
-    } else {
+        // Label 标签 从 0 开始计数
+    } else if(operation == "LABEL") {
+        return Instruction(OP_LABEL, lhs, rhs);
+    }
+    else {
         return Instruction(OP_UNKNOWN, lhs, rhs);
     }
 }
@@ -189,6 +193,7 @@ State Assembler::compile(const string &assemblerFile)
     string operation;
     string rhs;
     int length;
+    int count = 0;
 
     while(std::getline(file, single_instruction)) {
         length = single_instruction.length();
@@ -205,6 +210,14 @@ State Assembler::compile(const string &assemblerFile)
         rhs.assign(single_instruction, pos1+1, length-pos1-1);
 
         m_instructions.push_back(Assembler::createInstruction(operation, lhs,rhs));
+
+        // 如果是标签
+        if(m_instructions.back().operation == OP_LABEL) {
+            // 记下标签的汇编集行号 - 1
+            m_labels.push_back(count);
+            cout << "compile: label[" << m_labels.size() << "] : " << count << endl;
+        }
+        count++;
     }
 
     file.close();
@@ -215,37 +228,50 @@ State Assembler::compile(const string &assemblerFile)
 
 State Assembler::run()
 {
-    program_counter = 0;
+    m_program_counter = 0;
 
     State state;
     int instructions_count = m_instructions.size();
 
-
-
-    while(program_counter < instructions_count) {
-        switch(m_instructions[program_counter].operation)
+    while(m_program_counter < instructions_count) {
+        switch(m_instructions[m_program_counter].operation)
         {
         case OP_ASSIGN:
         {
-            state = this->ASSIGN(m_instructions[program_counter].lhs,
-                                 m_instructions[program_counter].rhs);
-        }
+            state = this->ASSIGN(m_instructions[m_program_counter].lhs,
+                                 m_instructions[m_program_counter].rhs);
             if(state != State::NormalCall) return state;
+        }
             break;
 
         case OP_DECLARA:
         {
-            cout << "-------------" << endl;
-            state = this->DECLARA(m_instructions[program_counter].lhs,
-                                  m_instructions[program_counter].rhs);
+            state = this->DECLARA(m_instructions[m_program_counter].lhs,
+                                  m_instructions[m_program_counter].rhs);
             if(state != State::NormalCall) return state;
+        }
+            break;
+
+
+            //        case OP_LABEL:
+            //        {
+            //        }
+            //            break;
+
+        case OP_GOTO:
+        {
+            state = this->GOTO(m_instructions[m_program_counter].lhs,
+                               m_instructions[m_program_counter].rhs);
+            // GOTO will set the m_program_counter;
+            if(state != State::NormalCall) return state;
+            continue;
         }
             break;
 
         default: return State::Unkonwn;
         }
 
-        program_counter++;
+        m_program_counter++;
     }
 
     return State::NormalCall;
@@ -264,7 +290,7 @@ void Assembler::setLastErrorString(const std::string &lastErrorString)
  * DECLARA @name "string and string"
 */
 
-State Assembler::DECLARA(const string lhs, const string &rhs)
+State Assembler::DECLARA(const string &lhs, const string &rhs)
 {
     if(lhs.at(0) != '@') return State::NameError;   // haven't @
 
@@ -301,7 +327,7 @@ DECLARA @b 0
 ASSIGN @b @a
 */
 
-State Assembler::ASSIGN(const string lhs, const string &rhs)
+State Assembler::ASSIGN(const string& lhs, const string &rhs)
 {
     string lhs_ = lhs;
     lhs_.erase(0, 1);
@@ -324,6 +350,60 @@ State Assembler::ASSIGN(const string lhs, const string &rhs)
 
         return State::NotDefine;
     }
+}
+
+
+// GOTO TRUE 1:2
+// LABEL 1 :
+// DECLARA @name1 1
+// GOTO TRUE 3:3
+// LABEL 2 :
+// DECLARA @name2 1
+// GOTO TRUE 3:3
+// LABEL 3 :
+
+
+State Assembler::GOTO(const string &lhs, const string &rhs)
+{
+    // @name
+    // $CACHE
+    // TRUE OR FALSE
+    // NUMBER
+
+    string label1;
+    string label2;
+
+    // 1:2
+    // 100:200
+    int pos = rhs.find(':', 0);                     // ':' pos
+
+    label1.assign(rhs, 0, pos);
+    label2.assign(rhs, pos+1, rhs.length()-pos-1);
+
+
+    if(lhs == "TRUE") {
+        unsigned int label_one = std::stoi(label1);                  // 汇编集中第几行的索引
+        if(label_one <= m_labels.size()) {
+//            cout << "label_one: " << label_one << endl;
+//            cout << "m_labels[label_one]: " <<  m_labels[label_one] << endl;
+            m_program_counter = m_labels[label_one] + 1;
+            return State::NormalCall;
+        } else {
+            setLastErrorString("label not found");
+            return State::LabelFail;
+        }
+    } else {
+        unsigned int label_two = std::stoi(label2);
+        if(label_two <= m_labels.size()) {
+            m_program_counter = m_labels[label_two] + 1;
+            return State::NormalCall;
+        } else {
+            setLastErrorString("label not found");
+            return State::LabelFail;
+        }
+    }
+
+    return State::NormalCall;
 }
 
 

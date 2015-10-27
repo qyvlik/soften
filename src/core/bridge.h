@@ -107,7 +107,6 @@ public:
     virtual Return GT(BridgeAbstract* other) = 0;                    // T(GT, ">", 10)
     virtual Return LTE(BridgeAbstract* other) = 0;                   // T(LTE, "<=", 10)
     virtual Return GTE(BridgeAbstract* other) = 0;                   // T(GTE, ">=", 10)
-    // virtual Return INSTANCEOF(BridgeAbstract* other) = 0;            // K(INSTANCEOF, "instanceof", 10)
 
     virtual Return IN(BridgeAbstract* other) = 0;                    // K(IN, "in", 10)
     virtual Return NOT(BridgeAbstract* other) = 0;                   // T(NOT, "!", 0)
@@ -120,6 +119,7 @@ public:
 class Bridge : virtual public BridgeAbstract
 {
     SOFTEN_OBJECT(Bridge, Object);
+
 public:
     explicit Bridge();
     virtual ~Bridge();

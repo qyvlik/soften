@@ -33,6 +33,7 @@ int callMethod(D* thiz, const std::string& methodName,
                std::vector<soften::Bridge*> args, soften::Bridge* r) {
     //! 静态检查
     static_assert(std::is_base_of<B, D>::value, "E10: is not base");
+    static_assert(std::is_base_of<soften::Object, D>::value, "E10: is not base");
 
     auto c = thiz->metaCall.methods.find(methodName);
     auto end = thiz->metaCall.methods.end();
