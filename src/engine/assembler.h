@@ -95,6 +95,8 @@ public:
 
     State GOTO(const std::string& lhs, const std::string& rhs);
 
+    State PUSH(const std::string& lhs, const std::string& rhs);
+
 
     //@ TEST
     void test_print_instrctions() {
@@ -133,6 +135,13 @@ public:
         }
     }
 
+    // @ TEST
+    void test_print_arguments() {
+        for(unsigned int i=0; i<m_arguments.size(); i++) {
+            std::cout << "arguments[" << i << "]: " << m_arguments[i]->toString() << std::endl;
+        }
+    }
+
 protected:
 
     void setLastErrorString(const std::string &lastErrorString);
@@ -154,6 +163,7 @@ private:
 
     std::string m_lastErrorString;
 
+    // std::vector<Variant> // it well better
     std::vector<Bridge*> m_arguments;
     Bridge* m_cache;
 

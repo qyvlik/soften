@@ -252,6 +252,14 @@ State Assembler::run()
         }
             break;
 
+        case OP_PUSH:
+        {
+            state = this->PUSH(m_instructions[m_program_counter].lhs,
+                               m_instructions[m_program_counter].rhs);
+            if(state != State::NormalCall) return state;
+        }
+            break;
+
         case OP_GOTO:
         {
             state = this->GOTO(m_instructions[m_program_counter].lhs,
@@ -378,8 +386,8 @@ State Assembler::GOTO(const string &lhs, const string &rhs)
     if(lhs == "TRUE") {
         unsigned int label_one = std::stoi(label1);                  // 汇编集中第几行的索引
         if(label_one <= m_labels.size()) {
-//            cout << "label_one: " << label_one << endl;
-//            cout << "m_labels[label_one]: " <<  m_labels[label_one] << endl;
+            //            cout << "label_one: " << label_one << endl;
+            //            cout << "m_labels[label_one]: " <<  m_labels[label_one] << endl;
             m_program_counter = m_labels[label_one] + 1;
             return State::NormalCall;
         } else {
@@ -398,6 +406,44 @@ State Assembler::GOTO(const string &lhs, const string &rhs)
     }
 
     return State::NormalCall;
+}
+
+
+// PUSH $ARGUMENTS @name
+// PUSH $ARGUMENTS $CACHE
+
+State Assembler::PUSH(const string &lhs, const string &rhs)
+{
+    if(lhs == "$ARGUMENTS") {
+        if(rhs.at(0) == '@') {
+            string _rhs = rhs;
+            _rhs.erase(0, 1);
+
+            auto source = m_objectMap.find(_rhs);
+            auto end = m_objectMap.end();
+
+            if(source != end) {
+                this->m_arguments.push_back((*source).second);
+                return State::NormalCall;
+            } else {
+                setLastErrorString(rhs + "Not Define");
+                return State::NotDefine;
+            }
+        } else if(rhs == "$CACHE") {
+            if(this->m_cache) {
+                this->m_arguments.push_back(this->m_cache);
+                return State::NormalCall;
+            } else {
+                return State::CacheEmpty;
+            }
+        } else {
+            setLastErrorString(rhs + "Not Define");
+            return State::NotDefine;
+        }
+    } else {
+        setLastErrorString(lhs + "Not Define");
+        return State::NotDefine;
+    }
 }
 
 
