@@ -33,11 +33,11 @@ int main()
 
 void test_bridge()
 {
-    BaseTypeBridge<int> i(new int(10));
+    BaseTypeBridge<int> i(10);
     Bridge* r = &i;
 
-    BaseTypeBridge<int> arg0(new int(20));
-    BaseTypeBridge<int> arg1(new int(20));
+    BaseTypeBridge<int> arg0(20);
+    BaseTypeBridge<int> arg1(20);
 
     vector<Bridge*> args;
     args.push_back(&arg0);

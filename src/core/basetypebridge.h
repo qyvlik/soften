@@ -32,43 +32,30 @@ class BaseTypeBridge : public Bridge
 
 public:
     friend std::ostream& operator << (std::ostream& os, const BaseTypeBridge& obj)
-    { return os << "(" << obj.d.get() << ", " << *obj.d.get() << ")"; }
-
-    T* operator->()
-    { return d.get();}
+    { return os << "(" << obj.data<< ")"; }
 
     T get() {
-        return *(d.get());
+        return this->data;
     }
 
     const T get() const {
-        return *(d.get());
+        return this->data;
     }
 
-protected:
-    static std::pair<bool, std::shared_ptr<T> >
-    getSharedPoint(BridgeAbstract *other)
-    {
-        BaseTypeBridge<T>* p = dynamic_cast<BaseTypeBridge<T>*>(other);
-        return std::pair<bool, std::shared_ptr<T> >
-                (p != nullptr,
-                 p != nullptr ? p->d : Null);
-    }
 public:
-    explicit BaseTypeBridge():
-        d(new T)
+    explicit BaseTypeBridge()
     { }
 
-    BaseTypeBridge(T* thiz ):
-        d(thiz)
+    explicit BaseTypeBridge(const T& data):
+        data(data)
     { }
 
     BaseTypeBridge(const BaseTypeBridge& other)
-        : d(other.d)
+        : data(other.data)
     { }
 
     BaseTypeBridge& operator=(const BaseTypeBridge& other) {
-        this->d = other.d;
+        this->data = other.data;
         return *this;
     }
 
@@ -76,13 +63,11 @@ public:
     { }
 
     BaseTypeBridge(BaseTypeBridge&& other)
-        : d(other.d)
+        : data(other.data)
     { }
 
     Type type() const
-    {
-        return toType<T>();
-    }
+    { return toType<T>(); }
 
     // ASSIGN @a @b
     // 将 b 赋值给 a
@@ -92,7 +77,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d = *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data = dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -107,7 +92,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d |= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data |= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -122,7 +107,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d ^= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data ^= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -137,7 +122,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d &= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data &= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -152,7 +137,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d <<= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data <<= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -167,7 +152,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d >>= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data >>= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -182,7 +167,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d += *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+               this->data += dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -197,7 +182,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d -= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data -= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -212,7 +197,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d *= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data *= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -227,7 +212,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-                *d /= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data /= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -244,7 +229,7 @@ public:
             if(isBaseType(this->type())) {
 
                 // TODO: NullPointException
-                *d %= *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+                this->data %= dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -294,11 +279,8 @@ public:
     }
 
 private:
-    std::shared_ptr<T> d;
-    static std::shared_ptr<T> Null;
+    T data;
 };
-
-template<typename T> std::shared_ptr<T> BaseTypeBridge<T>::Null;
 
 
 }

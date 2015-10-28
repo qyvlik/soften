@@ -48,7 +48,7 @@ Bridge *Assembler::createBridgeFromStringValue(Assembler* thiz,const string &val
 {
     if(isalnum( value.at(0)) ) {
         int n = toNumber<int>(value);
-        return new BaseTypeBridge<int>(new int(n));
+        return new BaseTypeBridge<int>(n);
     } else if(value.at(0) == '@') {
         string rhs_t = value;
         rhs_t.erase(0, 1);              // remove @
@@ -158,8 +158,8 @@ Assembler::Instruction Assembler::createInstruction(const string &operation,
         // Label 标签 从 0 开始计数
     } else if(operation == "LABEL") {
         return Instruction(OP_LABEL, lhs, rhs);
-    }
-    else {
+
+    } else {
         return Instruction(OP_UNKNOWN, lhs, rhs);
     }
 }
@@ -209,7 +209,7 @@ State Assembler::compile(const string &assemblerFile)
 
         rhs.assign(single_instruction, pos1+1, length-pos1-1);
 
-        m_instructions.push_back(Assembler::createInstruction(operation, lhs,rhs));
+        m_instructions.push_back(Assembler::createInstruction(operation, lhs, rhs));
 
         // 如果是标签
         if(m_instructions.back().operation == OP_LABEL) {
@@ -251,12 +251,6 @@ State Assembler::run()
             if(state != State::NormalCall) return state;
         }
             break;
-
-
-            //        case OP_LABEL:
-            //        {
-            //        }
-            //            break;
 
         case OP_GOTO:
         {

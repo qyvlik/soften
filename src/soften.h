@@ -23,7 +23,6 @@ std::string getObjectAddress(const T* thiz) {
 }
 
 
-
 template<typename T>
 T toNumber(const std::string& number_string ){
     T number;

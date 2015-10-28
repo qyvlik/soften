@@ -27,7 +27,7 @@ MyObject::Meta MyObject::metaCall = {
 
                 int result = thiz->add(arg0->get(), arg1->get());
 
-                soften::BaseTypeBridge<int> ret(new int(result));
+                soften::BaseTypeBridge<int> ret(result);
 
                 if(r->ASSIGN(&ret) != soften::State::NormalCall) {
                     return (int)soften::State::ReturnFail;

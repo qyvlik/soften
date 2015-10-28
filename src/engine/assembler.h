@@ -87,7 +87,7 @@ public:
 
     State run();
 
-    //! run instrctions ASSIGN
+    //! run instrctions
 
     State DECLARA(const std::string& lhs,const std::string& rhs);
 
@@ -148,7 +148,7 @@ private:
     typedef std::pair<std::string, Bridge*> Variant;
 
     std::vector<Instruction> m_instructions;            // 汇编集
-    std::vector<int> m_labels;                          // 保存 label 对应的汇编集行号
+    std::vector<int> m_labels;                          // 保存 label 号对应的汇编集行号
     int m_program_counter;                              // 程序计数器
     std::map<std::string, Bridge*> m_objectMap;
 
