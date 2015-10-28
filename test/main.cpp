@@ -3,11 +3,15 @@
 #include <set>
 #include <map>
 
+#include <typeinfo>
+
+#include "function_meta/function_meta.h"
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
 #include "../src/core/bridge.h"
 #include "../src/engine/assembler.h"
+#include "../src/core/functionmeta.h"
 
 using namespace std;
 using namespace soften;
@@ -23,12 +27,13 @@ void test_assembler_sample_GOTO();
 void test_assembler_GOTO_LABEL();
 void test_assembler_PUSH_ARGUEMNTS();
 void test_assembler_CALL();
+void test_function_meta();
 void test_file_stream();
 void test_set_insert();
 
 int main()
 {
-    test_assembler_CALL();
+    test_function_meta();
     return 0;
 }
 
@@ -291,3 +296,19 @@ void test_set_insert()
 }
 
 
+void z1(int, int){}
+typedef void(*z2)(int, int);
+typedef void(*z3)();
+typedef void(*z4)(void);
+
+void test_function_meta()
+{
+    cout << FunctionMeta<decltype (z1)>::value << endl;         // 2
+    cout << FunctionMeta<z2>::value << endl;                    // 2
+    cout << FunctionMeta<z3>::value << endl;                    // 0
+    cout << FunctionMeta<z4>::value <<  endl;                   // 1
+
+    typedef std::tuple_element<0, FunctionMeta<decltype (z1)>::ArgsTypeTuple >::type Type_Int;
+    Type_Int i = 0;
+    cout << i << endl;
+}
