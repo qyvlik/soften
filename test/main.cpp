@@ -221,6 +221,8 @@ void test_assembler_CALL()
     if(assmbler.run() != State::NormalCall) {
         cout << "--------------" << endl
              << "assmbler run has error" << endl;
+        cout << "error:" << assmbler.lastErrorString() << endl;
+        return ;
     }
     assmbler.test_print_arguments();
     cout << "error:" << assmbler.lastErrorString() << endl;

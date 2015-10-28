@@ -1,0 +1,5 @@
+DECLARA @object 0
+DECLARA @argument 2
+
+PUSH $ARGUMENTS @argument
+CALL @object@log $ARGUMENTS
