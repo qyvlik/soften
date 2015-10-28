@@ -26,13 +26,12 @@ template<typename T>
 class BaseTypeBridge : public Bridge
 {
     //! static check
-    static_assert(std::is_integral<T>::value, "type is not baseType");
+    // static_assert(std::is_integral<T>::value, "type is not baseType");
     static_assert(!std::is_class<T>::value, "type is not baseType");
     static_assert(!std::is_union<T>::value, "type is not baseType");
+    static_assert(!std::is_pointer<T>::value, "type is not baseType");
 
 public:
-    friend std::ostream& operator << (std::ostream& os, const BaseTypeBridge& obj)
-    { return os << "(" << obj.data<< ")"; }
 
     T get() {
         return this->data;
