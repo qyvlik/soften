@@ -1,6 +1,9 @@
 #include "myobject.h"
 #include "../../src/core/bridge.h"
 #include "../../src/core/basetypebridge.h"
+#include "../../src/core/functionmeta.h"
+
+using namespace soften;
 
 MyObject::Meta MyObject::metaCall = {
     {
@@ -17,9 +20,16 @@ MyObject::Meta MyObject::metaCall = {
             "add",
             [](MyObject* thiz, std::vector<soften::Bridge*> args, soften::Bridge* r) -> int {
                 // int(int, int);
+
+
                 if(args.size() < 2) return (int)soften::State::ArgumentsFail;
-                soften::BaseTypeBridge<int>* arg0 = dynamic_cast<soften::BaseTypeBridge<int>*>(args[0]);
-                soften::BaseTypeBridge<int>* arg1 = dynamic_cast<soften::BaseTypeBridge<int>*>(args[1]);
+
+//                int arguemnts_count = FunctionMeta<decltype(MyObject::ASSIGN)>::value;
+//                typedef std::tuple_element<0, FunctionMeta<decltype(MyObject::ASSIGN)>::ArgsTypeTuple >::type type0;
+//                BaseTypeBridge<type0>* arg0 = dynamic_cast<soften::BaseTypeBridge<type0>*>(args[0]);
+
+                BaseTypeBridge<int>* arg0 = dynamic_cast<soften::BaseTypeBridge<int>*>(args[0]);
+                BaseTypeBridge<int>* arg1 = dynamic_cast<soften::BaseTypeBridge<int>*>(args[1]);
 
                 if(arg0 == nullptr || arg1 == nullptr) {
                     return (int)soften::State::ArgumentsFail;

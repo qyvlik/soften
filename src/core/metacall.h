@@ -41,7 +41,8 @@ public:
         if(c != end) {
             return (*c).second;
         } else {
-            return [](T* , std::vector<Bridge*>, Bridge*) -> int { return (int)State::MethodNotFound; };
+            return [](T* , std::vector<Bridge*>, Bridge*) -> int
+            { return (int)State::MethodNotFound; };
         }
     }
 
