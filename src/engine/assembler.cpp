@@ -16,7 +16,6 @@ Assembler::Assembler():
     m_program_counter(0),
     m_cache(nullptr)
 {
-
 }
 
 
@@ -159,6 +158,9 @@ Assembler::Instruction Assembler::createInstruction(const string &operation,
     } else if(operation == "LABEL") {
         return Instruction(OP_LABEL, lhs, rhs);
 
+    } else if(operation == "CALL") {
+        return Instruction(OP_CALL, lhs, rhs);
+
     } else {
         return Instruction(OP_UNKNOWN, lhs, rhs);
     }
@@ -248,6 +250,14 @@ State Assembler::run()
         {
             state = this->DECLARA(m_instructions[m_program_counter].lhs,
                                   m_instructions[m_program_counter].rhs);
+            if(state != State::NormalCall) return state;
+        }
+            break;
+
+        case OP_CALL:
+        {
+            state = this->CALL(m_instructions[m_program_counter].lhs,
+                               m_instructions[m_program_counter].rhs);
             if(state != State::NormalCall) return state;
         }
             break;
@@ -443,6 +453,52 @@ State Assembler::PUSH(const string &lhs, const string &rhs)
     } else {
         setLastErrorString(lhs + "Not Define");
         return State::NotDefine;
+    }
+}
+
+
+// cpp_object.cpp_native_function();
+// ASSIGN $ARGUMENTS $NULL
+// CALL @cpp_object@cpp_native_function $ARGUMENTS
+// ASSIGN $ARGUMENTS $NULL
+
+
+State Assembler::CALL(const string &lhs, const string &rhs)
+{
+    string _lhs = lhs;
+    if(_lhs.at(0) != '@') {
+        setLastErrorString(_lhs + "Bad Name");
+        return State::NameError;
+    } else {
+        _lhs.erase(0, 1);
+        string::size_type pos = _lhs.find('@');
+        if(pos == string::npos) {
+            setLastErrorString(lhs + " Method Not Found");
+            return State::MethodNotFound;
+        } else {
+            string objectName;
+            objectName.assign(_lhs, 0, pos);
+            string methodName;
+            methodName.assign(lhs, pos+2, lhs.length()-pos-1);
+
+//            cout << "============" << endl
+//                 << "methodName: " << methodName << endl;
+
+            auto object = m_objectMap.find(objectName);
+            auto end = m_objectMap.end();
+            if(object != end) {
+                if(rhs == "$ARGUMENTS") {
+                    return (State)(*object).second->
+                            callMethod(methodName, this->m_arguments, this->m_cache);
+                } else {
+                    setLastErrorString(rhs + " Not Define");
+                    return State::NotDefine;
+                }
+            } else {
+                setLastErrorString(objectName + " Not Define");
+                return State::NotDefine;
+            }
+        }
     }
 }
 

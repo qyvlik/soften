@@ -22,12 +22,13 @@ void test_assembler_label();
 void test_assembler_sample_GOTO();
 void test_assembler_GOTO_LABEL();
 void test_assembler_PUSH_ARGUEMNTS();
+void test_assembler_CALL();
 void test_file_stream();
 void test_set_insert();
 
 int main()
 {
-    test_assembler_PUSH_ARGUEMNTS();
+    test_assembler_CALL();
     return 0;
 }
 
@@ -204,6 +205,19 @@ void test_assembler_PUSH_ARGUEMNTS()
 {
     Assembler assmbler;
     assmbler.compile("K://ass-push-arguments.txt");
+    if(assmbler.run() != State::NormalCall) {
+        cout << "--------------" << endl
+             << "assmbler run has error" << endl;
+    }
+    assmbler.test_print_arguments();
+    cout << "error:" << assmbler.lastErrorString() << endl;
+}
+
+
+void test_assembler_CALL()
+{
+    Assembler assmbler;
+    assmbler.compile("K://ass-call-object-method.txt");
     if(assmbler.run() != State::NormalCall) {
         cout << "--------------" << endl
              << "assmbler run has error" << endl;

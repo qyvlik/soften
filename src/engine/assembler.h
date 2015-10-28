@@ -62,6 +62,7 @@ public:
         OP_NEW,
         OP_PUSH,
         OP_LABEL,                       // 标签
+        OP_CALL,
         OP_UNKNOWN
     };
 
@@ -96,6 +97,8 @@ public:
     State GOTO(const std::string& lhs, const std::string& rhs);
 
     State PUSH(const std::string& lhs, const std::string& rhs);
+
+    State CALL(const std::string& lhs, const std::string& rhs);
 
 
     //@ TEST

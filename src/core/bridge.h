@@ -232,6 +232,8 @@ public:
     virtual Return VOID(BridgeAbstract* );
 
     virtual std::string toString() const;
+
+    SOFTEN_INVOKABLE void log(Bridge*);
 };
 
 

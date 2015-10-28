@@ -9,9 +9,13 @@ Bridge::Meta Bridge::metaCall =
 {
     {
         pair<const string, Bridge::Meta::Call>(
-        "null",
-        [](Bridge* , std::vector<Bridge*>, Bridge*)->int{
-            cout << "null";
+        "log",
+        [](Bridge* thiz, std::vector<Bridge*> args, Bridge*)->int{
+
+            // void(Bridge*)
+            if(args.empty()) return (int)State::ArgumentsFail;
+
+            thiz->log(args[0]);
             return (int)soften::State::NormalCall;
         })
     }
@@ -247,6 +251,14 @@ BridgeAbstract::Return Bridge::VOID(BridgeAbstract *)
 string Bridge::toString() const
 {
     return "Bridge: " + this->Object::toString();
+}
+
+void Bridge::log(Bridge * bridge)
+{
+    cout << "--------------------" << endl;
+    cout << "here is the log method" << endl;
+    cout << bridge->toString() << endl;
+    cout << "--------------------" << endl;
 }
 
 

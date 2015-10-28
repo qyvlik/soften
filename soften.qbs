@@ -14,6 +14,7 @@ CppApplication {
         "src/engine/assembler.cpp",
         "src/engine/assembler.h",
         "src/soften.h",
+
         "test/main.cpp",
         "test/polymorphism/myobject.cpp",
         "test/polymorphism/myobject.h",
