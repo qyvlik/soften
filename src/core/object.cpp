@@ -33,19 +33,17 @@ Object::~Object()
 int Object::callMethod(const string &methodName, std::vector<Bridge *> args, Bridge *r)
 {
     return Object::metaCall.findMethod(methodName)(this, args, r);
-
 }
 
 
-std::string Object::toString() const
+string Object::toString() const
 {
-    std::string thiz = ::soften::getObjectAddress<Object>(this);
-    std::string s("(Object");
+    string thiz = ::soften::getObjectAddress<Object>(this);
+    string s("(Object");
 
     return thiz.empty()
             ? s +  ")"
             : s + ", " + thiz + ")";
-
 }
 
 

@@ -3,9 +3,10 @@
 #include <set>
 #include <map>
 
+#include <locale>
+#include <bits/codecvt.h>
 #include <typeinfo>
 
-#include "function_meta/function_meta.h"
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
@@ -31,9 +32,27 @@ void test_function_meta();
 void test_file_stream();
 void test_set_insert();
 
-int main()
+#include "gel/stxutif.h"
+#include <iconv.h>
+//! [iconv 文件编码转换](http://www.cnblogs.com/xuxm2007/archive/2010/11/09/1872379.html)
+
+void test_utf()
 {
-    test_function_meta();
+    std::locale utf8_locale(std::locale(), new gel::stdx::utf8cvt<true>);
+    wstring str = L"你好!";
+    wfstream f;
+    f.imbue(utf8_locale);
+    f.open("k:\\utf-8.txt", ios_base::app);
+    cout << f.is_open() << endl;
+    f << str;
+    cout << str.size() << endl;
+}
+
+int main(
+        // int argc, const char* argv[]
+        )
+{
+    test_utf();
     return 0;
 }
 
@@ -313,3 +332,4 @@ void test_function_meta()
     Type_Int i = 0;
     cout << i << endl;
 }
+

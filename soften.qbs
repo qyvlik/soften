@@ -14,12 +14,14 @@ CppApplication {
         "src/engine/assembler.cpp",
         "src/engine/assembler.h",
         "src/soften.h",
-        // "test/function_meta/function_meta.h",
+        "test/gel/gel.cpp",
+        "test/gel/stxutif.h",
         "test/main.cpp",
         "test/polymorphism/myobject.cpp",
         "test/polymorphism/myobject.h",
         "test/polymorphism/myobjectchild.cpp",
         "test/polymorphism/myobjectchild.h",
+        // "test/tester.h",
     ]
 
     cpp.cxxFlags:"-std=c++11"
