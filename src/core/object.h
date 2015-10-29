@@ -1,10 +1,6 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <functional>
-#include <map>
-#include <list>
-
 #include "../soften.h"
 #include "metacall.h"
 

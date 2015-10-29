@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <map>
-#include <list>
 #include <vector>
 
 namespace soften {
@@ -25,7 +24,6 @@ enum class State {
     CacheEmpty,
     Unkonwn
 };
-
 
 class Bridge;
 

@@ -1,8 +1,6 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
-#include <memory>
-#include <map>
 #include "object.h"
 
 namespace soften {
