@@ -21,7 +21,6 @@ CppApplication {
         "test/polymorphism/myobject.h",
         "test/polymorphism/myobjectchild.cpp",
         "test/polymorphism/myobjectchild.h",
-        // "test/tester.h",
     ]
 
     cpp.cxxFlags:"-std=c++11"

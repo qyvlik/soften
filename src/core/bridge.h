@@ -215,21 +215,21 @@ public:
     virtual Return GTE(BridgeAbstract* );
 
     // K(IN, "in", 10)
-    virtual Return IN(BridgeAbstract* );
+    Return IN(BridgeAbstract* );
 
     // T(NOT, "!", 0)
-    virtual Return NOT(BridgeAbstract* );
+    Return NOT(BridgeAbstract* );
 
     // K(DELETE, "delete", 0)
-    virtual Return DELETE(BridgeAbstract* );
+    Return DELETE(BridgeAbstract* );
 
     // K(TYPEOF, "typeof", 0)
-    virtual Return TYPEOF(BridgeAbstract* );
+    Return TYPEOF(BridgeAbstract* );
 
     // K(VOID, "void", 0)
-    virtual Return VOID(BridgeAbstract* );
+    Return VOID(BridgeAbstract* );
 
-    virtual std::string toString() const;
+    std::string toString() const;
 
     SOFTEN_INVOKABLE void log(Bridge*);
 };
