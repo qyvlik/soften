@@ -14,6 +14,8 @@ CppApplication {
         "src/engine/assembler.cpp",
         "src/engine/assembler.h",
         "src/soften.h",
+        "src/utility/characterencodingconverter.cpp",
+        "src/utility/characterencodingconverter.h",
         "test/gel/gel.cpp",
         "test/gel/stxutif.h",
         "test/main.cpp",

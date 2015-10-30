@@ -3,14 +3,13 @@
 #include <set>
 #include <map>
 
-#include <typeinfo>
-
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
 #include "../src/core/bridge.h"
 #include "../src/engine/assembler.h"
 #include "../src/core/functionmeta.h"
+#include "../src/utility/characterencodingconverter.h"
 
 using namespace std;
 using namespace soften;
