@@ -227,14 +227,13 @@ int Parser::if_stat()
         return (es = 5);
     }
 
-    //! label[0]
-    m_pos.push_back(m_labelCount++);
-    //this->printPos();
-    this->m_outputStream->output("if First LABEL", this->getPosString(),":","");
+
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = expression();                              // if 中的判断条件
+
+
 
     if(es > 0) {
         return es;
@@ -246,6 +245,15 @@ int Parser::if_stat()
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
+    //! label[0]
+    m_pos.push_back(m_labelCount++);
+    //this->printPos();
+    this->m_outputStream->output("if First LABEL", this->getPosString(),":","");
+
+    this->m_outputStream->output("GOTO", "r",
+                                 this->getPosString(),      // label[0]
+                                 this->getPosString() +"#1");     // label[1]
+    //  label[1] = label[0] + label[0][label[0].length-1]
 
     //! 条件为真时的执行语句
     es = statement();
@@ -262,12 +270,6 @@ int Parser::if_stat()
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     if(m_token == "else") {                             // else 部分处理
-
-//        //! label[2]
-//        m_pos.push_back(m_labelCount++);
-//        // this->printPos();
-//        this->m_outputStream->output("LABEL", this->getPosString(),":","");
-//        m_pos.pop_back();
 
         this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -299,13 +301,16 @@ int Parser::while_stat()
     //! label[0]
     //! while 循环的真假比较
     m_pos.push_back(m_labelCount++);
+    string label0 = this->getPosString();
     // this->printPos();
-    this->m_outputStream->output("while First LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LOOP_START_LABEL", label0,":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
-
+    //! while 循环跳出条件判断
     es = expression();
+
+    this->m_outputStream->output("LOOP_GOTO", "r", label0+"#1", label0+"#2");
 
     if(es > 0) {
         return es;
@@ -319,17 +324,19 @@ int Parser::while_stat()
     //! while 循环体
     m_pos.push_back(m_labelCount++);
     // this->printPos();
-    this->m_outputStream->output("while Second LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LOOP_BODY_LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = statement();
 
+    this->m_outputStream->output("LOOP_JUMP", label0, "", "");
+
     //! label[2]
     //! 跳出while循环
     m_pos.push_back(m_labelCount++);
     // this->printPos();
-    this->m_outputStream->output("while thrid LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LOOP_END_LABEL", this->getPosString(),":","");
 
     m_pos.pop_back();
     m_pos.pop_back();
@@ -364,12 +371,15 @@ int Parser::for_stat()
     //! compare
     //! label[0]
     m_pos.push_back(m_labelCount++);
+    string label0 = this->getPosString();
     // this->printPos();
-    this->m_outputStream->output("for first LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LOOP_START_LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = expression();
+
+    this->m_outputStream->output("LOOP_GOTO", "r", label0+"#1", label0+"#2");
 
     if(es > 0) {
         return es;
@@ -383,7 +393,7 @@ int Parser::for_stat()
     //! label[1]
     m_pos.push_back(m_labelCount++);
     // this->printPos();
-    this->m_outputStream->output("LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LOOP_BODY_LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -401,11 +411,13 @@ int Parser::for_stat()
 
     es = statement();
 
+    this->m_outputStream->output("LOOP_JUMP", label0, "", "");
+
     //! label[2]
     //! 跳出for循环
     m_pos.push_back(m_labelCount++);
     // this->printPos();
-    this->m_outputStream->output("LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LOOP_END_LABEL", this->getPosString(),":","");
 
     m_pos.pop_back();
     m_pos.pop_back();
