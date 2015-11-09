@@ -1,6 +1,7 @@
 #include "parser.h"
 
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -161,22 +162,35 @@ int Parser::statement_list()
 int Parser::statement()
 {
     int es = 0;
+    while(es == 0 && (
+              m_token == "if" ||
+              m_token == "while" ||
+              m_token == "for"
+              ))
+    {
+        if(es == 0 && m_token == "if") {
+            es = if_stat();
+        }
 
-    if(es == 0 && m_token == "if") {
-        es = if_stat();
-    }
+        // 添加 else
 
-    // 添加 else
+        if(es == 0 &&  m_token == "while") {
+            es = while_stat();
+        }
 
-    if(es == 0 &&  m_token == "while") {
-        es = while_stat();
-    }
+        if(es == 0 &&  m_token == "for") {
+            es = for_stat();
+        }
 
-    if(es == 0 &&  m_token == "for") {
-        es = for_stat();
+
+        this->m_inputStream->getToken(m_tokenType, m_token);
     }
 
     // 可在此处添加 do 语句滴啊用
+
+    if(m_token == "while" ) {
+        cout << "-----------while-----------";
+    }
 
     if(es == 0 &&  m_token == "{") {
         es = compound_stat();
@@ -198,23 +212,20 @@ int Parser::if_stat()
 {
     int es = 0;
 
-    cout << "if begin : " << endl;
-
-
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     if(m_token != "(") {                                 // 缺少 '('
         return (es = 5);
     }
 
+    //! label[0]
+    m_pos.push_back(m_labelCount++);
+    //this->printPos();
+    this->m_outputStream->output("if First LABEL", this->getPosString(),"","");
+
     this->m_inputStream->getToken(m_tokenType, m_token);
 
-
-    cout << "if compare : " << endl;
-
     es = expression();                              // if 中的判断条件
-
-    cout << "if compare end : " << endl;
 
     if(es > 0) {
         return es;
@@ -226,21 +237,21 @@ int Parser::if_stat()
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
-    cout << "if statement : " << endl;
 
     es = statement();
-
-    cout << "if statement end : " << endl;
 
     if(es > 0 ) {
         return es;
     }
 
+    //! label[1]
+    m_pos.push_back(m_labelCount++);
+    //this->printPos();
+    this->m_outputStream->output("LABEL", this->getPosString(),"","");
+
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     if(m_token == "else") {                             // else 部分处理
-
-        cout << "else : " << endl;
 
         this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -250,10 +261,15 @@ int Parser::if_stat()
             return es;
         }
 
-        cout << "else end : " << endl;
+        //! label[2]
+        m_pos.push_back(m_labelCount++);
+        // this->printPos();
+        this->m_outputStream->output("LABEL", this->getPosString(),"","");
+        m_pos.pop_back();
+
     }
 
-    cout << "if end : " << endl;
+    m_pos.pop_back();
 
     return es;
 }
@@ -263,13 +279,17 @@ int Parser::while_stat()
 {
     int es = 0;
 
-    cout << "while : " << endl;
-
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     if(m_token != "(") {                                 // 缺少 '('
         return (es = 5);
     }
+
+    //! label[0]
+    //! while 循环的真假比较
+    m_pos.push_back(m_labelCount++);
+    // this->printPos();
+    this->m_outputStream->output("while First LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -284,11 +304,25 @@ int Parser::while_stat()
         return (es = 6);
     }
 
+    //! label[1]
+    //! while 循环体
+    m_pos.push_back(m_labelCount++);
+    // this->printPos();
+    this->m_outputStream->output("while Second LABEL", this->getPosString(),":","");
+
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = statement();
 
-    cout << "while end : " << endl;
+    //! label[2]
+    //! 跳出while循环
+    m_pos.push_back(m_labelCount++);
+    // this->printPos();
+    this->m_outputStream->output("while thrid LABEL", this->getPosString(),":","");
+
+    m_pos.pop_back();
+    m_pos.pop_back();
+    m_pos.pop_back();
 
     return es;
 }
@@ -316,6 +350,12 @@ int Parser::for_stat()
         return (es = 4);
     }
 
+    //! compare
+    //! label[0]
+    m_pos.push_back(m_labelCount++);
+    // this->printPos();
+    this->m_outputStream->output("for first LABEL", this->getPosString(),":","");
+
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = expression();
@@ -327,6 +367,12 @@ int Parser::for_stat()
     if(m_token != ";") {                                 // 缺少 ';'
         return (es = 4);
     }
+
+    //! step
+    //! label[1]
+    m_pos.push_back(m_labelCount++);
+    // this->printPos();
+    this->m_outputStream->output("LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -343,6 +389,16 @@ int Parser::for_stat()
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = statement();
+
+    //! label[2]
+    //! 跳出for循环
+    m_pos.push_back(m_labelCount++);
+    // this->printPos();
+    this->m_outputStream->output("LABEL", this->getPosString(),":","");
+
+    m_pos.pop_back();
+    m_pos.pop_back();
+    m_pos.pop_back();
 
     return es;
 }
@@ -397,19 +453,25 @@ int Parser::expression()
 
         if(tokenType == "=") {
             this->m_inputStream->getToken(m_tokenType, m_token);
+
             es = bool_expr();
+
             if(es > 0) {
                 return es;
             }
         } else {
             this->m_inputStream->seek(fileadd);              // 若非 '=', 则文件指针回退到 '=' 前的标识符
+
             es = bool_expr();
+
             if(es > 0) {
                 return es;
             }
         }
     } else {
+
         es = bool_expr();
+
     }
 
     return es;
@@ -419,7 +481,9 @@ int Parser::expression()
 int Parser::bool_expr()
 {
     int es = 0;
+
     es = additive_expr();
+
     if(es > 0) {
         return es;
     }
@@ -438,7 +502,6 @@ int Parser::bool_expr()
             return es;
         }
     }
-
     return es;
 }
 
@@ -476,10 +539,15 @@ int Parser::term()
 
     while(m_token == "*" || m_token == "/" || m_token == "%") {
         this->m_inputStream->getToken(m_tokenType, m_token);
+
+        cout << "PUSH a temp in stack" << endl;
+
         es = factor();
+
         if(es > 0) {
             return es;
         }
+
     }
 
     return es;
@@ -492,7 +560,9 @@ int Parser::factor()
 
     if(m_token == "(") {
         this->m_inputStream->getToken(m_tokenType, m_token);
+
         es = expression();
+
         if(es > 0) {
             return es;
         }
@@ -503,7 +573,11 @@ int Parser::factor()
 
         this->m_inputStream->getToken(m_tokenType, m_token);
     } else {
-        if(m_tokenType == "ID" || m_tokenType == "NUMBER") {
+        // ID NUMBER STRING
+        if(m_tokenType == "ID"
+                || m_tokenType == "NUMBER"
+                || m_tokenType == "STRING")
+        {
             this->m_inputStream->getToken(m_tokenType, m_token);
             return es;
         } else {
@@ -511,6 +585,40 @@ int Parser::factor()
         }
     }
     return es;
+}
+
+
+void Parser::printPos()
+{
+    auto iter = m_pos.begin();
+    auto end = m_pos.end();
+    while(iter != end) {
+        cout << (*iter);
+        iter++;
+        if(iter != end) {
+            cout <<  ".";
+        }
+    }
+    cout << ":" << endl;
+}
+
+
+string Parser::getPosString()
+{
+    stringstream ss;
+
+    auto iter = m_pos.begin();
+    auto end = m_pos.end();
+    while(iter != end) {
+        ss << (*iter);
+        iter++;
+        if(iter != end) {
+            ss <<  ".";
+        }
+    }
+    string s;
+    ss >> s;
+    return s;
 }
 
 
@@ -593,7 +701,7 @@ void Parser::IOutputStream::output(const string &operationType,
                                    const string &arg1,
                                    const string &result)
 {
-    cout << operationType << " " << arg0 << " " << arg1 << " " << result << endl;
+    // cout << operationType << " " << arg0 << " " << arg1 << " " << result << endl;
     fwriter << operationType << " " << arg0 << " " << arg1 << " " << result << endl;
 }
 

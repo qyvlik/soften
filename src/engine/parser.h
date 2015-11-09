@@ -1,10 +1,16 @@
+/*!
+  1. 支持嵌套
+  2. 不支持嵌套中并列
+    a. 已在 statement 函数中修复
+  3. 不支持 ++ += 等操作
+*/
 #ifndef PARSER_H
 #define PARSER_H
 
 #include <fstream>
 #include <string>
-//#include <tuple>
-//#include <vector>
+#include <stack>
+#include <vector>
 
 class Parser
 {
@@ -179,6 +185,12 @@ private:
     std::string m_token;
     int m_labelCount;
 
+    std::vector<int> m_pos;
+
+    //@Test
+    void printPos();
+    //@Test
+    std::string getPosString();
 
     //    // 四元式 Quadruple
     //    typedef std::tuple<std::string, std::string, std::string, std::string> Quadruple;
