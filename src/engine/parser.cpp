@@ -248,12 +248,14 @@ int Parser::if_stat()
     //! label[0]
     m_pos.push_back(m_labelCount++);
     //this->printPos();
-    this->m_outputStream->output("if First LABEL", this->getPosString(),":","");
+
 
     this->m_outputStream->output("GOTO", "r",
                                  this->getPosString(),      // label[0]
                                  this->getPosString() +"#1");     // label[1]
     //  label[1] = label[0] + label[0][label[0].length-1]
+
+     this->m_outputStream->output("LABEL", this->getPosString(),":","");
 
     //! 条件为真时的执行语句
     es = statement();
@@ -265,7 +267,7 @@ int Parser::if_stat()
     //! label[1]
     m_pos.push_back(m_labelCount++);
     //this->printPos();
-    this->m_outputStream->output("if second LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
