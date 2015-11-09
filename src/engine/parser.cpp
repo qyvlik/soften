@@ -162,6 +162,18 @@ int Parser::statement_list()
 int Parser::statement()
 {
     int es = 0;
+
+    //! 此处的while 循环是为了处理嵌套中，并列的while if for 的解析问题。
+    //! 例如：
+    //! for(x = 0;
+    //!    x < 100;
+    //!    x = x+1) {
+    //!    while(x == 0) {
+    //!
+    //!    while(x == 0) {
+    //!    }
+    //!}
+
     while(es == 0 && (
               m_token == "if" ||
               m_token == "while" ||
@@ -186,11 +198,7 @@ int Parser::statement()
         this->m_inputStream->getToken(m_tokenType, m_token);
     }
 
-    // 可在此处添加 do 语句滴啊用
-
-    if(m_token == "while" ) {
-        cout << "-----------while-----------";
-    }
+    // 可在此处添加 do 语句
 
     if(es == 0 &&  m_token == "{") {
         es = compound_stat();
@@ -210,6 +218,7 @@ int Parser::statement()
 
 int Parser::if_stat()
 {
+    //! if 只有两个跳转点
     int es = 0;
 
     this->m_inputStream->getToken(m_tokenType, m_token);
@@ -221,7 +230,7 @@ int Parser::if_stat()
     //! label[0]
     m_pos.push_back(m_labelCount++);
     //this->printPos();
-    this->m_outputStream->output("if First LABEL", this->getPosString(),"","");
+    this->m_outputStream->output("if First LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -238,6 +247,7 @@ int Parser::if_stat()
     this->m_inputStream->getToken(m_tokenType, m_token);
 
 
+    //! 条件为真时的执行语句
     es = statement();
 
     if(es > 0 ) {
@@ -247,28 +257,29 @@ int Parser::if_stat()
     //! label[1]
     m_pos.push_back(m_labelCount++);
     //this->printPos();
-    this->m_outputStream->output("LABEL", this->getPosString(),"","");
+    this->m_outputStream->output("if second LABEL", this->getPosString(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     if(m_token == "else") {                             // else 部分处理
 
+//        //! label[2]
+//        m_pos.push_back(m_labelCount++);
+//        // this->printPos();
+//        this->m_outputStream->output("LABEL", this->getPosString(),":","");
+//        m_pos.pop_back();
+
         this->m_inputStream->getToken(m_tokenType, m_token);
 
+        //! 条件为假时的执行语句
         es = statement();
 
         if(es > 0) {
             return es;
         }
-
-        //! label[2]
-        m_pos.push_back(m_labelCount++);
-        // this->printPos();
-        this->m_outputStream->output("LABEL", this->getPosString(),"","");
-        m_pos.pop_back();
-
     }
 
+    m_pos.pop_back();
     m_pos.pop_back();
 
     return es;
