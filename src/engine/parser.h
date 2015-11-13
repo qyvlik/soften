@@ -51,6 +51,7 @@ public:
                             const std::string& arg0,
                             const std::string& arg1,
                             const std::string& result) = 0;
+//        virtual void put(const std::string& unknow) = 0;
     };
 
 
@@ -220,3 +221,6 @@ private:
  ** GOTO true 1:0
  ** LABEL 1 :
 */
+
+//! [毕业设计（论文）-基于GUI的交互式编译系统之中间代码生成器的设计与实现]
+//! (http://max.book118.com/html/2015/0611/18837623.shtm)

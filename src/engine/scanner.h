@@ -28,6 +28,9 @@ public:
 
         virtual bool isOpen()const = 0;
         virtual int get() = 0;
+        virtual int lineNumber() const = 0;
+        virtual int columnNumber() const = 0;
+        virtual std::string streamName() const = 0;
         virtual void close() = 0;
     };
 
@@ -40,7 +43,10 @@ public:
         { }
 
         virtual void output(const std::string& token, const std::string& value) = 0;
-        virtual void error(const std::string& token, const std::string& errorString) = 0;
+        virtual void error(const std::string& filename,
+                           int lineNumber,
+                           int columnNumber,
+                           const std::string& reason) = 0;
     };
 
     static InputStream* getInputStream(const std::string& filename);
@@ -69,18 +75,26 @@ protected:
         ~IInputStream();
         bool isOpen()const override;
         int get() override;
+        int lineNumber() const override;
+        int columnNumber() const override;
+        std::string streamName() const override;
         void close()override;
     private:
+        std::string m_filename;
+        int m_lineNumber;
+        int m_columnNumber;
         std::ifstream fread;
     };
 
-    class IOutputStream : public  OutputStream
+    class IOutputStream : public OutputStream
     {
     public:
         explicit IOutputStream(const std::string& filename);
         ~IOutputStream();
         void output(const std::string& token, const std::string& value) override;
-        void error(const std::string& token, const std::string& errorString) override;
+        void error(const std::string& filename,
+                   int lineNumber, int columnNumber,
+                   const std::string& reason) override;
     private:
         std::ofstream fwrite;
     };

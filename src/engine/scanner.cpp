@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include <unistd.h>
 
 using namespace std;
 
@@ -52,7 +53,6 @@ Scanner::Scanner()
 
 Scanner::~Scanner()
 {
-
 }
 
 
@@ -198,15 +198,25 @@ void Scanner::scan(Scanner::InputStream *inputStream, OutputStream *outputStream
             if(letter != EOF && !error) {
                 outputStream->output(Scanner::STRING, token);
             } else {
-                outputStream->error(Scanner::STRING,token);
+                outputStream->error( inputStream->streamName(),
+                                     inputStream->lineNumber(),
+                                     inputStream->columnNumber(),
+                                     "End of file"
+                                     );
                 return ;
             }
             letter = inputStream->get();
         } else {
-            token.clear();
-            token.push_back(letter);
-            letter = inputStream->get();
-            outputStream->error(Scanner::ERROR,token);
+            outputStream->error( inputStream->streamName(),
+                                 inputStream->lineNumber(),
+                                 inputStream->columnNumber(),
+                                 "Not allow token"
+                                 );
+            // token.clear();
+            // token.push_back(letter);
+            // letter = inputStream->get();
+            // outputStream->error(Scanner::ERROR,token);
+            return ;
         }
     }
     inputStream->close();
@@ -249,7 +259,12 @@ bool Scanner::isDoubleWord(char word)
 /////////////////////// Scanner::IInputStream ////////////////////////////////
 
 Scanner::IInputStream::IInputStream(const string &filename):
-    fread(filename)
+    m_filename(filename),
+    m_lineNumber(1),
+    m_columnNumber(0),
+    fread( filename
+           , ios_base::binary | ios_base::in
+           )
 {
 }
 
@@ -268,7 +283,31 @@ bool Scanner::IInputStream::isOpen() const
 
 int Scanner::IInputStream::get()
 {
-    return fread.get();
+    int g = fread.get();
+    ++m_columnNumber;
+    if(g == '\n') {
+        m_columnNumber = 0;
+        ++m_lineNumber;
+    }
+    return g;
+}
+
+
+int Scanner::IInputStream::lineNumber() const
+{
+    return m_lineNumber;
+}
+
+
+int Scanner::IInputStream::columnNumber() const
+{
+    return m_columnNumber;
+}
+
+
+string Scanner::IInputStream::streamName() const
+{
+    return m_filename;
 }
 
 
@@ -299,8 +338,13 @@ void Scanner::IOutputStream::output(const string &token, const string &value)
 }
 
 
-void Scanner::IOutputStream::error(const string &token, const string &errorString)
+void Scanner::IOutputStream::error(const string &filename,
+                                   int lineNumber, int columnNumber,
+                                   const string &reason)
 {
-    // cout << Scanner::ERROR << ":" << token << "\t" << errorString << endl;
-    fwrite << Scanner::ERROR << ":" << "\t" << errorString << endl;
+    fwrite << Scanner::ERROR << ":" << "\t"
+           << filename << " "
+           << lineNumber << ":" << columnNumber << endl
+           << reason
+           << endl;
 }

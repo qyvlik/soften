@@ -139,7 +139,7 @@ int Parser::declaration_stat()
         return (es = 4);
     }
 
-    cout << type << " "<< id << endl;
+    this->m_outputStream->output("DECLARA", type, id, "_");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -255,7 +255,7 @@ int Parser::if_stat()
                                  this->getPosString() +"#1");     // label[1]
     //  label[1] = label[0] + label[0][label[0].length-1]
 
-     this->m_outputStream->output("LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LABEL", this->getPosString(),":","");
 
     //! 条件为真时的执行语句
     es = statement();
@@ -530,10 +530,12 @@ int Parser::bool_expr()
     return es;
 }
 
-
+// <算术表达式> ::= <项>{(+ | -) <项>}
+// <additive_expr> ::= <term>{(+ | -)<term>}
 int Parser::additive_expr()
 {
     int es = 0;
+
     es = term();
 
     if(es > 0) {
@@ -541,8 +543,12 @@ int Parser::additive_expr()
     }
 
     while(m_token == "+" || m_token == "-") {
+
+
         this->m_inputStream->getToken(m_tokenType, m_token);
+
         es = term();
+
         if(es > 0) {
             return es;
         }
@@ -563,6 +569,7 @@ int Parser::term()
     }
 
     while(m_token == "*" || m_token == "/" || m_token == "%") {
+
         this->m_inputStream->getToken(m_tokenType, m_token);
 
         cout << "PUSH a temp in stack" << endl;
@@ -709,7 +716,10 @@ bool Parser::IInputStream::isEnd()
 ////////////////////////Parser::IOutputStream//////////////////////////////
 
 Parser::IOutputStream::IOutputStream(const string &filename):
-    fwriter(filename)
+    fwriter(
+        filename
+        , ios_base::binary | ios_base::in
+        )
 {
 
 }
