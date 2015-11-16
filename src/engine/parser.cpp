@@ -9,8 +9,8 @@ Parser::Parser():
     m_inputStream(nullptr),
     m_outputStream(nullptr),
     //! 以下是语法制导的部分
-    m_labelCount(0),
-    m_tempName(0)
+    labelCreator(new LabelCreator()),
+    quadrupleCreator(new QuadrupleCreator())
 {
 }
 
@@ -18,6 +18,9 @@ Parser::Parser():
 Parser::~Parser()
 {
     //! \note don't delete m_inputStream and m_outputStream
+
+    delete labelCreator;
+    delete quadrupleCreator;
 }
 
 
@@ -37,8 +40,8 @@ int Parser::parse(Parser::InputStream *inputStream, Parser::OutputStream *output
 {
     int es = 0;
 
-    m_inputStream = inputStream;
-    m_outputStream = outputStream;
+    this->m_inputStream = inputStream;
+    this->m_outputStream = outputStream;
 
     if(es == 0) {
         es = program();
@@ -196,7 +199,6 @@ int Parser::statement()
             es = for_stat();
         }
 
-
         this->m_inputStream->getToken(m_tokenType, m_token);
     }
 
@@ -229,13 +231,9 @@ int Parser::if_stat()
         return (es = 5);
     }
 
-
-
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = expression();                              // if 中的判断条件
-
-
 
     if(es > 0) {
         return es;
@@ -248,16 +246,14 @@ int Parser::if_stat()
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     //! label[0]
-    m_pos.push_back(m_labelCount++);
-    //this->printPos();
-
-
-    this->m_outputStream->output("GOTO", "r",
-                                 this->getPosString(),      // label[0]
-                                 this->getPosString() +"#1");     // label[1]
+    labelCreator->push();
+    string label0 = labelCreator->getLabel();
+    this->m_outputStream->output("GOTO", quadrupleCreator->top(),
+                                 label0,          // label[0]
+                                 label0 +"#1");   // label[1]
     //  label[1] = label[0] + label[0][label[0].length-1]
 
-    this->m_outputStream->output("LABEL", this->getPosString(),":","");
+    this->m_outputStream->output("LABEL", label0 , ":", "");
 
     //! 条件为真时的执行语句
     es = statement();
@@ -267,9 +263,9 @@ int Parser::if_stat()
     }
 
     //! label[1]
-    m_pos.push_back(m_labelCount++);
-    //this->printPos();
-    this->m_outputStream->output("LABEL", this->getPosString(),":","");
+    labelCreator->push();
+
+    this->m_outputStream->output("LABEL", labelCreator->getLabel(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -285,8 +281,8 @@ int Parser::if_stat()
         }
     }
 
-    m_pos.pop_back();
-    m_pos.pop_back();
+    labelCreator->pop();
+    labelCreator->pop();
 
     return es;
 }
@@ -304,8 +300,10 @@ int Parser::while_stat()
 
     //! label[0]
     //! while 循环的真假比较
-    m_pos.push_back(m_labelCount++);
-    string label0 = this->getPosString();
+
+    labelCreator->push();
+    string label0 = labelCreator->getLabel();
+
     // this->printPos();
     this->m_outputStream->output("LOOP_START_LABEL", label0,":","");
 
@@ -314,7 +312,10 @@ int Parser::while_stat()
     //! while 循环跳出条件判断
     es = expression();
 
-    this->m_outputStream->output("LOOP_GOTO", "r", label0+"#1", label0+"#2");
+    this->m_outputStream->output("LOOP_GOTO",
+                                 quadrupleCreator->top(),
+                                 label0+"#1",
+                                 label0+"#2");
 
     if(es > 0) {
         return es;
@@ -326,9 +327,8 @@ int Parser::while_stat()
 
     //! label[1]
     //! while 循环体
-    m_pos.push_back(m_labelCount++);
-    // this->printPos();
-    this->m_outputStream->output("LOOP_BODY_LABEL", this->getPosString(),":","");
+    labelCreator->push();
+    this->m_outputStream->output("LOOP_BODY_LABEL", labelCreator->getLabel(), ":", "");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -338,13 +338,13 @@ int Parser::while_stat()
 
     //! label[2]
     //! 跳出while循环
-    m_pos.push_back(m_labelCount++);
-    // this->printPos();
-    this->m_outputStream->output("LOOP_END_LABEL", this->getPosString(),":","");
+    labelCreator->push();
+    this->m_outputStream->output("LOOP_END_LABEL", labelCreator->getLabel(),":","");
 
-    m_pos.pop_back();
-    m_pos.pop_back();
-    m_pos.pop_back();
+
+    labelCreator->pop();
+    labelCreator->pop();
+    labelCreator->pop();
 
     return es;
 }
@@ -374,16 +374,19 @@ int Parser::for_stat()
 
     //! compare
     //! label[0]
-    m_pos.push_back(m_labelCount++);
-    string label0 = this->getPosString();
-    // this->printPos();
-    this->m_outputStream->output("LOOP_START_LABEL", this->getPosString(),":","");
+
+    labelCreator->push();
+    string label0 = labelCreator->getLabel();
+    this->m_outputStream->output("LOOP_START_LABEL", label0,":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
     es = expression();
 
-    this->m_outputStream->output("LOOP_GOTO", "r", label0+"#1", label0+"#2");
+    this->m_outputStream->output("LOOP_GOTO",
+                                 quadrupleCreator->top(),
+                                 label0+"#1",
+                                 label0+"#2");
 
     if(es > 0) {
         return es;
@@ -395,9 +398,8 @@ int Parser::for_stat()
 
     //! step
     //! label[1]
-    m_pos.push_back(m_labelCount++);
-    // this->printPos();
-    this->m_outputStream->output("LOOP_BODY_LABEL", this->getPosString(),":","");
+    labelCreator->push();
+    this->m_outputStream->output("LOOP_BODY_LABEL", labelCreator->getLabel(),":","");
 
     this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -419,13 +421,12 @@ int Parser::for_stat()
 
     //! label[2]
     //! 跳出for循环
-    m_pos.push_back(m_labelCount++);
-    // this->printPos();
-    this->m_outputStream->output("LOOP_END_LABEL", this->getPosString(),":","");
+    labelCreator->push();
+    this->m_outputStream->output("LOOP_END_LABEL", labelCreator->getLabel(),":","");
 
-    m_pos.pop_back();
-    m_pos.pop_back();
-    m_pos.pop_back();
+    labelCreator->pop();
+    labelCreator->pop();
+    labelCreator->pop();
 
     return es;
 }
@@ -447,6 +448,9 @@ int Parser::expression_stat()
     int es = 0;
 
     if(m_token == ";") {
+
+        cout << "clear temp" << endl;
+
         this->m_inputStream->getToken(m_tokenType, m_token);
         return es;
     }
@@ -459,8 +463,7 @@ int Parser::expression_stat()
 
     if(es == 0 && m_token == ";" ) {
 
-        // 这里输出四元式。
-
+        cout << "clear temp" << endl;
 
         this->m_inputStream->getToken(m_tokenType, m_token);
         return es;
@@ -478,23 +481,31 @@ int Parser::expression()
     string tokenType, token;
 
     if(m_tokenType == "ID") {
+
+        //! 将单因子push到四元式中
+        quadrupleCreator->push(m_token);
+
         fileadd = this->m_inputStream->tell();              // 记住文件当前位置
 
         this->m_inputStream->getToken(tokenType, token);
 
         if(tokenType == "=") {
+
+            // 生成四元式时记录下操作符
+
+
             this->m_inputStream->getToken(m_tokenType, m_token);
 
             es = bool_expr();
 
-            // TODO
-            // 这里输出
-            // 必定有个 =
-            // (=, a, b, r)
-
             if(es > 0) {
                 return es;
             }
+
+            // 向输出流输出四元式
+            // = z, , 临时值
+            quadrupleCreator->setOperation(tokenType);
+            quadrupleCreator->outputQuadruple(this->m_outputStream);
         } else {
             this->m_inputStream->seek(fileadd);              // 若非 '=', 则文件指针回退到 '=' 前的标识符
 
@@ -532,23 +543,17 @@ int Parser::bool_expr()
             || m_token == "<="
             || m_token == "=="
             || m_token == "!=" ) {
-        // TODO
-        // (m_token, a, b, r)
+
         string op = m_token;
 
         this->m_inputStream->getToken(m_tokenType, m_token);
 
         es = additive_expr();
 
-        string a1 = zzz.back();
-        zzz.pop_back();
-        string a0 = zzz.back();
-        zzz.pop_back();
-
-        zzz.push_back(this->getTempName());
-
-        cout << op << " " << a0 << "," << a1 <<"," << zzz.back() << endl;
-
+        // 生成四元式时记录下操作符
+        // 向输出流输出四元式
+        quadrupleCreator->setOperation(op);
+        quadrupleCreator->outputQuadruple(this->m_outputStream);
 
         if(es > 0) {
             return es;
@@ -570,9 +575,7 @@ int Parser::additive_expr()
     }
 
     while(m_token == "+" || m_token == "-") {
-
         string op = m_token;
-
         this->m_inputStream->getToken(m_tokenType, m_token);
 
         es = term();
@@ -580,21 +583,10 @@ int Parser::additive_expr()
         if(es > 0) {
             return es;
         }
-
-        // TODO
-        // 这里输出
-        // (+, a, b, r)
-        // or
-        // (-, a, b, r)
-
-        string a1 = zzz.back();
-        zzz.pop_back();
-        string a0 = zzz.back();
-        zzz.pop_back();
-
-        zzz.push_back(this->getTempName());
-
-        cout << op << " " << a0 << "," << a1 <<"," << zzz.back() << endl;
+        // 生成四元式时记录下操作符
+        // 向输出流输出四元式
+        quadrupleCreator->setOperation(op);
+        quadrupleCreator->outputQuadruple(this->m_outputStream);
 
     }
 
@@ -615,30 +607,20 @@ int Parser::term()
 
     while(m_token == "*" || m_token == "/" || m_token == "%") {
 
-
         string op = m_token;
 
         this->m_inputStream->getToken(m_tokenType, m_token);
 
         es = factor();
 
-        // 在这里输出
-        // (*, a, b, r)
-        // (/, a, b, r)
-        // (%, a, b, r)
-
-        string a1 = zzz.back();
-        zzz.pop_back();
-        string a0 = zzz.back();
-        zzz.pop_back();
-
-        zzz.push_back(this->getTempName());
-
-        cout << op << " " << a0 << "," << a1 <<"," << zzz.back() << endl;
-
         if(es > 0) {
             return es;
         }
+
+        // 生成四元式时记录下操作符
+        // 向输出流输出四元式
+        quadrupleCreator->setOperation(op);
+        quadrupleCreator->outputQuadruple(this->m_outputStream);
 
     }
 
@@ -671,11 +653,11 @@ int Parser::factor()
                 || m_tokenType == "NUMBER"
                 || m_tokenType == "STRING")
         {
-
-            // push 符号到栈中
-            zzz.push_back(m_token);
+            //! 将单因子push到四元式中
+            quadrupleCreator->push(m_token);
 
             this->m_inputStream->getToken(m_tokenType, m_token);
+
             return es;
         } else {
             return (es = 7);
@@ -685,57 +667,9 @@ int Parser::factor()
 }
 
 
-void Parser::printPos()
-{
-    auto iter = m_pos.begin();
-    auto end = m_pos.end();
-    while(iter != end) {
-        cout << (*iter);
-        iter++;
-        if(iter != end) {
-            cout <<  ".";
-        }
-    }
-    cout << ":" << endl;
-}
-
-
-string Parser::getPosString()
-{
-    stringstream ss;
-
-    auto iter = m_pos.begin();
-    auto end = m_pos.end();
-    while(iter != end) {
-        ss << (*iter);
-        iter++;
-        if(iter != end) {
-            ss <<  ".";
-        }
-    }
-    string s;
-    ss >> s;
-    return s;
-}
-
-string Parser::getTempName()
-{
-    stringstream ss;
-    string s;
-    ss << m_tempName;
-    ++m_tempName;
-    ss >> s;
-    s = "$" + s;
-    return s;
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-
-
-
-
+//////////////////////////////////////////////////////////////////////////
 ////////////////////////Parser::IInputStream//////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 
 Parser::IInputStream::IInputStream(const string &filename):
     fread(filename
@@ -816,3 +750,114 @@ void Parser::IOutputStream::output(const string &operationType,
     fwriter << operationType << " " << arg0 << " " << arg1 << " " << result << endl;
 }
 
+//////////////////////////////Parser::QuadrupleCreator////////////////////////////////////
+
+Parser::QuadrupleCreator::QuadrupleCreator():
+    tempName(0)
+{
+}
+
+Parser::QuadrupleCreator::~QuadrupleCreator()
+{
+}
+
+
+void Parser::QuadrupleCreator::push(const string &token)
+{
+    stack.push_back(token);
+}
+
+
+void Parser::QuadrupleCreator::pop()
+{
+    if(!stack.empty()) {
+        stack.pop_back();
+    }
+}
+
+
+string Parser::QuadrupleCreator::top()
+{
+    return stack.back();
+}
+
+
+string Parser::QuadrupleCreator::getTempVarName()
+{
+    stringstream ss;
+    string s;
+    ss << tempName;
+    ++tempName;
+    ss >> s;
+    s = "$" + s;
+    return s;
+}
+
+
+void Parser::QuadrupleCreator::outputQuadruple(Parser::OutputStream *outputStream)
+{
+    if(this->operation != "=") {
+        string a1 = this->top();
+        this->pop();
+        string a0 = this->top();
+        this->pop();
+        this->push(this->getTempVarName());
+        outputStream->output(this->operation, a0, a1, this->top());
+    } else if(this->operation == "=") {
+        string a0 = this->top();
+        this->pop();
+        outputStream->output(this->operation, a0, "_", this->top());
+    }
+}
+
+
+void Parser::QuadrupleCreator::setOperation(const string &value)
+{
+    this->operation = value;
+}
+
+
+///////////////////////////////Parser::LabelCreator////////////////////////////////////
+
+Parser::LabelCreator::LabelCreator():
+    labelCount(0)
+{
+
+}
+
+
+Parser::LabelCreator::~LabelCreator()
+{
+
+}
+
+
+void Parser::LabelCreator::push()
+{
+    parts.push_back(labelCount++);
+}
+
+
+void Parser::LabelCreator::pop()
+{
+    parts.pop_back();
+}
+
+
+string Parser::LabelCreator::getLabel()
+{
+    stringstream ss;
+
+    auto iter = parts.begin();
+    auto end = parts.end();
+    while(iter != end) {
+        ss << (*iter);
+        iter++;
+        if(iter != end) {
+            ss <<  ".";
+        }
+    }
+    string s;
+    ss >> s;
+    return s;
+}

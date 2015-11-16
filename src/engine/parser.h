@@ -16,6 +16,9 @@
 class Parser
 {
 public:
+
+    typedef std::pair<std::string, std::string> Token;
+
     explicit Parser();
     virtual ~Parser();
 
@@ -26,7 +29,7 @@ public:
 
         virtual ~InputStream()
         { }
-
+        // virtual bool getToken(Token token) = 0;
         virtual bool getToken(std::string& tokenType, std::string& token) = 0;
         // 由于 tellg 与 seek
         // 还有std::getline
@@ -52,7 +55,6 @@ public:
                             const std::string& arg0,
                             const std::string& arg1,
                             const std::string& result) = 0;
-//        virtual void put(const std::string& unknow) = 0;
     };
 
 
@@ -162,6 +164,7 @@ protected:
         size_t tell() override;
         void seek(size_t pos) override;
         bool isEnd() override;
+
     private:
         std::ifstream fread;
         bool m_end;
@@ -180,23 +183,44 @@ protected:
         std::ofstream fwriter;
     };
 
+    class QuadrupleCreator {
+    public:
+        explicit QuadrupleCreator();
+        ~QuadrupleCreator();
+        void push(const std::string& token);
+        void outputQuadruple(Parser::OutputStream* outputStream);
+        void setOperation(const std::string &value);
+        std::string top();
+        void pop();
+        std::string getTempVarName();
+    private:
+        std::string operation;
+        std::vector<std::string> stack;
+        int tempName;
+    };
+
+    class LabelCreator {
+    public:
+        explicit LabelCreator();
+        ~LabelCreator();
+        void push();
+        void pop();
+        std::string getLabel();
+    private:
+        int labelCount;
+        std::vector<int> parts;
+    };
+
 private:
     InputStream* m_inputStream;
     OutputStream* m_outputStream;
+
     std::string m_tokenType;
     std::string m_token;
-    int m_labelCount;
 
-    std::vector<int> m_pos;
 
-    //@Test
-    void printPos();
-
-    std::string getPosString();
-
-    std::vector<std::string> zzz;
-    std::string getTempName();
-    int m_tempName;
+    LabelCreator* labelCreator;
+    QuadrupleCreator* quadrupleCreator;
 };
 
 
