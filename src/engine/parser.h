@@ -12,6 +12,7 @@
 #include <stack>
 #include <vector>
 
+
 class Parser
 {
 public:
@@ -190,14 +191,16 @@ private:
 
     //@Test
     void printPos();
-    //@Test
+
     std::string getPosString();
 
-    //    // 四元式 Quadruple
-    //    typedef std::tuple<std::string, std::string, std::string, std::string> Quadruple;
-    //    std::vector<Quadruple> m_quadruples;
-    //    int m_label;                            // 标签
+    std::vector<std::string> zzz;
+    std::string getTempName();
+    int m_tempName;
 };
+
+
+
 
 #endif // PARSER_H
 

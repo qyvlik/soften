@@ -8,7 +8,9 @@ using namespace std;
 Parser::Parser():
     m_inputStream(nullptr),
     m_outputStream(nullptr),
-    m_labelCount(0)
+    //! 以下是语法制导的部分
+    m_labelCount(0),
+    m_tempName(0)
 {
 }
 
@@ -456,6 +458,10 @@ int Parser::expression_stat()
     }
 
     if(es == 0 && m_token == ";" ) {
+
+        // 这里输出四元式。
+
+
         this->m_inputStream->getToken(m_tokenType, m_token);
         return es;
     } else {
@@ -481,6 +487,11 @@ int Parser::expression()
 
             es = bool_expr();
 
+            // TODO
+            // 这里输出
+            // 必定有个 =
+            // (=, a, b, r)
+
             if(es > 0) {
                 return es;
             }
@@ -503,6 +514,8 @@ int Parser::expression()
 }
 
 
+// <布尔表达式> ::= <算数表达式> | <算术表达式> (> | < | >= | <= | == | !=)
+// <bool_expr> ::= <additive_expr> | <additive_expr> (> | < | >= | <= | == | !=) <additive_expr>
 int Parser::bool_expr()
 {
     int es = 0;
@@ -519,10 +532,24 @@ int Parser::bool_expr()
             || m_token == "<="
             || m_token == "=="
             || m_token == "!=" ) {
+        // TODO
+        // (m_token, a, b, r)
+        string op = m_token;
 
         this->m_inputStream->getToken(m_tokenType, m_token);
 
         es = additive_expr();
+
+        string a1 = zzz.back();
+        zzz.pop_back();
+        string a0 = zzz.back();
+        zzz.pop_back();
+
+        zzz.push_back(this->getTempName());
+
+        cout << op << " " << a0 << "," << a1 <<"," << zzz.back() << endl;
+
+
         if(es > 0) {
             return es;
         }
@@ -544,6 +571,7 @@ int Parser::additive_expr()
 
     while(m_token == "+" || m_token == "-") {
 
+        string op = m_token;
 
         this->m_inputStream->getToken(m_tokenType, m_token);
 
@@ -552,12 +580,29 @@ int Parser::additive_expr()
         if(es > 0) {
             return es;
         }
+
+        // TODO
+        // 这里输出
+        // (+, a, b, r)
+        // or
+        // (-, a, b, r)
+
+        string a1 = zzz.back();
+        zzz.pop_back();
+        string a0 = zzz.back();
+        zzz.pop_back();
+
+        zzz.push_back(this->getTempName());
+
+        cout << op << " " << a0 << "," << a1 <<"," << zzz.back() << endl;
+
     }
 
     return es;
 }
 
-
+// <项> ::= <因子> {（* | / | %）<因子>}
+// <term> ::= <factor> {(* | / | %)<factor>}
 int Parser::term()
 {
     int es = 0;
@@ -570,11 +615,26 @@ int Parser::term()
 
     while(m_token == "*" || m_token == "/" || m_token == "%") {
 
+
+        string op = m_token;
+
         this->m_inputStream->getToken(m_tokenType, m_token);
 
-        cout << "PUSH a temp in stack" << endl;
-
         es = factor();
+
+        // 在这里输出
+        // (*, a, b, r)
+        // (/, a, b, r)
+        // (%, a, b, r)
+
+        string a1 = zzz.back();
+        zzz.pop_back();
+        string a0 = zzz.back();
+        zzz.pop_back();
+
+        zzz.push_back(this->getTempName());
+
+        cout << op << " " << a0 << "," << a1 <<"," << zzz.back() << endl;
 
         if(es > 0) {
             return es;
@@ -585,7 +645,8 @@ int Parser::term()
     return es;
 }
 
-
+// <因子> ::= (<表达式> | <标识符> | <无符号整数>)
+// <factor> ::= (<expression>) | ID | NUM
 int Parser::factor()
 {
     int es = 0;
@@ -610,6 +671,10 @@ int Parser::factor()
                 || m_tokenType == "NUMBER"
                 || m_tokenType == "STRING")
         {
+
+            // push 符号到栈中
+            zzz.push_back(m_token);
+
             this->m_inputStream->getToken(m_tokenType, m_token);
             return es;
         } else {
@@ -650,6 +715,17 @@ string Parser::getPosString()
     }
     string s;
     ss >> s;
+    return s;
+}
+
+string Parser::getTempName()
+{
+    stringstream ss;
+    string s;
+    ss << m_tempName;
+    ++m_tempName;
+    ss >> s;
+    s = "$" + s;
     return s;
 }
 
