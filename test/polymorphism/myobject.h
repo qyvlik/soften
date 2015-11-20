@@ -8,7 +8,7 @@ class MyObject : public soften::Object
 public:
     SOFTEN_OBJECT(MyObject, Object)
 
-    SOFTEN_INVOKABLE virtual std::string toString()const;
+    SOFTEN_INVOKABLE std::string toString()const;
     SOFTEN_INVOKABLE int add(int a, int b);
 };
 

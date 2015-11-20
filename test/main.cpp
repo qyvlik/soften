@@ -7,24 +7,25 @@
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
 #include "../src/core/bridge.h"
-#include "../src/engine/assembler.h"
 #include "../src/core/functionmeta.h"
-#include "../src/utility/characterencodingconverter.h"
+// #include "../src/engine/assembler.h"
+// #include "../src/utility/characterencodingconverter.h"
 
 using namespace std;
 using namespace soften;
 
+//void test_assembler_DECLARA();
+//void test_assembler_ASSIGN();
+//void test_assembler_cache();
+//void test_assmbler_sample_run();
+//void test_assembler_compiler();
+//void test_assembler_label();
+//void test_assembler_sample_GOTO();
+//void test_assembler_GOTO_LABEL();
+//void test_assembler_PUSH_ARGUEMNTS();
+//void test_assembler_CALL();
+
 void test_bridge();
-void test_assembler_DECLARA();
-void test_assembler_ASSIGN();
-void test_assembler_cache();
-void test_assmbler_sample_run();
-void test_assembler_compiler();
-void test_assembler_label();
-void test_assembler_sample_GOTO();
-void test_assembler_GOTO_LABEL();
-void test_assembler_PUSH_ARGUEMNTS();
-void test_assembler_CALL();
 void test_function_meta();
 void test_file_stream();
 void test_set_insert();
@@ -33,7 +34,7 @@ int main(
         // int argc, const char* argv[]
         )
 {
-    test_assembler_CALL();
+    test_bridge();
     return 0;
 }
 
@@ -83,165 +84,166 @@ void test_bridge()
 
     p->callMethod("add", args, r);
     cout << i.get() << endl;
+
 }
 
 
-void test_assembler_DECLARA()
-{
-    Assembler assmbler;
-    if(assmbler.DECLARA("name", "123") != soften::State::NormalCall) {
-        cout << "error !" << endl;
-    } else {
-        cout << "success !" << endl;
-    }
+//void test_assembler_DECLARA()
+//{
+//    Assembler assmbler;
+//    if(assmbler.DECLARA("name", "123") != soften::State::NormalCall) {
+//        cout << "error !" << endl;
+//    } else {
+//        cout << "success !" << endl;
+//    }
 
-    if(assmbler.DECLARA("name1", "@name") != soften::State::NormalCall) {
-        cout << "error !" << endl;
-        cout << assmbler.lastErrorString() << endl;
-    } else {
-        cout << "success !" << endl;
-    }
-    assmbler.test_print_object_map();
-}
-
-
-void test_assembler_ASSIGN()
-{
-    Assembler assmbler;
-
-    //! DECLARA @name 123
-
-    if(assmbler.DECLARA("@name", "123") != soften::State::NormalCall) {
-        cout << "DECLARA error !" << endl;
-    } else {
-        cout << "DECLARA success !" << endl;
-    }
-
-    //! DECLARA @name1 456
-    if(assmbler.DECLARA("@name1", "456") != soften::State::NormalCall) {
-        cout << "error !" << endl;
-    } else {
-        cout << "DECLARA success !" << endl;
-    }
-
-    assmbler.test_print_object_map();
-
-    //! ASSIGN @name1 @name
-    if(assmbler.ASSIGN("@name1", "@name") != soften::State::NormalCall) {
-        cout << "ASSIGN error !" << endl;
-        cout << assmbler.lastErrorString() << endl;
-    } else {
-        cout << "ASSIGN success !" << endl;
-    }
-
-    assmbler.test_print_object_map();
-}
+//    if(assmbler.DECLARA("name1", "@name") != soften::State::NormalCall) {
+//        cout << "error !" << endl;
+//        cout << assmbler.lastErrorString() << endl;
+//    } else {
+//        cout << "success !" << endl;
+//    }
+//    assmbler.test_print_object_map();
+//}
 
 
-void test_assembler_cache()
-{
-    Assembler assmbler;
+//void test_assembler_ASSIGN()
+//{
+//    Assembler assmbler;
 
-    //! DECLARA @name 123
+//    //! DECLARA @name 123
 
-    if(assmbler.DECLARA("@name", "123") != soften::State::NormalCall) {
-        cout << "DECLARA error !" << endl;
-    } else {
-        cout << "DECLARA success !" << endl;
-    }
+//    if(assmbler.DECLARA("@name", "123") != soften::State::NormalCall) {
+//        cout << "DECLARA error !" << endl;
+//    } else {
+//        cout << "DECLARA success !" << endl;
+//    }
 
-    assmbler.test_print_cache();
+//    //! DECLARA @name1 456
+//    if(assmbler.DECLARA("@name1", "456") != soften::State::NormalCall) {
+//        cout << "error !" << endl;
+//    } else {
+//        cout << "DECLARA success !" << endl;
+//    }
 
-    //! DECLARA @name1 456
-    if(assmbler.DECLARA("@name1", "456") != soften::State::NormalCall) {
-        cout << "error !" << endl;
-    } else {
-        cout << "DECLARA success !" << endl;
-    }
+//    assmbler.test_print_object_map();
 
-    assmbler.test_print_cache();
+//    //! ASSIGN @name1 @name
+//    if(assmbler.ASSIGN("@name1", "@name") != soften::State::NormalCall) {
+//        cout << "ASSIGN error !" << endl;
+//        cout << assmbler.lastErrorString() << endl;
+//    } else {
+//        cout << "ASSIGN success !" << endl;
+//    }
 
-    //! ASSIGN @name1 @notdefine
-    //! NotDefine Error
-    if(assmbler.ASSIGN("@name1", "@notdefine") != soften::State::NormalCall) {
-        cout << "ASSIGN error !" << endl;
-        cout << assmbler.lastErrorString() << endl;
-    } else {
-        cout << "ASSIGN success !" << endl;
-    }
-
-    assmbler.test_print_cache();
-}
+//    assmbler.test_print_object_map();
+//}
 
 
-void test_assembler_label()
-{
-    Assembler assmbler;
-    assmbler.compile("K://ass-lable.txt");
-    assmbler.run();
-    cout << "error:" << assmbler.lastErrorString() << endl;
-    assmbler.test_print_object_map();
-}
+//void test_assembler_cache()
+//{
+//    Assembler assmbler;
+
+//    //! DECLARA @name 123
+
+//    if(assmbler.DECLARA("@name", "123") != soften::State::NormalCall) {
+//        cout << "DECLARA error !" << endl;
+//    } else {
+//        cout << "DECLARA success !" << endl;
+//    }
+
+//    assmbler.test_print_cache();
+
+//    //! DECLARA @name1 456
+//    if(assmbler.DECLARA("@name1", "456") != soften::State::NormalCall) {
+//        cout << "error !" << endl;
+//    } else {
+//        cout << "DECLARA success !" << endl;
+//    }
+
+//    assmbler.test_print_cache();
+
+//    //! ASSIGN @name1 @notdefine
+//    //! NotDefine Error
+//    if(assmbler.ASSIGN("@name1", "@notdefine") != soften::State::NormalCall) {
+//        cout << "ASSIGN error !" << endl;
+//        cout << assmbler.lastErrorString() << endl;
+//    } else {
+//        cout << "ASSIGN success !" << endl;
+//    }
+
+//    assmbler.test_print_cache();
+//}
 
 
-void test_assembler_sample_GOTO()
-{
-    Assembler assmbler;
-    assmbler.GOTO("TRUE", "10000:10");
-    cout << "error:" << assmbler.lastErrorString() << endl;
-}
+//void test_assembler_label()
+//{
+//    Assembler assmbler;
+//    assmbler.compile("K://ass-lable.txt");
+//    assmbler.run();
+//    cout << "error:" << assmbler.lastErrorString() << endl;
+//    assmbler.test_print_object_map();
+//}
 
 
-void test_assembler_GOTO_LABEL()
-{
-    Assembler assmbler;
-    assmbler.compile("K://ass-goto-label.txt");
-    if(assmbler.run() != State::NormalCall) {
-        cout << "--------------" << endl
-             << "assmbler run has error" << endl;
-    }
-    assmbler.test_print_labels();
-    cout << "error:" << assmbler.lastErrorString() << endl;
-    assmbler.test_print_object_map();
-}
+//void test_assembler_sample_GOTO()
+//{
+//    Assembler assmbler;
+//    assmbler.GOTO("TRUE", "10000:10");
+//    cout << "error:" << assmbler.lastErrorString() << endl;
+//}
 
 
-void test_assembler_PUSH_ARGUEMNTS()
-{
-    Assembler assmbler;
-    assmbler.compile("K://ass-push-arguments.txt");
-    if(assmbler.run() != State::NormalCall) {
-        cout << "--------------" << endl
-             << "assmbler run has error" << endl;
-    }
-    assmbler.test_print_arguments();
-    cout << "error:" << assmbler.lastErrorString() << endl;
-}
+//void test_assembler_GOTO_LABEL()
+//{
+//    Assembler assmbler;
+//    assmbler.compile("K://ass-goto-label.txt");
+//    if(assmbler.run() != State::NormalCall) {
+//        cout << "--------------" << endl
+//             << "assmbler run has error" << endl;
+//    }
+//    assmbler.test_print_labels();
+//    cout << "error:" << assmbler.lastErrorString() << endl;
+//    assmbler.test_print_object_map();
+//}
 
 
-void test_assembler_CALL()
-{
-    Assembler assmbler;
-    assmbler.compile("K://ass-call-object-method.txt");
-    if(assmbler.run() != State::NormalCall) {
-        cout << "--------------" << endl
-             << "assmbler run has error" << endl;
-        cout << "error:" << assmbler.lastErrorString() << endl;
-        return ;
-    }
-    assmbler.test_print_arguments();
-    cout << "error:" << assmbler.lastErrorString() << endl;
-}
+//void test_assembler_PUSH_ARGUEMNTS()
+//{
+//    Assembler assmbler;
+//    assmbler.compile("K://ass-push-arguments.txt");
+//    if(assmbler.run() != State::NormalCall) {
+//        cout << "--------------" << endl
+//             << "assmbler run has error" << endl;
+//    }
+//    assmbler.test_print_arguments();
+//    cout << "error:" << assmbler.lastErrorString() << endl;
+//}
 
 
-void test_assmbler_sample_run()
-{
-    Assembler assmbler;
-    assmbler.compile("K://ass.txt");
-    assmbler.run();
-    cout << "error:" << assmbler.lastErrorString() << endl;
-    assmbler.test_print_object_map();
-}
+//void test_assembler_CALL()
+//{
+//    Assembler assmbler;
+//    assmbler.compile("K://ass-call-object-method.txt");
+//    if(assmbler.run() != State::NormalCall) {
+//        cout << "--------------" << endl
+//             << "assmbler run has error" << endl;
+//        cout << "error:" << assmbler.lastErrorString() << endl;
+//        return ;
+//    }
+//    assmbler.test_print_arguments();
+//    cout << "error:" << assmbler.lastErrorString() << endl;
+//}
+
+
+//void test_assmbler_sample_run()
+//{
+//    Assembler assmbler;
+//    assmbler.compile("K://ass.txt");
+//    assmbler.run();
+//    cout << "error:" << assmbler.lastErrorString() << endl;
+//    assmbler.test_print_object_map();
+//}
 
 
 void test_file_stream()
@@ -278,12 +280,12 @@ void test_file_stream()
 }
 
 
-void test_assembler_compiler()
-{
-    Assembler assmbler;
-    assmbler.compile("K://ass.txt");
-    assmbler.test_print_instrctions();
-}
+//void test_assembler_compiler()
+//{
+//    Assembler assmbler;
+//    assmbler.compile("K://ass.txt");
+//    assmbler.test_print_instrctions();
+//}
 
 
 void test_set_insert()

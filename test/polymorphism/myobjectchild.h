@@ -7,7 +7,7 @@ class MyObjectChild : public MyObject
 {
 public:
     SOFTEN_OBJECT(MyObjectChild, MyObject);
-    SOFTEN_INVOKABLE virtual std::string toString() const;
+    SOFTEN_INVOKABLE std::string toString() const;
 };
 
 #endif // MYOBJECTCHILD_H
