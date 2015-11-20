@@ -29,7 +29,8 @@ class BaseTypeBridge : public Bridge
     // static_assert(std::is_integral<T>::value, "type is not baseType");
     static_assert(!std::is_class<T>::value, "type is not baseType");
     static_assert(!std::is_union<T>::value, "type is not baseType");
-    static_assert(!std::is_pointer<T>::value, "type is not baseType");
+    static_assert(!std::is_pointer<T>::value, "Type Error");
+    static_assert(!std::is_reference<T>::value, "Type Error");
 
 public:
 
@@ -166,7 +167,7 @@ public:
     {
         if(isValid(other)) {
             if(isBaseType(this->type())) {
-               this->data += dynamic_cast<BaseTypeBridge<T>* >(other)->data;
+                this->data += dynamic_cast<BaseTypeBridge<T>* >(other)->data;
                 return State::NormalCall;
             } else {
                 std::cout << "Unknown type" << std::endl;
@@ -239,42 +240,42 @@ public:
         }
     }
 
-//    SOFTEN_INVOKABLE virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
-//    {
-//        if(this == other) {
-//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
-//            return Return(State::NormalCall, r_d);
-//        }
+    //    SOFTEN_INVOKABLE virtual Return EQ(BridgeAbstract* other)                    // T(EQ, "==", 9)
+    //    {
+    //        if(this == other) {
+    //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
+    //            return Return(State::NormalCall, r_d);
+    //        }
 
-//        if(isValid(other)) {
-//            bool r = *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
-//            return Return(State::NormalCall, r_d);
-//        } else {
-//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
-//            return Return(State::NormalCall, r_d);
-//        }
-//    }
+    //        if(isValid(other)) {
+    //            bool r = *d == *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+    //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
+    //            return Return(State::NormalCall, r_d);
+    //        } else {
+    //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
+    //            return Return(State::NormalCall, r_d);
+    //        }
+    //    }
 
-//    SOFTEN_INVOKABLE virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
-//    {
-//        if(this == other) {
-//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
-//            return Return(State::NormalCall, r_d);
-//        }
+    //    SOFTEN_INVOKABLE virtual Return NE(BridgeAbstract* other)                   // T(NE, "!=", 9)
+    //    {
+    //        if(this == other) {
+    //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(false)));
+    //            return Return(State::NormalCall, r_d);
+    //        }
 
-//        if(isValid(other)) {
-//            bool r = *d != *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
-//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
-//            return Return(State::NormalCall, r_d);
-//        } else {
-//            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
-//            return Return(State::NormalCall, r_d);
-//        }
-//    }
+    //        if(isValid(other)) {
+    //            bool r = *d != *(dynamic_cast<BaseTypeBridge<T>* >(other)->d);
+    //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(r)));
+    //            return Return(State::NormalCall, r_d);
+    //        } else {
+    //            std::shared_ptr<BridgeAbstract> r_d(new BaseTypeBridge<bool>(new bool(true)));
+    //            return Return(State::NormalCall, r_d);
+    //        }
+    //    }
 
     SOFTEN_INVOKABLE std::string toString() const {
-       return std::to_string(this->get());
+        return std::to_string(this->get());
     }
 
 private:

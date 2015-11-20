@@ -11,21 +11,21 @@ struct FunctionMeta;
 
 template<typename R, typename... Args>
 struct FunctionMeta<R(*)(Args...)> {
-    static const size_t value = sizeof...(Args);
+    static constexpr size_t value = sizeof...(Args);
     typedef std::tuple<Args...> ArgsTypeTuple;
     typedef R ReturnType;
 };
 
 template<typename R, typename T, typename... Args>
 struct FunctionMeta< R( T::* )( Args... )> {
-    static const size_t value = sizeof...(Args);
+    static constexpr size_t value = sizeof...(Args);
     typedef std::tuple<Args...> ArgsTypeTuple;
     typedef R ReturnType;
 };
 
 template<typename R, typename... Args>
 struct FunctionMeta<R(Args...)> {
-    static const size_t value = sizeof...(Args);
+    static constexpr size_t value = sizeof...(Args);
     typedef std::tuple<Args...> ArgsTypeTuple;
     typedef R ReturnType;
 };

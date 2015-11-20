@@ -2,7 +2,10 @@
 #include <fstream>
 #include <set>
 #include <map>
+#include <type_traits>
+#include <typeinfo>
 
+#include "../src/core/callhelper.h"
 #include "polymorphism/myobject.h"
 #include "polymorphism/myobjectchild.h"
 #include "../src/core/basetypebridge.h"
@@ -34,7 +37,7 @@ int main(
         // int argc, const char* argv[]
         )
 {
-    test_bridge();
+    test_function_meta();
     return 0;
 }
 
@@ -297,11 +300,11 @@ void test_set_insert()
     // 0 ==> false
 }
 
-
 void z1(int, int){}
 typedef void(*z2)(int, int);
 typedef void(*z3)();
 typedef void(*z4)(void);
+typedef void(*z5)(int);
 
 void test_function_meta()
 {
@@ -314,5 +317,12 @@ void test_function_meta()
     typedef std::tuple_element<0, FunctionMeta<decltype (z1)>::ArgsTypeTuple >::type Type_Int;
     Type_Int i = 0;
     cout << i << endl;
-}
 
+    DEFINE_ARGUMENTS_TYPE( 2, z2);
+
+    arg_type_0 arg0 = 1;
+    arg_type_1 arg1 = 1;
+
+    cout << arg0 << " " << arg1 << endl;
+
+}

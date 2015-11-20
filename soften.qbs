@@ -7,6 +7,7 @@ CppApplication {
         "src/core/basetypebridge.h",
         "src/core/bridge.h",
         "src/core/bridge.cpp",
+        "src/core/callhelper.h",
         "src/core/functionmeta.h",
         "src/core/metacall.h",
         "src/core/object.cpp",
