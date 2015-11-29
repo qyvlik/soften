@@ -5,21 +5,6 @@
 #include "functionmeta.h"
 #include "metacall.h"
 
-template<typename T>
-struct RemoveRefenrence;
-
-
-template<typename T>
-struct RemoveRefenrence{
-    typedef T type;
-};
-
-
-template<typename T>
-struct RemoveRefenrence<T&>{
-    typedef T type;
-};
-
 
 //---------------------------------------------------------------------------------------
 
@@ -27,7 +12,7 @@ struct RemoveRefenrence<T&>{
 
 #define GET_ARGUMENT_TYPE_INDEX(_INDEX_, _FUNCTION_TYPE_) \
     typedef std::tuple_element< _INDEX_, \
-                                FunctionMeta<_FUNCTION_TYPE_>::ArgsTypeTuple >::type \
+                                soften::FunctionMeta<_FUNCTION_TYPE_>::ArgsTypeTuple >::type \
     arg_type_##_INDEX_;
 
 //! [0] 定义展开元式

@@ -30,8 +30,8 @@ using namespace soften;
 
 void test_bridge();
 void test_function_meta();
-void test_file_stream();
-void test_set_insert();
+//void test_file_stream();
+//void test_set_insert();
 
 int main(
         // int argc, const char* argv[]
@@ -249,38 +249,38 @@ void test_bridge()
 //}
 
 
-void test_file_stream()
-{
-    ifstream file;
-    file.open("K://ass.txt");
+//void test_file_stream()
+//{
+//    ifstream file;
+//    file.open("K://ass.txt");
 
-    string single_instruction;
-    string lhs;
-    string operation;
-    string rhs;
-    int length;
+//    string single_instruction;
+//    string lhs;
+//    string operation;
+//    string rhs;
+//    int length;
 
-    while(std::getline(file, single_instruction)) {
-        length = single_instruction.length();
-        if(length == 0) {
-            continue;
-        }
-        int pos0 = 0;
-        pos0 = single_instruction.find(' ', pos0);
-        operation.assign(single_instruction, 0, pos0);
+//    while(std::getline(file, single_instruction)) {
+//        length = single_instruction.length();
+//        if(length == 0) {
+//            continue;
+//        }
+//        int pos0 = 0;
+//        pos0 = single_instruction.find(' ', pos0);
+//        operation.assign(single_instruction, 0, pos0);
 
-        int pos1 = single_instruction.find(' ', pos0+1);
-        lhs.assign(single_instruction, pos0+1, pos1-pos0-1);
+//        int pos1 = single_instruction.find(' ', pos0+1);
+//        lhs.assign(single_instruction, pos0+1, pos1-pos0-1);
 
-        rhs.assign(single_instruction, pos1+1, length-pos1-1);
+//        rhs.assign(single_instruction, pos1+1, length-pos1-1);
 
-        cout << operation << endl
-             << lhs << endl
-             << rhs << endl;
-    }
+//        cout << operation << endl
+//             << lhs << endl
+//             << rhs << endl;
+//    }
 
-    file.close();
-}
+//    file.close();
+//}
 
 
 //void test_assembler_compiler()
@@ -291,14 +291,14 @@ void test_file_stream()
 //}
 
 
-void test_set_insert()
-{
-    set<int> int_set;
-    auto insert_result = int_set.insert(10);
-    insert_result = int_set.insert(10);
-    cout << insert_result.second << endl;
-    // 0 ==> false
-}
+//void test_set_insert()
+//{
+//    set<int> int_set;
+//    auto insert_result = int_set.insert(10);
+//    insert_result = int_set.insert(10);
+//    cout << insert_result.second << endl;
+//    // 0 ==> false
+//}
 
 void z1(int, int){}
 typedef void(*z2)(int, int);

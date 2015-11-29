@@ -30,6 +30,22 @@ struct FunctionMeta<R(Args...)> {
     typedef R ReturnType;
 };
 
+template<typename T>
+struct RemoveRefenrence;
+
+
+template<typename T>
+struct RemoveRefenrence{
+    typedef T type;
+};
+
+
+template<typename T>
+struct RemoveRefenrence<T&>{
+    typedef T type;
+};
+
+
 /**
 
 void z1(int, int){}
@@ -51,6 +67,7 @@ void test_function_meta()
 }
 
 */
+
 }
 
 #endif // FUNCTIONMETA_H
