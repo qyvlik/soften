@@ -1,6 +1,0 @@
-DECLARA @a 0
-DECLARA @b 138
-ASSIGN @b @a
-
-DECLARA @a1 @b
-

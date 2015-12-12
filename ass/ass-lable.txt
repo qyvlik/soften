@@ -1,7 +1,0 @@
-LABEL 0 :
-
-DECLARA @A 10
-
-LABEL 1 :
-
-LABEL 2 :
