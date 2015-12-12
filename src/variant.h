@@ -138,12 +138,10 @@ public:
     bool get(T& g) {
         // T not a class or struct or union
         // or T register.
-        if(this->canConvert<T>()) {
-            g = dynamic_cast< Bridge<T> *> (d_ptr)->get();
-            return true;
-        } else {
-            return false;
-        }
+
+        return this->canConvert<T>()
+                ? (g = dynamic_cast< Bridge<T> *> (d_ptr)->get(), true)
+                : false;
     }
 
     std::string typeString() const
@@ -183,12 +181,9 @@ public:
         Bridge<VariantMap> * other_ =
                 dynamic_cast<Bridge<VariantMap> *>
                 (const_cast<AbstractBridge*>(other));
-        if(other_) {
-            data = other_->data;
-            return true;
-        } else {
-            return false;
-        }
+        return other_
+                ? (data = other_->data, true)
+                : false;
     }
 
     AbstractBridge* newCopy() const
@@ -225,12 +220,9 @@ public:
         Bridge<VariantList> * other_ =
                 dynamic_cast<Bridge<VariantList> *>
                 (const_cast<AbstractBridge*>(other));
-        if(other_) {
-            data = other_->data;
-            return true;
-        } else {
-            return false;
-        }
+        return other_
+                ? (data = other_->data, true)
+                : false;
     }
 
     AbstractBridge* newCopy() const
@@ -266,12 +258,9 @@ public:
         Bridge<VariantVector> * other_ =
                 dynamic_cast<Bridge<VariantVector> *>
                 (const_cast<AbstractBridge*>(other));
-        if(other_) {
-            data = other_->data;
-            return true;
-        } else {
-            return false;
-        }
+        return other_
+                ? (data = other_->data, true)
+                : false;
     }
 
     AbstractBridge* newCopy() const

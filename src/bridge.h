@@ -145,19 +145,21 @@ private:                                                                        
     STATIC_REGISTER_TYPE(_CLASS_, _CLASS_NAME_) \
     COMPLEX_TYPE_BRIDGE(_CLASS_)
 
-STATIC_REGISTER_TYPE(char, "char")
+STATIC_REGISTER_TYPE(bool, "bool");
 
-STATIC_REGISTER_TYPE(short, "short")
+STATIC_REGISTER_TYPE(char, "char");
 
-STATIC_REGISTER_TYPE(int, "int")
+STATIC_REGISTER_TYPE(short, "short");
 
-STATIC_REGISTER_TYPE(long long, "long long")
+STATIC_REGISTER_TYPE(int, "int");
 
-STATIC_REGISTER_TYPE(float, "float")
+STATIC_REGISTER_TYPE(long long, "long long");
 
-STATIC_REGISTER_TYPE(double, "double")
+STATIC_REGISTER_TYPE(float, "float");
 
-STATIC_REGISTER_TYPE(std::string, "String")
+STATIC_REGISTER_TYPE(double, "double");
+
+STATIC_REGISTER_TYPE(std::string, "String");
 
 template<>
 class Bridge<std::string> : public AbstractBridge
@@ -183,12 +185,10 @@ public:
         Bridge<std::string> * other_ =
                 dynamic_cast<Bridge<std::string> *>
                 (const_cast<AbstractBridge*>(other));
-        if(other_) {
-            data = other_->data;
-            return true;
-        } else {
-            return false;
-        }
+
+        return other_
+                ? (data = other_->data, true)
+                : false;
     }
 
     AbstractBridge* newCopy() const

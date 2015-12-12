@@ -5,7 +5,15 @@ using namespace std;
 const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
     {
         pair<const string, SObject::CallableMethod >
-        ( "toString", [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
+        ( "toString",
+        [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
+            result = thiz->toString();
+            return 0;
+        }),
+
+        pair<const string, SObject::CallableMethod >
+        ( "z",
+        [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
             result = thiz->toString();
             return 0;
         })
@@ -61,7 +69,7 @@ Variant SObject::property(const std::string &name) const
             : Variant();
 }
 
-void SObject::addMethod(const string &methodName,const SObject::CallableMethod &callable)
+void SObject::addMethod(const string &methodName, const SObject::CallableMethod &callable)
 {
     this->SObject::dynamicMetaCall[methodName] = callable;
 //    return SObject::StaticMetaCall.methods.find(methodName)
