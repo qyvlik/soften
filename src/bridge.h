@@ -165,6 +165,10 @@ template<>
 class Bridge<std::string> : public AbstractBridge
 {
 public:
+    explicit Bridge(const char* data):
+        data(data)
+    {}
+
     explicit Bridge(const std::string& data):
         data(data)
     { }
@@ -200,5 +204,6 @@ public:
 private:
     std::string data;
 };
+
 
 #endif // ABSTRACTBRIDGE_H

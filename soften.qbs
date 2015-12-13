@@ -10,6 +10,8 @@ CppApplication {
         "src/sobject.h",
         "src/variant.h",
         "test/main.cpp",
+        "test/myobject.cpp",
+        "test/myobject.h",
     ]
 
     cpp.defines: {

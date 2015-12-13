@@ -30,6 +30,11 @@ public:
 #endif
     }
 
+    // 去掉 explicit 方便
+    // explicit
+    Variant(const char* data)
+        :d_ptr(new Bridge<std::string>(data))
+    {}
 
     // explicit 就不能用于返回值了
     Variant(const Variant& other)
@@ -59,7 +64,9 @@ public:
     }
 
     template<typename T>
-    explicit Variant(const T& data):
+    // 去掉 explicit 方便一点
+    // explicit
+    Variant(const T& data):
         d_ptr(new Bridge<T>(data))
     {
 #if QBS_DEBUG

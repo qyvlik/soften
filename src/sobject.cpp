@@ -12,9 +12,13 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
         }),
 
         pair<const string, SObject::CallableMethod >
-        ( "z",
-        [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
-            result = thiz->toString();
+        ( "printSelf",
+        [](SObject* thiz, std::vector<Variant>&, Variant& )->int{
+            cout
+#ifdef QBS_DEBUG
+            << "printSelf: "
+#endif
+            << thiz->toString() << endl;
             return 0;
         })
     }
@@ -31,7 +35,7 @@ SObject::~SObject()
 
 }
 
-bool SObject::isEqual(const SObject *object)
+bool SObject::isEqual(const SObject *object) const
 {
     return this == object;
 }
@@ -57,7 +61,7 @@ int SObject::callMethod(const string methodName,
             : SObject::StaticMetaCall.findMethod(methodName)(this, args, result);
 }
 
-int SObject::callMethod(const string methodName)
+int SObject::callSampleMethod(const string methodName)
 {
     VariantVector arguments;
     Variant result;
@@ -80,10 +84,10 @@ Variant SObject::property(const std::string &name) const
 void SObject::addMethod(const string &methodName, const SObject::CallableMethod &callable)
 {
     this->SObject::dynamicMetaCall[methodName] = callable;
-//    return SObject::StaticMetaCall.methods.find(methodName)
-//            == SObject::StaticMetaCall.methods.end()
-//            ? (this->SObject::dynamicMetaCall[methodName] = callable, true)
-//            : false;
+    //    return SObject::StaticMetaCall.methods.find(methodName)
+    //            == SObject::StaticMetaCall.methods.end()
+    //            ? (this->SObject::dynamicMetaCall[methodName] = callable, true)
+    //            : false;
 }
 
 void SObject::removeMethod(const string &methodName)

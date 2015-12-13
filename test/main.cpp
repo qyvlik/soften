@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "../src/sobject.h"
+#include "myobject.h"
 
 using namespace std;
 
@@ -88,16 +89,15 @@ void test_02()
 
     cout << result << endl;
 
-
     ageObject->callMethod("setAge", arguments, result);
 
     ageObject->callMethod("getAge", arguments, result);
 
     cout << result << endl;
 
-    ageObject->callMethod("doSomething");
+    ageObject->callSampleMethod("doSomething");
 
-    ageObject->callMethod("tryToUseBingArg");
+    ageObject->callSampleMethod("tryToUseBingArg");
 
     delete ageObject;
 }
@@ -117,6 +117,19 @@ void test_03()
     cout << "sizeof(SObject): " << sizeof(SObject) << endl;
 }
 
+void test_4()
+{
+    cout << "sizeof(MyObject): " << sizeof(MyObject) << endl;
+    MyObject myObj;
+    myObj.callSampleMethod("printSelf");
+    cout << endl;
+    VariantVector vec;
+    vec.push_back(12);
+    vec.push_back("12");
+    myObj.setProperty("vector", vec);
+    cout << myObj.property("vector") << endl;
+}
+
 int main(
         // int argc, const char* argv[]
         )
@@ -124,6 +137,8 @@ int main(
     test_02();
     cout << "------------------" << endl;
     test_03();
+    cout << "------------------" << endl;
+    test_4();
     return 0;
 }
 
