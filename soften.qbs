@@ -12,6 +12,7 @@ CppApplication {
         "test/main.cpp",
         "test/myobject.cpp",
         "test/myobject.h",
+        "test/objectfactory.h",
     ]
 
     cpp.defines: {

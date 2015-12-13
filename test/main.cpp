@@ -2,60 +2,9 @@
 
 #include "../src/sobject.h"
 #include "myobject.h"
+#include "objectfactory.h"
 
 using namespace std;
-
-class Factory
-{
-public:
-    static SObject* create(int) {
-        SObject* object = new SObject;
-        object->setProperty("age", Variant(12));
-
-        // int getAge();
-        object->addMethod("getAge",
-                          [](SObject* thiz, VariantVector&, Variant& result)->int{
-            result = thiz->property("age");
-            return 0;
-        });
-
-        // void setAge(int age);
-        object->addMethod("setAge",
-                          [](SObject* thiz, VariantVector& args, Variant&)->int{
-            if(args.size() == 1) {
-                // 这里可以做类型判断
-                if(thiz->property("age").typeString()
-                        == args.at(0).typeString()) {
-                    thiz->setProperty("age", args.at(0));
-                    return 0;
-                } else {
-                    return -2;
-                }
-            } else {
-                return -1;
-            }
-        });
-
-        object->addMethod("doSomething", Factory::doSomething);
-
-        object->addMethod("tryToUseBingArg",
-                          bind(Factory::tryToUseBindArg,
-                               nullptr, std::placeholders::_2, std::placeholders::_3));
-
-        return object;
-    }
-
-    static int tryToUseBindArg(SObject* thiz, VariantVector& , Variant&) {
-        //! thiz is nullptr
-        cout << "tryToUseBindArg:" << thiz <<endl;
-        return 0;
-    }
-
-    static int doSomething(SObject* thiz, VariantVector& , Variant&) {
-        cout << "doSomething: " <<thiz->toString() <<endl;
-        return 0;
-    }
-};
 
 void test_01() {
     SObject obj;
@@ -83,7 +32,7 @@ void test_02()
     VariantVector arguments;
     Variant result;
 
-    SObject *ageObject = Factory::create(0);
+    ObjectFactory<SObject>::shared ageObject = ObjectFactory<SObject>::create();
 
     ageObject->callMethod("getAge", arguments, result);
 
@@ -98,8 +47,6 @@ void test_02()
     ageObject->callSampleMethod("doSomething");
 
     ageObject->callSampleMethod("tryToUseBingArg");
-
-    delete ageObject;
 }
 
 void test_03()
