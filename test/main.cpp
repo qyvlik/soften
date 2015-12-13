@@ -3,6 +3,7 @@
 #include "../src/sobject.h"
 #include "myobject.h"
 #include "objectfactory.h"
+#include "test_vector2d.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ void test_02()
     VariantVector arguments;
     Variant result;
 
-    ObjectFactory<SObject>::shared ageObject = ObjectFactory<SObject>::create();
+    auto ageObject = ObjectFactory<SObject>::create();
 
     ageObject->callMethod("getAge", arguments, result);
 
@@ -86,6 +87,7 @@ int main(
     test_03();
     cout << "------------------" << endl;
     test_4();
+    TestVector2d::Test();
     return 0;
 }
 

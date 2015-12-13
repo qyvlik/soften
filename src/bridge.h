@@ -128,22 +128,15 @@ public:                                                                         
         Bridge<_CLASS_> * other_ =                                               \
                 dynamic_cast<Bridge<_CLASS_> *>                                  \
                 (const_cast<AbstractBridge*>(other));                            \
-        if(other_) {                                                             \
-            data = other_->data;                                                 \
-            return true;                                                         \
-        } else {                                                                 \
-            return false;                                                        \
-        }                                                                        \
+        return other_                                                            \
+                ? (data = other_->data, true)                                    \
+                : false;                                                         \
     }                                                                            \
     AbstractBridge* newCopy() const                                              \
     { return new Bridge<_CLASS_>(data); }                                        \
 private:                                                                         \
     _CLASS_ data;                                                                \
 };
-
-#define STATIC_REGISTER_COMPLEX_TYPE(_CLASS_, _CLASS_NAME_) \
-    STATIC_REGISTER_TYPE(_CLASS_, _CLASS_NAME_) \
-    COMPLEX_TYPE_BRIDGE(_CLASS_)
 
 STATIC_REGISTER_TYPE(bool, "bool");
 
@@ -205,5 +198,9 @@ private:
     std::string data;
 };
 
+
+#define STATIC_REGISTER_COMPLEX_TYPE(_CLASS_, _CLASS_NAME_) \
+    STATIC_REGISTER_TYPE(_CLASS_, _CLASS_NAME_) \
+    COMPLEX_TYPE_BRIDGE(_CLASS_)
 
 #endif // ABSTRACTBRIDGE_H
