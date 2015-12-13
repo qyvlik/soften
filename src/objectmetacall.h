@@ -16,12 +16,38 @@ struct ObjectMetaCall
         auto findCall = methods.find(methodName);
         return findCall != methods.end()
                 ? findCall->second
-                : [](Class* , std::vector<Variant>&, Variant&) -> int { return 0; }
+                : [methodName](Class* , std::vector<Variant>&, Variant&) -> int {
+#ifdef QBS_DEBUG
+            std::cout << "CallableMethod findMethod(const std::string& methodName) const "
+                         "not find :"
+                      << methodName << std::endl;
+#endif
+            return -1;
+        }
         ;
     }
 
     const std::map<const std::string, CallableMethod> methods;
 };
+
+template<typename D, typename B>
+int callMethodHelper(D* thiz,
+                     const std::string& methodName,
+                     std::vector<Variant> args,
+                     Variant result) {
+    //! 静态检查
+    static_assert(std::is_base_of<B, D>::value, "NOT BASE OF SObject");
+
+    auto findCall = thiz->StaticMetaCall.methods.find(methodName);
+    auto end = thiz->StaticMetaCall.methods.end();
+
+    return findCall != end
+            ? findCall->second(thiz, args, result)
+            : thiz->B::callMethod(methodName, args, result);
+}
+
+
+
 
 #endif // OBJECTMETACALL
 

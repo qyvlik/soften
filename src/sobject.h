@@ -11,6 +11,10 @@ public:
     typedef ObjectMetaCall<SObject>::CallableMethod CallableMethod;
     static const ObjectMetaCall<SObject> StaticMetaCall;
 
+private:
+    std::map<const std::string, CallableMethod> dynamicMetaCall;
+
+public:
     explicit SObject();
     virtual ~SObject();
 
@@ -23,6 +27,8 @@ public:
                            std::vector<Variant> &args,
                            Variant& result);
 
+    int callMethod(const std::string methodName);
+
     void setProperty(const std::string& name, const Variant& value);
 
     Variant property(const std::string& name) const;
@@ -30,31 +36,9 @@ public:
     void addMethod(const std::string& methodName,const CallableMethod& callable);
 
     void removeMethod(const std::string& methodName);
-
 private:
     VariantMap properties;
-    std::map<const std::string, CallableMethod> dynamicMetaCall;
 };
-
-template<typename D, typename B>
-int callMethod(D* thiz,
-               const std::string& methodName,
-               std::vector<Variant> args,
-               Variant result) {
-    //! 静态检查
-    static_assert(std::is_base_of<B, D>::value, "NOT BASE OF SObject");
-    static_assert(std::is_base_of<SObject, D>::value, "NOT BASE OF SObject");
-
-    auto c = thiz->metaCall.methods.find(methodName);
-    auto end = thiz->metaCall.methods.end();
-
-    if( c != end) {
-        return c->second(thiz, args, result);
-    } else {
-        // 向上
-       return thiz->B::callMethod(methodName, args, result);
-    }
-}
 
 
 #endif // SOBJECT_H

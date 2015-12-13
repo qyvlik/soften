@@ -50,10 +50,18 @@ int SObject::callMethod(const string methodName,
                         std::vector<Variant>& args,
                         Variant& result)
 {    
-    auto findDynamicMethod  = this->SObject::dynamicMetaCall.find(methodName);
-    return findDynamicMethod != this->SObject::dynamicMetaCall.end()
+    auto findDynamicMethod = this->SObject::dynamicMetaCall.find(methodName);
+    auto end = this->SObject::dynamicMetaCall.end();
+    return findDynamicMethod != end
             ? findDynamicMethod->second(this, args, result)
             : SObject::StaticMetaCall.findMethod(methodName)(this, args, result);
+}
+
+int SObject::callMethod(const string methodName)
+{
+    VariantVector arguments;
+    Variant result;
+    return this->callMethod(methodName, arguments, result);
 }
 
 void SObject::setProperty(const std::string &name, const Variant &value)
