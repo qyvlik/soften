@@ -29,7 +29,7 @@ public:
 
     virtual AbstractBridge* newCopy() const = 0;
 
-    virtual std::string toString()const {
+    virtual std::string toString() const {
         std::stringstream sstream;
         sstream << this;
         std::string address;
@@ -41,13 +41,13 @@ public:
 template<typename T>
 class Bridge : public AbstractBridge
 {
-    static_assert(!std::is_class<T>::value, "NOT SUPPORT CLASS");
-    static_assert(!std::is_union<T>::value, "NOT SUPPORT UNION");
-    static_assert(!std::is_reference<T>::value ,"NOT SUPPORT REFERENCE");
-    static_assert(!std::is_const<T>::value ,"NOT SUPPORT CONSTANT");
-    static_assert(!std::is_pointer<T>::value, "NOT SUPPORT POINTER");
-    static_assert(!std::is_void<T>::value, "NOT SUPPORT VOID");
-    static_assert(!std::is_volatile<T>::value, "NOT SUPPORT VOLATILE");
+    static_assert(!std::is_class<T>::value,             "NOT SUPPORT CLASS");
+    static_assert(!std::is_union<T>::value,             "NOT SUPPORT UNION");
+    static_assert(!std::is_reference<T>::value ,        "NOT SUPPORT REFERENCE");
+    static_assert(!std::is_const<T>::value ,            "NOT SUPPORT CONSTANT");
+    static_assert(!std::is_pointer<T>::value,           "NOT SUPPORT POINTER");
+    static_assert(!std::is_void<T>::value,              "NOT SUPPORT VOID");
+    static_assert(!std::is_volatile<T>::value,          "NOT SUPPORT VOLATILE");
 
 public:
     explicit Bridge(const T& value):

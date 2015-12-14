@@ -20,7 +20,7 @@ struct ObjectMetaCall
         auto findCall = methods.find(methodName);
         return findCall != methods.end()
                 ? findCall->second
-                : [](ObjectMetaCall::CallableClass*, std::vector<Variant>&, Variant&) -> int {
+                : [](Class*, std::vector<Variant>&, Variant&) -> int {
             return -1;
         };
     }
@@ -43,8 +43,9 @@ struct ObjectMetaCall
 template<typename D, typename B>
 int callMethodHelper(D* thiz,
                      const std::string& methodName,
-                     std::vector<Variant> args,
-                     Variant result) {
+                     std::vector<Variant>& args,
+                     Variant& result)
+{
     //! 静态检查
     static_assert(std::is_base_of<B, D>::value, "NOT BASE OF SObject");
 
@@ -75,11 +76,11 @@ int callMethodHelper(D* thiz,
         friend struct ObjectMetaCall<_D_>; \
         friend int callMethodHelper<_D_, _B_> (_D_* thiz, \
                                                 const std::string& methodName, \
-                                                std::vector<Variant> args, \
-                                                Variant result); \
+                                                std::vector<Variant>& args, \
+                                                Variant& result); \
     public: \
-        virtual int callMethod(const std::string methodName, \
-                                std::vector<Variant> &args, \
+        virtual int callMethod(const std::string& methodName, \
+                                std::vector<Variant>& args, \
                                 Variant& result) \
         { return callMethodHelper<_D_, _B_>(this, methodName, args, result); }
 

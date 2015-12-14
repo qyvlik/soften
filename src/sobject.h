@@ -16,8 +16,8 @@ private:
 
 public:
     //! 优先调用动态添加的方法
-    virtual int callMethod(const std::string methodName,
-                           std::vector<Variant> &args,
+    virtual int callMethod(const std::string& methodName,
+                           std::vector<Variant>& args,
                            Variant& result);
 
 public:

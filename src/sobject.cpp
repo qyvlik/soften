@@ -50,7 +50,7 @@ string SObject::toString() const
 }
 
 //! 优先调用动态添加的方法
-int SObject::callMethod(const string methodName,
+int SObject::callMethod(const string &methodName,
                         std::vector<Variant>& args,
                         Variant& result)
 {    
