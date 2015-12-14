@@ -65,6 +65,7 @@ void test_03()
     cout << "sizeof(SObject): " << sizeof(SObject) << endl;
 }
 
+
 void test_4()
 {
     cout << "sizeof(MyObject): " << sizeof(MyObject) << endl;
@@ -78,16 +79,29 @@ void test_4()
     cout << myObj.property("vector") << endl;
 }
 
+void test_5()
+{
+    SObject* parent = new SObject();
+    SObject* child = new SObject(parent);
+    cout << child->property("toString");
+
+    delete parent;
+}
+
 int main(
         // int argc, const char* argv[]
         )
 {
+    /*
     test_02();
     cout << "------------------" << endl;
     test_03();
     cout << "------------------" << endl;
     test_4();
     TestVector2d::Test();
+    */
+    test_5();
+
     return 0;
 }
 

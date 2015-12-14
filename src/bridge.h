@@ -146,6 +146,8 @@ STATIC_REGISTER_TYPE(short, "short");
 
 STATIC_REGISTER_TYPE(int, "int");
 
+STATIC_REGISTER_TYPE(long, "long");
+
 STATIC_REGISTER_TYPE(long long, "long long");
 
 STATIC_REGISTER_TYPE(float, "float");

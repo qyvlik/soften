@@ -2,6 +2,10 @@
 
 using namespace std;
 
+
+ObjectManager<SObject*> SObject::SObjectManager;
+
+
 const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
     {
         pair<const string, SObject::CallableMethod >
@@ -15,9 +19,9 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
         ( "printSelf",
         [](SObject* thiz, std::vector<Variant>&, Variant& )->int{
             cout
-#ifdef QBS_DEBUG
+            #ifdef QBS_DEBUG
             << "printSelf: "
-#endif
+            #endif
             << thiz->toString() << endl;
             return 0;
         })
@@ -25,15 +29,28 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
 };
 
 
-
-SObject::SObject(SObject *parent)
+SObject::SObject(SObject *parent):
+    m_parent(nullptr)
 {
-
+    SObjectManager.add(this);
+    setParentHelper(parent);
 }
 
 SObject::~SObject()
 {
+#ifdef QBS_DEBUG
+    cout << "parent:" << this->parent() << " this:" << this << endl;
+#endif
+    auto iter = this->children.begin();
+    auto end = this->children.end();
 
+    while(iter != end) {
+        this->children.remove((*iter));
+        this->deleteChild((*iter));
+        iter++;
+    }
+
+    SObjectManager.remove(this);
 }
 
 bool SObject::isEqual(const SObject *object) const
@@ -95,5 +112,43 @@ void SObject::addMethod(const string &methodName, const SObject::CallableMethod 
 void SObject::removeMethod(const string &methodName)
 {
     this->SObject::dynamicMetaCall.erase(methodName);
+}
+
+void SObject::setParent(SObject *parentPointer)
+{
+    this->setParentHelper(parentPointer);
+}
+
+SObject *SObject::parent() const
+{
+    return this->m_parent;
+}
+
+void SObject::deleteChild(SObject *child)
+{
+    if(SObjectManager.isLive(child)){
+        delete child;
+    }
+}
+
+void SObject::setParentHelper(SObject *parentPointer)
+{
+    if(parentPointer) {
+        // 自身的 parent 为空
+        // 则设置 parent
+        if(this->m_parent == nullptr) {
+            this->m_parent = parentPointer;
+            this->m_parent->children.push_back(this);
+
+        } else {
+            // 自身的 parent 不为空
+            // 先移除原有的父子关系
+            // 再建立新的父子关系
+            SObjectManager.isLive(m_parent) ? this->m_parent->children.remove(this)
+                                            : []()->void{}();
+            this->m_parent = parentPointer;
+            this->m_parent->children.push_back(this);
+        }
+    }
 }
 
