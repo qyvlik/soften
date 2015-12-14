@@ -13,6 +13,7 @@ CppApplication {
         "test/myobject.cpp",
         "test/myobject.h",
         "test/objectfactory.h",
+        "test/test_callmethod_time.h",
         "test/test_vector2d.h",
         "test/vector2d.cpp",
         "test/vector2d.h",

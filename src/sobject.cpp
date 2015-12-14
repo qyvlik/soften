@@ -8,14 +8,14 @@ ObjectManager<SObject*> SObject::SObjectManager;
 
 const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
     {
-        pair<const string, SObject::CallableMethod >
+        pair<const string, SObject::CallableMethod>
         ( "toString",
         [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
             result = thiz->toString();
             return 0;
         }),
 
-        pair<const string, SObject::CallableMethod >
+        pair<const string, SObject::CallableMethod>
         ( "printSelf",
         [](SObject* thiz, std::vector<Variant>&, Variant& )->int{
             cout
@@ -23,6 +23,23 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
             << "printSelf: "
             #endif
             << thiz->toString() << endl;
+            return 0;
+        }),
+
+        pair<const string, SObject::CallableMethod>
+        ( "isEqual",
+        // bool isEqual(const SObject* other)
+        [](SObject* thiz, std::vector<Variant>&args, Variant& result)->int{
+
+            if(args.size() != 1) return -1;
+
+            if(!args.at(0).canConvert<SObject*>()) return -2;
+
+            SObject* object = args.at(0).value<SObject*>();
+
+            if(!SObject::SObjectManager.isLive(object)) return -3;
+
+            result = thiz->isEqual(object);
             return 0;
         })
     }

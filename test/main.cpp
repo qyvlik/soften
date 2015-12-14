@@ -4,6 +4,7 @@
 #include "myobject.h"
 #include "objectfactory.h"
 #include "test_vector2d.h"
+#include "test_callmethod_time.h"
 
 using namespace std;
 
@@ -107,7 +108,88 @@ void test_06()
     cout << wellVar << endl;
     cout << wellVar.canConvert<SObject*>() << endl;
     cout << wellVar.value<SObject*>()->property("myName") << endl;
+
+    VariantVector args;
+    args.push_back(wellVar);
+
+    Variant result;
+    well->callMethod("isEqual", args, result);
+    cout << result;
+
 }
+
+/**
+  \title test callMethod time
+*/
+void internal_test_07_0()
+{
+    SObject* well = new SObject();
+
+    VariantVector args;
+    args.push_back(well);
+
+    Variant result;
+    for(int i=0; i<2000000; i++) {
+        well->callMethod("isEqual", args, result);
+    }
+    cout << result << endl;
+    delete well;
+}
+
+void internal_test_07_1()
+{
+    SObject* well = new SObject();
+    bool result;
+    for(int i=0; i<2000000; i++) {
+        result = well->isEqual(well);
+    }
+    cout << result << endl;
+    delete well;
+}
+
+
+void internal_test_07_2()
+{
+    SObject* well = new SObject();
+
+    well->addMethod(
+                "internal_test_07_1",
+                [](SObject* thiz, VariantVector& , Variant& result){
+        bool r = false;
+        for(int i=0; i<2000000; i++) {
+            r = thiz->isEqual(thiz);
+        }
+        result = r;
+        return 0;
+    });
+
+    well->callSampleMethod("internal_test_07_1");
+    delete well;
+}
+
+void test_07()
+{
+    cout << "unnative code"
+         << test_function_time(internal_test_07_0)
+         << " s" << endl;
+    // 1.28607
+
+    cout << "native code"
+         <<
+            test_function_time(internal_test_07_1)
+         << " s" << endl;
+    // 0.006
+
+    cout << "register code"
+         <<
+            test_function_time(internal_test_07_2)
+         << " s" << endl;
+    //0.006001
+
+    // 200 times
+}
+
+
 
 int main(
         // int argc, const char* argv[]
@@ -121,8 +203,9 @@ int main(
     test_04();
     TestVector2d::Test();
     */
-//    test_05();
-    test_06();
+    //    test_05();
+    // test_06();
+    test_07();
     return 0;
 }
 

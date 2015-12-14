@@ -25,6 +25,14 @@ private:
 template<typename Class>
 std::set<Class> ObjectManager<Class>::ObjectSet;
 
+class SObject;
+class SObjectFactory
+{
+public:
+    virtual ~SObjectFactory() = 0;
+    virtual SObject* create() = 0;
+};
+
 class SObject
 {
 public:
@@ -46,6 +54,7 @@ public:
 
     CALLABLE_METHOD(printSelf)
     CALLABLE_METHOD(toString)
+    CALLABLE_METHOD(isEqual)
 
     explicit SObject(SObject* m_parent = 0);
     virtual ~SObject();
@@ -117,9 +126,9 @@ public:
     inline const SObject* get() const
     { return d_ptr; }
 
-    bool assign(const AbstractBridge* other) {
+    inline bool assign(const AbstractBridge* other) {
         (void)other;
-        return  false;
+        return false;
     }
 
     AbstractBridge* clone() const
