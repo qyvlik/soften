@@ -168,7 +168,7 @@ public:
         data(data)
     { }
 
-    inline std::string typeString()
+    inline std::string typeString() const
     { return ::typeString<std::string>(); }
 
     inline void set(const std::string& value)

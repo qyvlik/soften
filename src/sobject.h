@@ -82,8 +82,54 @@ private:
     std::list<SObject*> children;
 
     void setParentHelper(SObject* parentPointer);
-
 };
 
+
+STATIC_REGISTER_TYPE(SObject*, "SObject");
+
+template<>
+class Bridge<SObject*> : public AbstractBridge
+{
+public:
+    explicit Bridge(SObject* data):
+        d_ptr(data)
+    { }
+
+    ~Bridge()
+    {
+        /**
+          \note don't delete data
+        */
+#ifdef QBS_DEBUG
+        std::cout << "don't delete data:" << d_ptr->toString() << std::endl;
+#endif
+    }
+
+    inline std::string typeString() const
+    { return ::typeString<SObject*>(); }
+
+    inline void set(SObject* value)
+    { d_ptr = value; }
+
+    inline SObject* get()
+    { return d_ptr; }
+
+    inline const SObject* get() const
+    { return d_ptr; }
+
+    bool assign(const AbstractBridge* other) {
+        (void)other;
+        return  false;
+    }
+
+    AbstractBridge* clone() const
+    { return new Bridge<SObject*>(d_ptr); }
+
+    std::string toString()const
+    { return d_ptr ? d_ptr->toString() : ""; }
+
+private:
+    SObject* d_ptr;
+};
 
 #endif // SOBJECT_H

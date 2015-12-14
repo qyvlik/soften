@@ -156,7 +156,13 @@ public:
     { return d_ptr ? d_ptr->typeString() : ::typeString(); }
 
     friend std::ostream& operator << (std::ostream& outs, const Variant& var)
-    { return outs << (var.d_ptr ? var.d_ptr->toString() : ""); }
+    {
+        return outs << "Variant("
+                    << (var.d_ptr
+                        ?  var.d_ptr->typeString() + ", " + var.d_ptr->toString()
+                        : "nil")
+                    << ")";
+    }
 
 private:
     AbstractBridge* d_ptr;

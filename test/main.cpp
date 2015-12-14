@@ -66,7 +66,7 @@ void test_03()
 }
 
 
-void test_4()
+void test_04()
 {
     cout << "sizeof(MyObject): " << sizeof(MyObject) << endl;
     MyObject myObj;
@@ -79,13 +79,34 @@ void test_4()
     cout << myObj.property("vector") << endl;
 }
 
-void test_5()
+/**
+  \title test parent-children tree
+*/
+void test_05()
 {
     SObject* parent = new SObject();
     SObject* child = new SObject(parent);
     cout << child->property("toString");
 
     delete parent;
+}
+
+/**
+  \title test Variant bridge SObject*
+*/
+
+void test_06()
+{
+    SObject* well = new SObject();
+
+    well->setProperty("myName", "Well SObject");
+
+    Variant wellVar;
+    wellVar = well;
+
+    cout << wellVar << endl;
+    cout << wellVar.canConvert<SObject*>() << endl;
+    cout << wellVar.value<SObject*>()->property("myName") << endl;
 }
 
 int main(
@@ -97,11 +118,11 @@ int main(
     cout << "------------------" << endl;
     test_03();
     cout << "------------------" << endl;
-    test_4();
+    test_04();
     TestVector2d::Test();
     */
-    test_5();
-
+//    test_05();
+    test_06();
     return 0;
 }
 
