@@ -113,10 +113,10 @@ public:
     }
 
     template<typename T>
-    bool canConvert()
+    bool canConvert() const
     { return dynamic_cast< Bridge<T> *>(d_ptr) ; }
 
-    bool canConvert(const std::string& typeName)
+    bool canConvert(const std::string& typeName) const
     { return d_ptr ? d_ptr->typeString() == typeName : false; }
 
     template<typename T>
@@ -142,7 +142,7 @@ public:
     }
 
     template<typename T>
-    bool get(T& g) {
+    bool get(T& g) const {
         // T not a class or struct or union
         // or T register.
 
