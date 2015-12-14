@@ -25,7 +25,8 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
 };
 
 
-SObject::SObject()
+
+SObject::SObject(SObject *parent)
 {
 
 }
@@ -60,6 +61,7 @@ int SObject::callMethod(const string &methodName,
             ? findDynamicMethod->second(this, args, result)
             : SObject::StaticMetaCall.findMethod(methodName)(this, args, result);
 }
+
 
 int SObject::callSampleMethod(const string methodName)
 {

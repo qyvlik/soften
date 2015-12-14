@@ -47,7 +47,7 @@ public:
                   << std::endl;
 #endif
         if(other.d_ptr) {
-            d_ptr = other.d_ptr->newCopy();
+            d_ptr = other.d_ptr->clone();
         }
     }
 
@@ -107,7 +107,7 @@ public:
 #endif
         if(this->d_ptr && !this->d_ptr->assign(other.d_ptr)) {
             delete this->d_ptr;
-            this->d_ptr = other.d_ptr->newCopy();
+            this->d_ptr = other.d_ptr->clone();
         }
         return *this;
     }
@@ -193,7 +193,7 @@ public:
                 : false;
     }
 
-    AbstractBridge* newCopy() const
+    AbstractBridge* clone() const
     { return new Bridge<VariantMap>(data); }
 
 private:
@@ -232,7 +232,7 @@ public:
                 : false;
     }
 
-    AbstractBridge* newCopy() const
+    AbstractBridge* clone() const
     { return new Bridge<VariantList>(data); }
 
 private:
@@ -270,7 +270,7 @@ public:
                 : false;
     }
 
-    AbstractBridge* newCopy() const
+    AbstractBridge* clone() const
     { return new Bridge<VariantVector>(data); }
 
 private:

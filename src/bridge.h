@@ -27,7 +27,7 @@ public:
 
     virtual bool assign(const AbstractBridge* other) = 0;
 
-    virtual AbstractBridge* newCopy() const = 0;
+    virtual AbstractBridge* clone() const = 0;
 
     virtual std::string toString() const {
         std::stringstream sstream;
@@ -82,7 +82,7 @@ public:
         }
     }
 
-    AbstractBridge* newCopy() const
+    AbstractBridge* clone() const
     { return new Bridge<T>(data); }
 
     std::string toString()const {
@@ -132,7 +132,7 @@ public:                                                                         
                 ? (data = other_->data, true)                                    \
                 : false;                                                         \
     }                                                                            \
-    AbstractBridge* newCopy() const                                              \
+    AbstractBridge* clone() const                                                \
     { return new Bridge<_CLASS_>(data); }                                        \
 private:                                                                         \
     _CLASS_ data;                                                                \
@@ -188,7 +188,7 @@ public:
                 : false;
     }
 
-    AbstractBridge* newCopy() const
+    AbstractBridge* clone() const
     { return new Bridge<std::string>(data); }
 
     std::string toString()const

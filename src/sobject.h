@@ -25,7 +25,7 @@ public:
     CALLABLE_METHOD(printSelf)
     CALLABLE_METHOD(toString)
 
-    explicit SObject();
+    explicit SObject(SObject* parent = 0);
     virtual ~SObject();
 
     virtual bool isEqual(const SObject* object) const;
@@ -43,7 +43,13 @@ public:
     void removeMethod(const std::string& methodName);
 
 private:
+
     VariantMap properties;
+
+
+
+    SObject& operator =(const SObject& other) = delete;
+    SObject(const SObject& other) = delete;
 };
 
 

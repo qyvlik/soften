@@ -36,7 +36,7 @@ public:
                 : false;
     }
 
-    AbstractBridge* newCopy() const
+    AbstractBridge* clone() const
     { return new Bridge<vector2d>(data); }
 
     std::string toString()const {
