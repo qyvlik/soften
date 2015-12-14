@@ -120,7 +120,7 @@ public:
     { return d_ptr ? d_ptr->typeString() == typeName : false; }
 
     template<typename T>
-    const T& value() const {
+    T value() const {
 #if QBS_DEBUG
         std::cout << "user this method must check object can convert"
                   << std::endl;
@@ -131,7 +131,8 @@ public:
     }
 
     template<typename T>
-    T& value() {
+    T& reference() {
+        static_assert(!std::is_pointer<T>::value, "NOT SUPPORT POINTER");
 #if QBS_DEBUG
         std::cout << "user this method must check object can convert"
                   << std::endl;
