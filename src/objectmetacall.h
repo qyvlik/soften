@@ -7,6 +7,18 @@
 
 #define CALLABLE_METHOD(X)
 
+struct ObjectMetaCallState {
+    enum {
+        Unkonwn = 1
+        , CallSuccess = 0
+        , NativeMethodNotFound = -1
+        , ArgumentsTypeError = -2
+        , ArgumentsLengthError = -3
+        , NativeMethodHasExcept = -4
+        , ObjectDeath = -5
+    };
+};
+
 template<typename Class>
 struct ObjectMetaCall
 {
@@ -21,7 +33,7 @@ struct ObjectMetaCall
         return findCall != methods.end()
                 ? findCall->second
                 : [](Class*, std::vector<Variant>&, Variant&) -> int {
-            return -1;
+            return ObjectMetaCallState::NativeMethodNotFound;
         };
     }
 

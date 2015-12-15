@@ -2,9 +2,7 @@
 
 using namespace std;
 
-
 ObjectManager<SObject*> SObject::SObjectManager;
-
 
 const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
     {
@@ -12,7 +10,7 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
         ( "toString",
         [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
             result = thiz->toString();
-            return 0;
+            return ObjectMetaCallState::CallSuccess;
         }),
 
         pair<const string, SObject::CallableMethod>
@@ -23,7 +21,7 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
             << "printSelf: "
             #endif
             << thiz->toString() << endl;
-            return 0;
+            return ObjectMetaCallState::CallSuccess;
         }),
 
         pair<const string, SObject::CallableMethod>
@@ -31,16 +29,19 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
         // bool isEqual(const SObject* other)
         [](SObject* thiz, std::vector<Variant>&args, Variant& result)->int{
 
-            if(args.size() != 1) return -1;
+            if(args.size() != 1)
+            return ObjectMetaCallState::ArgumentsLengthError;
 
-            if(!args.at(0).canConvert<SObject*>()) return -2;
+            if(!args.at(0).canConvert<SObject*>())
+            return ObjectMetaCallState::ArgumentsTypeError;
 
             SObject* object = args.at(0).value<SObject*>();
 
-            if(!SObject::SObjectManager.isLive(object)) return -3;
+            if(!SObject::SObjectManager.isLive(object))
+            return ObjectMetaCallState::ObjectDeath;
 
             result = thiz->isEqual(object);
-            return 0;
+            return ObjectMetaCallState::CallSuccess;
         })
     }
 };
@@ -154,9 +155,10 @@ void SObject::setParentHelper(SObject *parentPointer)
         // 自身的 parent 为空
         // 则设置 parent
         if(this->m_parent == nullptr) {
-            this->m_parent = parentPointer;
-            this->m_parent->children.push_back(this);
-
+            SObjectManager.isLive(parentPointer)
+                    ? ( this->m_parent = parentPointer,
+                        this->m_parent->children.push_back(this) )
+                    : []()->void{}();
         } else {
             // 自身的 parent 不为空
             // 先移除原有的父子关系

@@ -94,7 +94,7 @@ private:
 };
 
 
-STATIC_REGISTER_TYPE(SObject*, "SObject");
+STATIC_REGISTER_TYPE(SObject*, "SObject*");
 
 template<>
 class Bridge<SObject*> : public AbstractBridge
