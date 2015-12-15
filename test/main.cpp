@@ -195,17 +195,23 @@ int main(
         // int argc, const char* argv[]
         )
 {
-    /*
-    test_02();
+    //*
+//    test_01();
+//    cout << "------------------" << endl;
+//    test_02();
+//    cout << "------------------" << endl;
+//    test_03();
+//    cout << "------------------" << endl;
+//    test_04();
+//   cout << "------------------" << endl;
+    test_05();
     cout << "------------------" << endl;
-    test_03();
+    test_06();
     cout << "------------------" << endl;
-    test_04();
-    TestVector2d::Test();
-    */
-    //    test_05();
-    // test_06();
-    test_07();
+//    TestVector2d::Test();
+//    cout << "------------------" << endl;
+    //*/
+    //test_07();
     return 0;
 }
 

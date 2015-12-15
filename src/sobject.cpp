@@ -63,10 +63,12 @@ SObject::~SObject()
     auto end = this->children.end();
 
     while(iter != end) {
-        this->children.remove((*iter));
+        // this->children.remove((*iter));
         this->deleteChild((*iter));
         iter++;
     }
+
+    this->children.clear();
 
     SObjectManager.remove(this);
 }
