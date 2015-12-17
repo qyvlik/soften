@@ -25,6 +25,8 @@ public:
         return ::typeString();
     }
 
+    virtual bool isEqual(const AbstractBridge* other) const = 0;
+
     virtual bool assign(const AbstractBridge* other) = 0;
 
     virtual AbstractBridge* clone() const = 0;
@@ -70,16 +72,24 @@ public:
     inline const T& get() const
     { return data; }
 
-    bool assign(const AbstractBridge* other) {
+    bool isEqual(const AbstractBridge* other) const
+    {
         Bridge<T> * other_ =
                 dynamic_cast<Bridge<T> *>
                 (const_cast<AbstractBridge*>(other));
-        if(other_) {
-            data = other_->data;
-            return true;
-        } else {
-            return false;
-        }
+        return other_
+                ? data == other_->data
+                : false;
+    }
+
+    bool assign(const AbstractBridge* other)
+    {
+        Bridge<T> * other_ =
+                dynamic_cast<Bridge<T> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_
+                ? (data = other_->data, true)
+                : false;
     }
 
     AbstractBridge* clone() const
@@ -98,7 +108,7 @@ private:
 };
 
 #define STATIC_REGISTER_TYPE(_TYPE_, _TYPE_NAME) \
-     template<> inline std::string typeString< _TYPE_ >() { return _TYPE_NAME ; }
+    template<> inline std::string typeString< _TYPE_ >() { return _TYPE_NAME ; }
 
 //! complex type
 #define COMPLEX_TYPE_BRIDGE(_CLASS_) \
@@ -124,6 +134,15 @@ public:                                                                         
     { return data; }                                                             \
     inline const _CLASS_& get() const                                            \
     { return data; }                                                             \
+    bool isEqual(const AbstractBridge *other) const                              \
+    {                                                                            \
+        Bridge<_CLASS_> * other_ =                                               \
+                dynamic_cast<Bridge<_CLASS_> *>                                  \
+                (const_cast<AbstractBridge*>(other));                            \
+        return other_                                                            \
+                ? data == other_->data                                           \
+                : false;                                                         \
+    }                                                                            \
     bool assign(const AbstractBridge* other) {                                   \
         Bridge<_CLASS_> * other_ =                                               \
                 dynamic_cast<Bridge<_CLASS_> *>                                  \
@@ -179,6 +198,16 @@ public:
 
     inline const std::string& get() const
     { return data; }
+
+    bool isEqual(const AbstractBridge *other) const
+    {
+        Bridge<std::string> * other_ =
+                dynamic_cast<Bridge<std::string> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_
+                ? data == other_->data
+                : false;
+    }
 
     bool assign(const AbstractBridge* other) {
         Bridge<std::string> * other_ =

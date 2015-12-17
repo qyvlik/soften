@@ -112,6 +112,16 @@ public:
         return *this;
     }
 
+    friend bool operator == (const Variant& lhs, const Variant& rhs)
+    {
+        return lhs.d_ptr != rhs.d_ptr && lhs.d_ptr != nullptr
+                ? lhs.d_ptr->isEqual(rhs.d_ptr)
+                : true;
+    }
+
+    friend bool operator !=(const Variant& lhs, const Variant& rhs)
+    { return ! (lhs == rhs); }
+
     template<typename T>
     bool canConvert() const
     { return dynamic_cast< Bridge<T> *>(d_ptr) ; }
@@ -163,7 +173,7 @@ public:
         return outs << "Variant("
                     << (var.d_ptr
                         ?  var.d_ptr->typeString() + ", " + var.d_ptr->toString()
-                        : "nil")
+                         : "nil")
                     << ")";
     }
 
@@ -193,6 +203,16 @@ public:
 
     inline const VariantMap& get() const
     { return data; }
+
+    bool isEqual(const AbstractBridge *other) const
+    {
+        Bridge<VariantMap> * other_ =
+                dynamic_cast<Bridge<VariantMap> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_
+                ? data == other_->data
+                : false;
+    }
 
     bool assign(const AbstractBridge* other) {
         Bridge<VariantMap> * other_ =
@@ -233,6 +253,16 @@ public:
     inline const VariantList& get() const
     { return data; }
 
+    bool isEqual(const AbstractBridge *other) const
+    {
+        Bridge<VariantList> * other_ =
+                dynamic_cast<Bridge<VariantList> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_
+                ? data == other_->data
+                : false;
+    }
+
     bool assign(const AbstractBridge* other) {
         Bridge<VariantList> * other_ =
                 dynamic_cast<Bridge<VariantList> *>
@@ -270,6 +300,16 @@ public:
 
     inline const VariantVector& get() const
     { return data; }
+
+    bool isEqual(const AbstractBridge *other) const
+    {
+        Bridge<VariantVector> * other_ =
+                dynamic_cast<Bridge<VariantVector> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_
+                ? data == other_->data
+                : false;
+    }
 
     bool assign(const AbstractBridge* other) {
         Bridge<VariantVector> * other_ =

@@ -27,6 +27,16 @@ public:
     inline const vector2d& get() const
     { return data; }
 
+    bool isEqual(const AbstractBridge* other) const
+    {
+        Bridge<vector2d> * other_ =
+                dynamic_cast<Bridge<vector2d> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_
+                ? data.fuzzyEquals(other_->data)
+                : false;
+    }
+
     bool assign(const AbstractBridge* other) {
         Bridge<vector2d> * other_ =
                 dynamic_cast<Bridge<vector2d> *>

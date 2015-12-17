@@ -134,6 +134,16 @@ public:
     inline const SObject* get() const
     { return d_ptr; }
 
+    bool isEqual(const AbstractBridge* other) const
+    {
+        Bridge<SObject*> * other_ =
+                dynamic_cast<Bridge<SObject*> *>
+                (const_cast<AbstractBridge*>(other));
+        return other_ && d_ptr && other_->d_ptr
+                ? d_ptr->isEqual(other_->d_ptr)                 // 多态
+                : false;
+    }
+
     inline bool assign(const AbstractBridge* other) {
         (void)other;
         return false;

@@ -61,12 +61,12 @@ public:
                 if(thiz->property("age").typeString()
                         == args.at(0).typeString()) {
                     thiz->setProperty("age", args.at(0));
-                    return 0;
+                    return ObjectMetaCallState::CallSuccess;
                 } else {
-                    return -2;
+                    return ObjectMetaCallState::ArgumentsTypeError;
                 }
             } else {
-                return -1;
+                return ObjectMetaCallState::ArgumentsLengthError;
             }
         });
 

@@ -198,29 +198,45 @@ void test_07()
     // 200 times
 }
 
+/**
+  \title test the Variant == Variant
+*/
 
+void test_08()
+{
+    Variant int_a(12);
+    Variant int_b(12);
+    Variant string_b("12");
+
+    cout << (int_b == int_a) << endl;
+    cout << (int_a == string_b) << endl;
+
+}
 
 int main(
         // int argc, const char* argv[]
         )
 {
-    //*
-//    test_01();
+    /*
+    test_01();
     cout << "------------------" << endl;
     test_02();
-//    cout << "------------------" << endl;
-//    test_03();
-//    cout << "------------------" << endl;
-//    test_04();
-//    cout << "------------------" << endl;
-//    test_05();
-//    cout << "------------------" << endl;
-//    test_06();
-//    cout << "------------------" << endl;
-//    TestVector2d::Test();
-//    cout << "------------------" << endl;
+    cout << "------------------" << endl;
+    test_03();
+    cout << "------------------" << endl;
+    test_04();
+    cout << "------------------" << endl;
+    test_05();
+    cout << "------------------" << endl;
+    test_06();
+    cout << "------------------" << endl;
+    TestVector2d::Test();
+    cout << "------------------" << endl;
     //*/
-//    test_07();
+    //test_07();
+
+    test_08();
+
     return 0;
 }
 
