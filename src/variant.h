@@ -20,7 +20,7 @@ class Variant
 public:
     explicit Variant():
         d_ptr(
-            new Bridge<int>(0)
+            new Bridge<void>(0)
             // nullptr
             )
     {
@@ -168,11 +168,14 @@ public:
     std::string toStdString() const
     { return d_ptr? d_ptr->toString() : ""; }
 
+    bool isValid()const
+    { return this->d_ptr ? this->d_ptr->typeString() != ::typeString<void>() : false; }
+
     friend std::ostream& operator << (std::ostream& outs, const Variant& var)
     {
         return outs << "Variant("
                     << (var.d_ptr
-                        ?  var.d_ptr->typeString() + ", " + var.d_ptr->toString()
+                        ? var.d_ptr->typeString() + ", " + var.d_ptr->toString()
                          : "nil")
                     << ")";
     }

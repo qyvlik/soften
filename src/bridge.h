@@ -229,6 +229,49 @@ private:
     std::string data;
 };
 
+STATIC_REGISTER_TYPE(void, "Undefine");
+
+template<>
+class Bridge<void> : public AbstractBridge
+{
+public:
+    template<typename T>
+    explicit Bridge(T):
+        data(false)
+    { }
+
+    inline std::string typeString() const
+    { return ::typeString<void>(); }
+
+    template<typename T>
+    inline void set(const T&)
+    {  }
+
+    inline bool& get()
+    { return data; }
+
+    inline const bool& get() const
+    { return data; }
+
+    bool isEqual(const AbstractBridge *other) const
+    { return other && this->typeString() == other->typeString(); }
+
+    bool assign(const AbstractBridge* other) {
+        (void)other;
+        return  false;
+    }
+
+    AbstractBridge* clone() const
+    { return new Bridge<void>(data); }
+
+    std::string toString() const {
+        return "Undefine";
+    }
+
+private:
+    bool data;
+};
+
 
 #define STATIC_REGISTER_COMPLEX_TYPE(_CLASS_, _CLASS_NAME_) \
     STATIC_REGISTER_TYPE(_CLASS_, _CLASS_NAME_) \
