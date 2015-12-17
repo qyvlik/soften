@@ -31,6 +31,7 @@ class SObjectFactory;
 class SObject
 {
 public:
+    typedef std::function<void(void)> Handle;
     typedef ObjectMetaCall<SObject>::CallableMethod CallableMethod;
     static const ObjectMetaCall<SObject> StaticMetaCall;
 
@@ -65,6 +66,10 @@ public:
 
     Variant property(const std::string& name) const;
 
+    void propertyChanged(const std::string propertyName);
+
+    void setPropertyChangedHandle(const std::string& propertyName, const Handle& handle);
+
     void addMethod(const std::string& methodName,const CallableMethod& callable);
 
     void removeMethod(const std::string& methodName);
@@ -84,8 +89,11 @@ private:
     void setParentHelper(SObject* parentPointer);
 
     VariantMap properties;
+    std::map<std::string, Handle> propertyChangedHandles;
+
     SObject* m_parent;
     std::list<SObject*> children;
+
 };
 
 

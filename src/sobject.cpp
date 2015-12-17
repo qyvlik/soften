@@ -109,7 +109,10 @@ int SObject::callSampleMethod(const string methodName)
 
 void SObject::setProperty(const std::string &name, const Variant &value)
 {
-    properties[name] = value;
+    if(properties[name] != value) {
+        properties[name] = value;
+        propertyChanged(name);
+    }
 }
 
 Variant SObject::property(const std::string &name) const
@@ -118,6 +121,27 @@ Variant SObject::property(const std::string &name) const
     return findItem != properties.end()
             ? findItem->second
             : Variant();
+}
+
+
+void SObject::propertyChanged(const string propertyName)
+{
+#ifdef QBS_DEBUG
+    cout << propertyName << endl;
+#endif
+    auto handle = propertyChangedHandles.find(propertyName);
+    auto end = propertyChangedHandles.end();
+    if(handle != end) {
+        handle->second();
+    }
+}
+
+void SObject::setPropertyChangedHandle(const string &propertyName, const SObject::Handle &handle)
+{
+    propertyChangedHandles.insert(
+                pair<string, SObject::Handle>(
+                    propertyName, handle)
+                );
 }
 
 void SObject::addMethod(const string &methodName, const SObject::CallableMethod &callable)
