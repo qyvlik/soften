@@ -25,7 +25,7 @@ std::string MyObject::toString() const
 
 const ObjectMetaCall<MyMyObject> MyMyObject::StaticMetaCall = {
     {
-        std::pair<const std::string, MyMyObject::CallableMethod >
+        std::pair<std::string, MyMyObject::CallableMethod>
         ( "toString",
         [](MyMyObject* thiz, std::vector<Variant>&, Variant& result)->int{
             result = thiz->toString();

@@ -6,14 +6,14 @@ ObjectManager<SObject*> SObject::SObjectManager;
 
 const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
     {
-        pair<const string, SObject::CallableMethod>
+        pair<string, SObject::CallableMethod>
         ( "toString",
         [](SObject* thiz, std::vector<Variant>&, Variant& result)->int{
             result = thiz->toString();
             return ObjectMetaCallState::CallSuccess;
         }),
 
-        pair<const string, SObject::CallableMethod>
+        pair<string, SObject::CallableMethod>
         ( "printSelf",
         [](SObject* thiz, std::vector<Variant>&, Variant& )->int{
             cout
@@ -24,7 +24,7 @@ const ObjectMetaCall<SObject> SObject::StaticMetaCall = {
             return ObjectMetaCallState::CallSuccess;
         }),
 
-        pair<const string, SObject::CallableMethod>
+        pair<string, SObject::CallableMethod>
         ( "isEqual",
         // bool isEqual(const SObject* other)
         [](SObject* thiz, std::vector<Variant>&args, Variant& result)->int{
@@ -91,7 +91,7 @@ string SObject::toString() const
 int SObject::callMethod(const string &methodName,
                         std::vector<Variant>& args,
                         Variant& result)
-{    
+{
     auto findDynamicMethod = this->SObject::dynamicMetaCall.find(methodName);
     auto end = this->SObject::dynamicMetaCall.end();
     return findDynamicMethod != end
@@ -136,7 +136,9 @@ void SObject::removeMethod(const string &methodName)
 
 void SObject::setParent(SObject *parentPointer)
 {
-    this->setParentHelper(parentPointer);
+    if(this != parentPointer) {
+        this->setParentHelper(parentPointer);
+    }
 }
 
 SObject *SObject::parent() const

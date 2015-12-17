@@ -37,7 +37,7 @@ struct ObjectMetaCall
         };
     }
 
-    const std::map<const std::string, CallableMethod> methods;
+    const std::map<std::string, CallableMethod> methods;
 
     // static const CallableMethod NotFoundMethod;
 };

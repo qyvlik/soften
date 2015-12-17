@@ -155,6 +155,9 @@ public:
     std::string typeString() const
     { return d_ptr ? d_ptr->typeString() : ::typeString(); }
 
+    std::string toStdString() const
+    { return d_ptr? d_ptr->toString() : ""; }
+
     friend std::ostream& operator << (std::ostream& outs, const Variant& var)
     {
         return outs << "Variant("

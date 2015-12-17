@@ -8,7 +8,8 @@
 
 using namespace std;
 
-void test_01() {
+void test_01()
+{
     SObject obj;
 
     VariantVector arguments;
@@ -34,7 +35,9 @@ void test_02()
     VariantVector arguments;
     Variant result;
 
-    auto ageObject = ObjectFactory<SObject>::create();
+    ObjectFactory objectFactory;
+
+    SObject* ageObject = objectFactory.create();
 
     ageObject->callMethod("getAge", arguments, result);
 
@@ -49,6 +52,12 @@ void test_02()
     ageObject->callSampleMethod("doSomething");
 
     ageObject->callSampleMethod("tryToUseBingArg");
+
+    arguments.push_back("1");
+    arguments.push_back(1);
+    arguments.push_back(1.2);
+
+    ageObject->callMethod("print", arguments, result);
 }
 
 void test_03()
@@ -197,21 +206,21 @@ int main(
 {
     //*
 //    test_01();
-//    cout << "------------------" << endl;
-//    test_02();
+    cout << "------------------" << endl;
+    test_02();
 //    cout << "------------------" << endl;
 //    test_03();
 //    cout << "------------------" << endl;
 //    test_04();
-//   cout << "------------------" << endl;
-    test_05();
-    cout << "------------------" << endl;
-    test_06();
-    cout << "------------------" << endl;
+//    cout << "------------------" << endl;
+//    test_05();
+//    cout << "------------------" << endl;
+//    test_06();
+//    cout << "------------------" << endl;
 //    TestVector2d::Test();
 //    cout << "------------------" << endl;
     //*/
-    //test_07();
+//    test_07();
     return 0;
 }
 

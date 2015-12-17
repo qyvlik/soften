@@ -19,27 +19,42 @@ public:
     }
 };
 
-template<typename ObjectClass>
-class ObjectFactory
+
+// SObjectFactory is friend class of SObject
+class ObjectFactory : public SObjectFactory
 {
+    static SObject parent;
 public:
-    ~ObjectFactory();
 
-    typedef std::shared_ptr<ObjectClass> shared;
+    SObject* create()
+    {
+        SObject* globalObject = new SObject(&parent);
 
-    static shared create() {
-        shared object(new ObjectClass);
-        object->setProperty("age", Variant(12));
+        SObject* console = new SObject(globalObject);
+
+        console->addMethod("log",
+                           [](SObject* , VariantVector& args, Variant& result)->int{
+            auto iter = args.begin();
+            auto end = args.end();
+            while(iter != end) {
+                std::cout << (*iter).toStdString();
+                iter++;
+            }
+            result = args.size();
+            return 0;
+        });
+
+        globalObject->setProperty("age", Variant(12));
 
         // int getAge();
-        object->addMethod("getAge",
+        globalObject->addMethod("getAge",
                           [](SObject* thiz, VariantVector&, Variant& result)->int{
             result = thiz->property("age");
             return 0;
         });
 
         // void setAge(int age);
-        object->addMethod("setAge",
+        globalObject->addMethod("setAge",
                           [](SObject* thiz, VariantVector& args, Variant&)->int{
             if(args.size() == 1) {
                 // 这里可以做类型判断
@@ -55,15 +70,20 @@ public:
             }
         });
 
-        object->addMethod("doSomething", Utility::doSomething);
+        globalObject->addMethod("doSomething", Utility::doSomething);
 
-        object->addMethod("tryToUseBingArg",
+        globalObject->addMethod("tryToUseBingArg",
                           bind(Utility::tryToUseBindArg,
                                nullptr, std::placeholders::_2, std::placeholders::_3));
-        return object;
+
+        globalObject->addMethod("print",
+                                [console](SObject*, VariantVector& args, Variant&result)->int{
+            return console->callMethod("log", args, result);
+        });
+        return globalObject;
     }
-private:
-    ObjectFactory();
 };
+
+SObject ObjectFactory::parent;
 
 #endif // OBJECTFACTORY_H

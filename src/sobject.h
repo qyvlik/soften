@@ -6,6 +6,7 @@
 
 #include <set>
 
+
 template<typename Class>
 struct ObjectManager
 {
@@ -25,13 +26,7 @@ private:
 template<typename Class>
 std::set<Class> ObjectManager<Class>::ObjectSet;
 
-class SObject;
-class SObjectFactory
-{
-public:
-    virtual ~SObjectFactory() = 0;
-    virtual SObject* create() = 0;
-};
+class SObjectFactory;
 
 class SObject
 {
@@ -40,8 +35,9 @@ public:
     static const ObjectMetaCall<SObject> StaticMetaCall;
 
 private:
-    static ObjectManager<SObject*> SObjectManager;
     friend struct ObjectMetaCall<SObject>;
+    friend class SObjectFactory;
+    static ObjectManager<SObject*> SObjectManager;
     std::map<const std::string, CallableMethod> dynamicMetaCall;
 
 public:
@@ -82,17 +78,29 @@ protected:
     void deleteChild(SObject* child);
 
 private:
-    VariantMap properties;
-
     SObject& operator =(const SObject& other) = delete;
     SObject(const SObject& other) = delete;
 
+    void setParentHelper(SObject* parentPointer);
+
+    VariantMap properties;
     SObject* m_parent;
     std::list<SObject*> children;
-
-    void setParentHelper(SObject* parentPointer);
 };
 
+
+class SObjectFactory
+{
+public:
+    virtual ~SObjectFactory()
+    {}
+
+    virtual SObject* create() = 0;
+
+    static void setObjectOwnerShip(SObject* child, SObject* parent) {
+        child->setParent(parent);
+    }
+};
 
 STATIC_REGISTER_TYPE(SObject*, "SObject*");
 
