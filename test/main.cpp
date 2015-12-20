@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "../src/sobject.h"
+#include "../src/binding.h"
 #include "myobject.h"
 #include "objectfactory.h"
 #include "test_vector2d.h"
@@ -213,6 +214,96 @@ void test_08()
 
 }
 
+/**
+  \title test the property changed handle
+*/
+
+void test_09()
+{
+    SObject Object;
+    Object.setPropertyChangedHandle("name",
+                                    SObject::Handle("id",
+                                                    [&Object](){
+        bool isLive = SObject::SObjectManager.isLive(&Object);
+        if(isLive) {
+            cout << "name change : " << Object.property("name") << endl;
+        } else {
+            cout << "Object death" << endl;
+        }
+    }));
+
+    Object.setProperty("name", 12);
+
+    Object.setProperty("name", 13);
+
+    Object.removePropertyChangeHandle("name", "id");
+
+    Object.setProperty("name", 14);
+}
+
+/**
+  \title test the Binding
+    SObject{
+        id: parent
+        SObject{
+            id: childA
+            onAgeChanged: console.log("My width changed", childA.age);
+        }
+        SObject{
+            id: childB
+        }
+        Binding {
+            id: binding
+            target: childA
+            property: "age"
+            expression: childB.height*2 + childB.width
+        }
+    }
+*/
+
+void test_10()
+{
+    SObject* parent = new SObject();
+    parent->setObjectName("parent");
+
+    SObject* childA = new SObject(parent);
+    childA->setObjectName("childA");
+
+    auto childA_on_age_change_handle = [childA]() {
+        cout << "childA_on_age_change_handle: " << childA->property("age") << endl;
+    };
+
+    childA->setPropertyChangedHandle("age", SObject::Handle(
+                                         "childA_on_age_change_handle",
+                                         childA_on_age_change_handle));
+
+    SObject* childB = new SObject(parent);
+    childB->setObjectName("childB");
+
+    // typedef std::vector<std::pair<SObject*, std::string> > SourceObjects;
+    // childB.height*2 + childB.width
+    auto bindingExpression = [](Binding::SourceObjects& sourceObjects, Variant& result){
+        (void)sourceObjects;
+
+
+
+        result = "1000";
+    };
+
+    Binding* binding = new Binding(childA,
+                                    "age",
+                                    bindingExpression,
+                                    parent);
+
+
+    binding->addSourceObject(childB, "width");
+    binding->addSourceObject(childB, "height");
+
+    childB->setProperty("width", "123123");
+
+    delete parent;
+}
+
 int main(
         // int argc, const char* argv[]
         )
@@ -232,10 +323,13 @@ int main(
     cout << "------------------" << endl;
     TestVector2d::Test();
     cout << "------------------" << endl;
+    test_07();
     //*/
-    //test_07();
+    //test_08();
 
-    test_08();
+    // test_09();
+
+    test_10();
 
     return 0;
 }
