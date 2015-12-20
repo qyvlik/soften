@@ -101,6 +101,21 @@ public:
         return *this;
     }
 
+    Variant& operator = (const char* value) {
+#if QBS_DEBUG
+        std::cout << "Variant& operator = (const char* value)"
+                  << "this: " << this
+                  << std::endl;
+#endif
+        if(this->canConvert<std::string>()) {
+            dynamic_cast< Bridge<std::string> *> (d_ptr)->set(value);
+        } else {
+            delete d_ptr ;
+            d_ptr = new Bridge<std::string>(value);
+        }
+        return *this;
+    }
+
     Variant& operator = (const Variant& other) {
 #if QBS_DEBUG
         std::cout << "Variant& operator = (const Variant& other)" << std::endl;
@@ -111,6 +126,9 @@ public:
         }
         return *this;
     }
+
+    operator bool() const
+    { return this->isValid(); }
 
     friend bool operator == (const Variant& lhs, const Variant& rhs)
     {

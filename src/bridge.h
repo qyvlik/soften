@@ -11,6 +11,16 @@ template<typename T>
 inline std::string typeString()
 { return "Unknow"; }
 
+template<typename Class>
+inline std::string AddressToString(const Class* address)
+{
+    std::stringstream sstream;
+    sstream << address;
+    std::string addressString;
+    sstream >> addressString;
+    return addressString;
+}
+
 class AbstractBridge
 {
 public:
@@ -179,16 +189,19 @@ template<>
 class Bridge<std::string> : public AbstractBridge
 {
 public:
-    explicit Bridge(const char* data):
+    Bridge(const char* data):
         data(data)
     {}
 
-    explicit Bridge(const std::string& data):
+    Bridge(const std::string& data):
         data(data)
     { }
 
     inline std::string typeString() const
     { return ::typeString<std::string>(); }
+
+    inline void set(const char* value)
+    { data.assign(value); }
 
     inline void set(const std::string& value)
     { data = value; }
