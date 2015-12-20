@@ -1,5 +1,7 @@
 #include "sobject.h"
 
+#include <algorithm>
+
 using namespace std;
 
 ObjectManager<SObject*> SObject::SObjectManager;
@@ -123,25 +125,54 @@ Variant SObject::property(const std::string &name) const
             : Variant();
 }
 
+void SObject::removePropertyChangeHandle(const string &propertyName, const string &handleId)
+{
+    auto find = propertyChangedHandles.find(propertyName);
+    auto end = propertyChangedHandles.end();
+    if(find != end) {
+        /// TODO
+//        find->second
+        auto removeHandle = find->second.begin();
+        auto handleEnd = find->second.end();
+        while(removeHandle != handleEnd) {
+            if((*removeHandle).id == handleId) {
+                find->second.erase(removeHandle);
+                break;
+            }
+            removeHandle++;
+        }
+    }
+}
+
+void SObject::setPropertyChangedHandle(const string &propertyName,
+                                       const SObject::Handle &handle)
+{
+    auto find = propertyChangedHandles.find(propertyName);
+    auto end = propertyChangedHandles.end();
+    if(find != end) {
+        find->second.insert(handle);
+    } else {
+        propertyChangedHandles[propertyName] = set<Handle>();
+        propertyChangedHandles.at(propertyName).insert(handle);
+    }
+}
+
 
 void SObject::propertyChanged(const string propertyName)
 {
 #ifdef QBS_DEBUG
     cout << propertyName << endl;
 #endif
-    auto handle = propertyChangedHandles.find(propertyName);
+    auto handles = propertyChangedHandles.find(propertyName);
     auto end = propertyChangedHandles.end();
-    if(handle != end) {
-        handle->second();
+    if(handles != end) {
+        auto handleIter = handles->second.begin();
+        auto handleEnd = handles->second.end();
+        while(handleIter != handleEnd) {
+            (*handleIter)();
+            handleIter++;
+        }
     }
-}
-
-void SObject::setPropertyChangedHandle(const string &propertyName, const SObject::Handle &handle)
-{
-    propertyChangedHandles.insert(
-                pair<string, SObject::Handle>(
-                    propertyName, handle)
-                );
 }
 
 void SObject::addMethod(const string &methodName, const SObject::CallableMethod &callable)
@@ -156,6 +187,16 @@ void SObject::addMethod(const string &methodName, const SObject::CallableMethod 
 void SObject::removeMethod(const string &methodName)
 {
     this->SObject::dynamicMetaCall.erase(methodName);
+}
+
+string SObject::objectName() const
+{
+    return this->property("objectName").toStdString();
+}
+
+void SObject::setObjectName(const string &name)
+{
+    this->setProperty("objectName", name);
 }
 
 void SObject::setParent(SObject *parentPointer)

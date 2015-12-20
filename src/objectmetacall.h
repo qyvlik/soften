@@ -16,6 +16,7 @@ struct ObjectMetaCallState {
         , ArgumentsLengthError = -3
         , NativeMethodHasExcept = -4
         , ObjectDeath = -5
+        , NullMethod = -6
     };
 };
 

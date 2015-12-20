@@ -2,10 +2,8 @@
 #define SOBJECT_H
 
 #include "objectmetacall.h"
-#include "variant.h"
 
 #include <set>
-
 
 template<typename Class>
 struct ObjectManager
@@ -31,14 +29,36 @@ class SObjectFactory;
 class SObject
 {
 public:
-    typedef std::function<void(void)> Handle;
+
+    typedef std::function<void(void)> Delegate;
+
+    struct Handle
+    {
+        Handle(const std::string& id, const Delegate& delegate):
+            id(id),
+            delegate(delegate)
+        { }
+
+        bool operator < (const Handle& other) const
+        { return this->id < other.id; }
+
+        friend bool operator == (const Handle& lhs, const Handle& rhs)
+        { return lhs.id == rhs.id; }
+
+        void operator ()(void) const
+        { this->delegate(); }
+
+        std::string id;
+        Delegate delegate;
+    };
+
     typedef ObjectMetaCall<SObject>::CallableMethod CallableMethod;
     static const ObjectMetaCall<SObject> StaticMetaCall;
+    static ObjectManager<SObject*> SObjectManager;
 
 private:
     friend struct ObjectMetaCall<SObject>;
     friend class SObjectFactory;
-    static ObjectManager<SObject*> SObjectManager;
     std::map<const std::string, CallableMethod> dynamicMetaCall;
 
 public:
@@ -66,13 +86,19 @@ public:
 
     Variant property(const std::string& name) const;
 
-    void propertyChanged(const std::string propertyName);
+    void removePropertyChangeHandle(const std::string& propertyName, const std::string& handleId);
 
     void setPropertyChangedHandle(const std::string& propertyName, const Handle& handle);
+
+    void propertyChanged(const std::string propertyName);
 
     void addMethod(const std::string& methodName,const CallableMethod& callable);
 
     void removeMethod(const std::string& methodName);
+
+    std::string objectName()const;
+
+    void setObjectName(const std::string& name);
 
 protected:
 
@@ -89,7 +115,7 @@ private:
     void setParentHelper(SObject* parentPointer);
 
     VariantMap properties;
-    std::map<std::string, Handle> propertyChangedHandles;
+    std::map<std::string, std::set<Handle> > propertyChangedHandles;
 
     SObject* m_parent;
     std::list<SObject*> children;
